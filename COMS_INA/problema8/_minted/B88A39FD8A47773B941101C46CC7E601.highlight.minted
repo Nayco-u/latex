@@ -1,0 +1,183 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{numpy}\PYG{+w}{ }\PYG{k}{as}\PYG{+w}{ }\PYG{n+nn}{np}
+\PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{matplotlib.pyplot}\PYG{+w}{ }\PYG{k}{as}\PYG{+w}{ }\PYG{n+nn}{plt}
+\PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{scipy}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{signal}
+\PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{scipy.special}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{j0}
+\PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{math}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{pi}
+\PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{os}
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} Helper functions \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{clarke\PYGZus{}psd}\PYG{p}{(}\PYG{n}{f}\PYG{p}{,} \PYG{n}{fD}\PYG{p}{,} \PYG{n}{eps}\PYG{o}{=}\PYG{l+m+mf}{1e\PYGZhy{}9}\PYG{p}{):}
+    \PYG{n}{S} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros\PYGZus{}like}\PYG{p}{(}\PYG{n}{f}\PYG{p}{,} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{float}\PYG{p}{)}
+    \PYG{n}{mask} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{f}\PYG{p}{)} \PYG{o}{\PYGZlt{}} \PYG{n}{fD}
+    \PYG{n}{x} \PYG{o}{=} \PYG{n}{f}\PYG{p}{[}\PYG{n}{mask}\PYG{p}{]} \PYG{o}{/} \PYG{p}{(}\PYG{n}{fD} \PYG{o}{+} \PYG{l+m+mf}{0.0}\PYG{p}{)}
+    \PYG{n}{denom} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{maximum}\PYG{p}{(}\PYG{l+m+mf}{1.0} \PYG{o}{\PYGZhy{}} \PYG{n}{x}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{eps}\PYG{p}{))}
+    \PYG{n}{S}\PYG{p}{[}\PYG{n}{mask}\PYG{p}{]} \PYG{o}{=} \PYG{l+m+mf}{1.0}\PYG{o}{/}\PYG{p}{(}\PYG{n}{pi} \PYG{o}{*} \PYG{n}{fD} \PYG{o}{*} \PYG{n}{denom}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{S}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{fading\PYGZus{}rayleigh\PYGZus{}fd}\PYG{p}{(}\PYG{n}{v}\PYG{p}{,} \PYG{n}{fc}\PYG{p}{,} \PYG{n}{Ts}\PYG{p}{,} \PYG{n}{Td}\PYG{p}{,} \PYG{n}{seed}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{Nfreq}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{):}
+    \PYG{n}{c} \PYG{o}{=} \PYG{l+m+mf}{3e8}
+    \PYG{n}{fD} \PYG{o}{=} \PYG{p}{(}\PYG{n}{v} \PYG{o}{*} \PYG{n}{fc}\PYG{p}{)} \PYG{o}{/} \PYG{n}{c}
+    \PYG{n}{N} \PYG{o}{=} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{round}\PYG{p}{(}\PYG{n}{Td} \PYG{o}{/} \PYG{n}{Ts}\PYG{p}{))}
+    \PYG{k}{if} \PYG{n}{Nfreq} \PYG{o+ow}{is} \PYG{k+kc}{None}\PYG{p}{:}
+        \PYG{n}{Nfft} \PYG{o}{=} \PYG{l+m+mi}{1} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{p}{(}\PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{ceil}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{log2}\PYG{p}{(}\PYG{n}{N}\PYG{p}{)))} \PYG{o}{+} \PYG{l+m+mi}{2}\PYG{p}{)}
+    \PYG{k}{else}\PYG{p}{:}
+        \PYG{n}{Nfft} \PYG{o}{=} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{Nfreq}\PYG{p}{)}
+    \PYG{n}{Fs} \PYG{o}{=} \PYG{l+m+mf}{1.0} \PYG{o}{/} \PYG{n}{Ts}
+    \PYG{n}{freqs} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{fft}\PYG{o}{.}\PYG{n}{fftfreq}\PYG{p}{(}\PYG{n}{Nfft}\PYG{p}{,} \PYG{n}{d}\PYG{o}{=}\PYG{n}{Ts}\PYG{p}{)}
+    \PYG{n}{S} \PYG{o}{=} \PYG{n}{clarke\PYGZus{}psd}\PYG{p}{(}\PYG{n}{freqs}\PYG{p}{,} \PYG{n}{fD}\PYG{p}{)}
+    \PYG{n}{rng} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{default\PYGZus{}rng}\PYG{p}{(}\PYG{n}{seed}\PYG{p}{)}
+    \PYG{n}{spec\PYGZus{}real} \PYG{o}{=} \PYG{n}{rng}\PYG{o}{.}\PYG{n}{normal}\PYG{p}{(}\PYG{n}{size}\PYG{o}{=}\PYG{n}{Nfft}\PYG{p}{)}
+    \PYG{n}{spec\PYGZus{}imag} \PYG{o}{=} \PYG{n}{rng}\PYG{o}{.}\PYG{n}{normal}\PYG{p}{(}\PYG{n}{size}\PYG{o}{=}\PYG{n}{Nfft}\PYG{p}{)}
+    \PYG{n}{spec} \PYG{o}{=} \PYG{p}{(}\PYG{n}{spec\PYGZus{}real} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{n}{j}\PYG{o}{*}\PYG{n}{spec\PYGZus{}imag}\PYG{p}{)} \PYG{o}{*} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{S}\PYG{o}{/}\PYG{l+m+mf}{2.0}\PYG{p}{)}
+    \PYG{n}{h\PYGZus{}time} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{fft}\PYG{o}{.}\PYG{n}{ifft}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{fft}\PYG{o}{.}\PYG{n}{ifftshift}\PYG{p}{(}\PYG{n}{spec}\PYG{p}{))}
+    \PYG{n}{h} \PYG{o}{=} \PYG{n}{h\PYGZus{}time}\PYG{p}{[:}\PYG{n}{N}\PYG{p}{]}
+    \PYG{n}{power} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{h}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{)}
+    \PYG{n}{h} \PYG{o}{/=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{power}\PYG{p}{)}
+    \PYG{n}{t} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{arange}\PYG{p}{(}\PYG{n}{N}\PYG{p}{)} \PYG{o}{*} \PYG{n}{Ts}
+    \PYG{k}{return} \PYG{n}{h}\PYG{p}{,} \PYG{n}{fD}\PYG{p}{,} \PYG{n}{t}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{plot\PYGZus{}time\PYGZus{}db}\PYG{p}{(}\PYG{n}{h}\PYG{p}{,} \PYG{n}{t}\PYG{p}{,} \PYG{n}{title}\PYG{p}{):}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{()}
+    \PYG{n}{magdb} \PYG{o}{=} \PYG{l+m+mf}{20.0} \PYG{o}{*} \PYG{n}{np}\PYG{o}{.}\PYG{n}{log10}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{h}\PYG{p}{)} \PYG{o}{+} \PYG{l+m+mf}{1e\PYGZhy{}12}\PYG{p}{)} \PYG{c+c1}{\PYGZsh{} dB}
+
+    \PYG{c+c1}{\PYGZsh{} Plot}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{t}\PYG{p}{,} \PYG{n}{magdb}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Time (s)\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Magnitude (dB)\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{n}{title}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{k+kc}{True}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}fading\PYGZus{}trace.png\PYGZdq{}}\PYG{p}{,} \PYG{n}{dpi}\PYG{o}{=}\PYG{l+m+mi}{300}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{show}\PYG{p}{()}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{plot\PYGZus{}histogram\PYGZus{}rayleigh}\PYG{p}{(}\PYG{n}{r}\PYG{p}{,} \PYG{n}{title}\PYG{p}{,} \PYG{n}{bins}\PYG{o}{=}\PYG{l+m+mi}{60}\PYG{p}{):}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{()}
+
+    \PYG{c+c1}{\PYGZsh{} Histogram and Rayleigh PDF}
+    \PYG{n}{counts}\PYG{p}{,} \PYG{n}{edges} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{histogram}\PYG{p}{(}\PYG{n}{r}\PYG{p}{,} \PYG{n}{bins}\PYG{o}{=}\PYG{n}{bins}\PYG{p}{,} \PYG{n}{density}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{)}
+    \PYG{n}{centers} \PYG{o}{=} \PYG{l+m+mf}{0.5}\PYG{o}{*}\PYG{p}{(}\PYG{n}{edges}\PYG{p}{[:}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{+} \PYG{n}{edges}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{:])}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{bar}\PYG{p}{(}\PYG{n}{centers}\PYG{p}{,} \PYG{n}{counts}\PYG{p}{,} \PYG{n}{width}\PYG{o}{=}\PYG{n}{edges}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{\PYGZhy{}}\PYG{n}{edges}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{],} \PYG{n}{alpha}\PYG{o}{=}\PYG{l+m+mf}{0.6}\PYG{p}{)}
+    \PYG{n}{omega} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{r}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{)}
+    \PYG{n}{sigma2} \PYG{o}{=} \PYG{n}{omega}\PYG{o}{/}\PYG{l+m+mf}{2.0}
+    \PYG{n}{r\PYGZus{}axis} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{linspace}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{r}\PYG{o}{.}\PYG{n}{max}\PYG{p}{()}\PYG{o}{*}\PYG{l+m+mf}{1.05}\PYG{p}{,} \PYG{l+m+mi}{400}\PYG{p}{)}
+    \PYG{n}{pdf} \PYG{o}{=} \PYG{p}{(}\PYG{n}{r\PYGZus{}axis} \PYG{o}{/} \PYG{n}{sigma2}\PYG{p}{)} \PYG{o}{*} \PYG{n}{np}\PYG{o}{.}\PYG{n}{exp}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{n}{r\PYGZus{}axis}\PYG{o}{**}\PYG{l+m+mi}{2} \PYG{o}{/} \PYG{p}{(}\PYG{l+m+mf}{2.0}\PYG{o}{*}\PYG{n}{sigma2}\PYG{p}{))}
+
+    \PYG{c+c1}{\PYGZsh{}Plot}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{r\PYGZus{}axis}\PYG{p}{,} \PYG{n}{pdf}\PYG{p}{,} \PYG{n}{linewidth}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Envelope |h|\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}PDF\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{n}{title}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{k+kc}{True}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}histogram\PYGZus{}rayleigh.png\PYGZdq{}}\PYG{p}{,} \PYG{n}{dpi}\PYG{o}{=}\PYG{l+m+mi}{300}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{show}\PYG{p}{()}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{compute\PYGZus{}mean\PYGZus{}rms}\PYG{p}{(}\PYG{n}{r}\PYG{p}{):}
+    \PYG{n}{mean\PYGZus{}r} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{r}\PYG{p}{)}
+    \PYG{n}{rms} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{r}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{))}
+    \PYG{k}{return} \PYG{n}{mean\PYGZus{}r}\PYG{p}{,} \PYG{n}{rms}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{plot\PYGZus{}psd\PYGZus{}and\PYGZus{}clarke}\PYG{p}{(}\PYG{n}{h}\PYG{p}{,} \PYG{n}{Fs}\PYG{p}{,} \PYG{n}{fD}\PYG{p}{,} \PYG{n}{title}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}PSD vs Clarke\PYGZdq{}}\PYG{p}{):}
+    \PYG{c+c1}{\PYGZsh{} Welch PSD}
+    \PYG{n}{f}\PYG{p}{,} \PYG{n}{Pxx} \PYG{o}{=} \PYG{n}{signal}\PYG{o}{.}\PYG{n}{welch}\PYG{p}{(}\PYG{n}{h}\PYG{p}{,} \PYG{n}{fs}\PYG{o}{=}\PYG{n}{Fs}\PYG{p}{,} \PYG{n}{return\PYGZus{}onesided}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{)}
+    \PYG{n}{f\PYGZus{}shift} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{fft}\PYG{o}{.}\PYG{n}{fftshift}\PYG{p}{(}\PYG{n}{f}\PYG{p}{)}
+    \PYG{n}{P\PYGZus{}shift} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{fft}\PYG{o}{.}\PYG{n}{fftshift}\PYG{p}{(}\PYG{n}{Pxx}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} Normalizar el área de la PSD empírica a 1}
+    \PYG{n}{area\PYGZus{}emp} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{trapezoid}\PYG{p}{(}\PYG{n}{P\PYGZus{}shift}\PYG{p}{,} \PYG{n}{f\PYGZus{}shift}\PYG{p}{)}
+    \PYG{k}{if} \PYG{n}{area\PYGZus{}emp} \PYG{o}{\PYGZgt{}} \PYG{l+m+mi}{0}\PYG{p}{:}
+        \PYG{n}{P\PYGZus{}shift} \PYG{o}{/=} \PYG{n}{area\PYGZus{}emp}
+
+    \PYG{c+c1}{\PYGZsh{} Clarke teórica}
+    \PYG{n}{f\PYGZus{}th} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{linspace}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{n}{fD}\PYG{o}{*}\PYG{l+m+mf}{1.2}\PYG{p}{,} \PYG{n}{fD}\PYG{o}{*}\PYG{l+m+mf}{1.2}\PYG{p}{,} \PYG{l+m+mi}{2001}\PYG{p}{)}  \PYG{c+c1}{\PYGZsh{} eje centrado en 0}
+    \PYG{n}{S\PYGZus{}th} \PYG{o}{=} \PYG{n}{clarke\PYGZus{}psd}\PYG{p}{(}\PYG{n}{f\PYGZus{}th}\PYG{p}{,} \PYG{n}{fD}\PYG{p}{)}
+    \PYG{n}{S\PYGZus{}th} \PYG{o}{/=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{trapezoid}\PYG{p}{(}\PYG{n}{S\PYGZus{}th}\PYG{p}{,} \PYG{n}{f\PYGZus{}th}\PYG{p}{)}  \PYG{c+c1}{\PYGZsh{} normalizar área a 1}
+
+    \PYG{c+c1}{\PYGZsh{} Plot}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{7}\PYG{p}{,}\PYG{l+m+mi}{4}\PYG{p}{))}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{semilogy}\PYG{p}{(}\PYG{n}{f\PYGZus{}shift}\PYG{p}{,} \PYG{n}{Pxx}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}Welch PSD (empirical)\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{semilogy}\PYG{p}{(}\PYG{n}{f\PYGZus{}th}\PYG{p}{,} \PYG{n}{S\PYGZus{}th}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}r\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,} \PYG{n}{linewidth}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}Clarke theoretical PSD\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlim}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{fD}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{fD}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Frequency (Hz)\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Normalized PSD\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{n}{title}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{legend}\PYG{p}{()}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{k+kc}{True}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}psd\PYGZus{}clarke.png\PYGZdq{}}\PYG{p}{,} \PYG{n}{dpi}\PYG{o}{=}\PYG{l+m+mi}{300}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{show}\PYG{p}{()}
+
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{autocorr\PYGZus{}empirical}\PYG{p}{(}\PYG{n}{h}\PYG{p}{):}
+    \PYG{n}{N} \PYG{o}{=} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{h}\PYG{p}{)}
+    \PYG{n}{R} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{(}\PYG{n}{N}\PYG{p}{,} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{complex}\PYG{p}{)}
+    \PYG{n}{R} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{correlate}\PYG{p}{(}\PYG{n}{h}\PYG{p}{,} \PYG{n}{h}\PYG{p}{,} \PYG{n}{mode}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}full\PYGZsq{}}\PYG{p}{)} \PYG{o}{/} \PYG{n}{N}
+    \PYG{n}{R} \PYG{o}{=} \PYG{n}{R}\PYG{p}{[}\PYG{n}{N}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{:]}  \PYG{c+c1}{\PYGZsh{} Keep non\PYGZhy{}negative lags}
+    \PYG{k}{return} \PYG{n}{R}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{plot\PYGZus{}autocorr\PYGZus{}vs\PYGZus{}j0}\PYG{p}{(}\PYG{n}{h}\PYG{p}{,} \PYG{n}{Ts}\PYG{p}{,} \PYG{n}{fD}\PYG{p}{,} \PYG{n}{title}\PYG{p}{):}
+    \PYG{n}{R} \PYG{o}{=} \PYG{n}{autocorr\PYGZus{}empirical}\PYG{p}{(}\PYG{n}{h}\PYG{p}{)}
+    \PYG{n}{lags} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{arange}\PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{R}\PYG{p}{))}
+    \PYG{n}{taus} \PYG{o}{=} \PYG{n}{lags} \PYG{o}{*} \PYG{n}{Ts}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{()}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{taus}\PYG{p}{,} \PYG{n}{np}\PYG{o}{.}\PYG{n}{real}\PYG{p}{(}\PYG{n}{R}\PYG{p}{),} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}Empirical Re}\PYG{l+s+si}{\PYGZob{}Rhh\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{taus}\PYG{p}{,} \PYG{n}{j0}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{pi}\PYG{o}{*}\PYG{n}{fD}\PYG{o}{*}\PYG{n}{taus}\PYG{p}{),} \PYG{n}{linewidth}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}J0 theory\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Lag (s)\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Autocorrelation\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{n}{title}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{legend}\PYG{p}{()}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{k+kc}{True}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}autocorr\PYGZus{}j0.png\PYGZdq{}}\PYG{p}{,} \PYG{n}{dpi}\PYG{o}{=}\PYG{l+m+mi}{300}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{show}\PYG{p}{()}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{estimate\PYGZus{}LCR\PYGZus{}AFD}\PYG{p}{(}\PYG{n}{r}\PYG{p}{,} \PYG{n}{Ts}\PYG{p}{,} \PYG{n}{Td}\PYG{p}{,} \PYG{n}{levels\PYGZus{}dB}\PYG{o}{=}\PYG{p}{[}\PYG{l+m+mi}{10}\PYG{p}{,}\PYG{l+m+mi}{20}\PYG{p}{]):}
+    \PYG{n}{results} \PYG{o}{=} \PYG{p}{\PYGZob{}\PYGZcb{}}
+    \PYG{n}{rms} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{r}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{))}
+    \PYG{n}{omega} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{r}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{)}
+    \PYG{k}{for} \PYG{n}{L} \PYG{o+ow}{in} \PYG{n}{levels\PYGZus{}dB}\PYG{p}{:}
+        \PYG{n}{R} \PYG{o}{=} \PYG{l+m+mi}{10}\PYG{o}{**}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{n}{L}\PYG{o}{/}\PYG{l+m+mf}{20.0}\PYG{p}{)} \PYG{o}{*} \PYG{n}{rms}
+        \PYG{n}{crossings} \PYG{o}{=} \PYG{l+m+mi}{0}
+        \PYG{n}{durations} \PYG{o}{=} \PYG{p}{[]}
+        \PYG{n}{in\PYGZus{}fade} \PYG{o}{=} \PYG{k+kc}{False}
+        \PYG{n}{cur\PYGZus{}len} \PYG{o}{=} \PYG{l+m+mi}{0}
+        \PYG{k}{for} \PYG{n}{n} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{r}\PYG{p}{)):}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{r}\PYG{p}{[}\PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{\PYGZgt{}} \PYG{n}{R}\PYG{p}{)} \PYG{o+ow}{and} \PYG{p}{(}\PYG{n}{r}\PYG{p}{[}\PYG{n}{n}\PYG{p}{]} \PYG{o}{\PYGZlt{}=} \PYG{n}{R}\PYG{p}{):}
+                \PYG{n}{crossings} \PYG{o}{+=} \PYG{l+m+mi}{1}
+            \PYG{k}{if} \PYG{n}{r}\PYG{p}{[}\PYG{n}{n}\PYG{p}{]} \PYG{o}{\PYGZlt{}} \PYG{n}{R}\PYG{p}{:}
+                \PYG{n}{cur\PYGZus{}len} \PYG{o}{+=} \PYG{l+m+mi}{1}
+                \PYG{n}{in\PYGZus{}fade} \PYG{o}{=} \PYG{k+kc}{True}
+            \PYG{k}{else}\PYG{p}{:}
+                \PYG{k}{if} \PYG{n}{in\PYGZus{}fade}\PYG{p}{:}
+                    \PYG{n}{durations}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{cur\PYGZus{}len} \PYG{o}{*} \PYG{n}{Ts}\PYG{p}{)}
+                \PYG{n}{in\PYGZus{}fade} \PYG{o}{=} \PYG{k+kc}{False}
+                \PYG{n}{cur\PYGZus{}len} \PYG{o}{=} \PYG{l+m+mi}{0}
+        \PYG{k}{if} \PYG{n}{in\PYGZus{}fade} \PYG{o+ow}{and} \PYG{n}{cur\PYGZus{}len}\PYG{o}{\PYGZgt{}}\PYG{l+m+mi}{0}\PYG{p}{:}
+            \PYG{n}{durations}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{cur\PYGZus{}len} \PYG{o}{*} \PYG{n}{Ts}\PYG{p}{)}
+        \PYG{n}{LCR\PYGZus{}emp} \PYG{o}{=} \PYG{n}{crossings} \PYG{o}{/} \PYG{n}{Td}
+        \PYG{n}{AFD\PYGZus{}emp} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{durations}\PYG{p}{)} \PYG{k}{if} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{durations}\PYG{p}{)}\PYG{o}{\PYGZgt{}}\PYG{l+m+mi}{0} \PYG{k}{else} \PYG{l+m+mf}{0.0}
+        \PYG{n}{results}\PYG{p}{[}\PYG{n}{L}\PYG{p}{]} \PYG{o}{=} \PYG{p}{\PYGZob{}}\PYG{l+s+s2}{\PYGZdq{}R\PYGZdq{}}\PYG{p}{:}\PYG{n}{R}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}LCR\PYGZus{}emp\PYGZdq{}}\PYG{p}{:}\PYG{n}{LCR\PYGZus{}emp}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}AFD\PYGZus{}emp\PYGZdq{}}\PYG{p}{:}\PYG{n}{AFD\PYGZus{}emp}\PYG{p}{\PYGZcb{}}
+    \PYG{k}{return} \PYG{n}{results}
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} Example usage \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{k}{if} \PYG{n+nv+vm}{\PYGZus{}\PYGZus{}name\PYGZus{}\PYGZus{}} \PYG{o}{==} \PYG{l+s+s2}{\PYGZdq{}\PYGZus{}\PYGZus{}main\PYGZus{}\PYGZus{}\PYGZdq{}}\PYG{p}{:}
+    \PYG{n}{v} \PYG{o}{=} \PYG{l+m+mf}{60.0}\PYG{o}{/}\PYG{l+m+mf}{3.6}
+    \PYG{n}{fc} \PYG{o}{=} \PYG{l+m+mf}{1.8e9}
+    \PYG{n}{Ts} \PYG{o}{=} \PYG{l+m+mf}{100e\PYGZhy{}6}
+    \PYG{n}{Td} \PYG{o}{=} \PYG{l+m+mf}{0.5}
+    \PYG{n}{seed} \PYG{o}{=} \PYG{l+m+mi}{10}
+
+    \PYG{n}{h}\PYG{p}{,} \PYG{n}{fD}\PYG{p}{,} \PYG{n}{t} \PYG{o}{=} \PYG{n}{fading\PYGZus{}rayleigh\PYGZus{}fd}\PYG{p}{(}\PYG{n}{v}\PYG{p}{,} \PYG{n}{fc}\PYG{p}{,} \PYG{n}{Ts}\PYG{p}{,} \PYG{n}{Td}\PYG{p}{,} \PYG{n}{seed}\PYG{p}{)}
+    \PYG{n}{Fs} \PYG{o}{=} \PYG{l+m+mf}{1.0}\PYG{o}{/}\PYG{n}{Ts}
+
+    \PYG{n}{plot\PYGZus{}time\PYGZus{}db}\PYG{p}{(}\PYG{n}{h}\PYG{p}{,} \PYG{n}{t}\PYG{p}{,} \PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}Fading trace (seed=}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{seed}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{, fD=}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{fD}\PYG{l+s+si}{:}\PYG{l+s+s2}{.2f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ Hz)\PYGZdq{}}\PYG{p}{)}
+
+    \PYG{n}{r} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{h}\PYG{p}{)}
+    \PYG{n}{plot\PYGZus{}histogram\PYGZus{}rayleigh}\PYG{p}{(}\PYG{n}{r}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}Envelope histogram vs Rayleigh PDF\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{mean\PYGZus{}r}\PYG{p}{,} \PYG{n}{rms\PYGZus{}r} \PYG{o}{=} \PYG{n}{compute\PYGZus{}mean\PYGZus{}rms}\PYG{p}{(}\PYG{n}{r}\PYG{p}{)}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Empirical mean:\PYGZdq{}}\PYG{p}{,} \PYG{n}{mean\PYGZus{}r}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}Empirical RMS:\PYGZdq{}}\PYG{p}{,} \PYG{n}{rms\PYGZus{}r}\PYG{p}{)}
+
+    \PYG{n}{plot\PYGZus{}psd\PYGZus{}and\PYGZus{}clarke}\PYG{p}{(}\PYG{n}{h}\PYG{p}{,} \PYG{n}{Fs}\PYG{p}{,} \PYG{n}{fD}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}PSD vs Clarke\PYGZdq{}}\PYG{p}{)}
+
+    \PYG{n}{plot\PYGZus{}autocorr\PYGZus{}vs\PYGZus{}j0}\PYG{p}{(}\PYG{n}{h}\PYG{p}{,} \PYG{n}{Ts}\PYG{p}{,} \PYG{n}{fD}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}Autocorrelation vs J0\PYGZdq{}}\PYG{p}{)}
+
+    \PYG{n}{results} \PYG{o}{=} \PYG{n}{estimate\PYGZus{}LCR\PYGZus{}AFD}\PYG{p}{(}\PYG{n}{r}\PYG{p}{,} \PYG{n}{Ts}\PYG{p}{,} \PYG{n}{Td}\PYG{p}{)}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}LCR/AFD results:\PYGZdq{}}\PYG{p}{,} \PYG{n}{results}\PYG{p}{)}
+\end{MintedVerbatim}
