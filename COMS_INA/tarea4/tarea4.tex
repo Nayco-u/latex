@@ -1,0 +1,44 @@
+\documentclass[11pt]{article}
+
+% ==== Paquetes ====
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath, amssymb, amsfonts, siunitx}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{minted}   % Para código con sintaxis coloreada
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{geometry}
+\usepackage{tikz}
+
+\geometry{margin=2.5cm}
+
+% ==== Datos de la tarea ====
+\title{IEE3584 - Comunicaciones inalámbricas \\
+Tarea 4: Pregunta 14e}
+\author{Nicolás Seguel}
+\date{Septiembre 2025}
+
+\begin{document}
+\maketitle
+
+\section*{Problema 14e: Desvanecimiento de tipo Rice}
+
+En el desvanecimiento de tipo Rice existen múltiples caminos por lo que la señal puede llegar al receptor. La diferencia con el desvanecimiento Rayleigh es que aqui existe un camino dominante, típicamente la línea de visión. Los otros caminos son dispersivos y más débiles.
+
+El parametro K es la razón entre la potencia del camino directo y la potencia de los otros caminos dispersos.
+
+\[
+K = \frac{\nu^2}{2\sigma^2}
+\]
+
+donde \(\nu^2\) es la potencia del camino dominante, y \(2\sigma^2\) es la potencia de los caminos dispersos.
+
+Si \(K \rightarrow  0\), significa que la potencia del camino dominante es cero. Por lo que estaríamos en un caso \textit{NLOS}, con desvanecimiento Rayleigh.
+
+Si \(K \rightarrow \infty\), significa que la potencia de los caminos dispersivos es cercana a cero o que potencia de la linea de vision directa es muy grande. Esto corresponde a un caso donde no existen obstaculos entre el transmisor y el receptor, y no hay reflexiones en otros obstaculos. 
+
+\end{document}
