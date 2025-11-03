@@ -1,0 +1,5 @@
+Frec. muestreo = 341.3 [MHz]
+Tasa de datos  = 256 [Mbps]
+Modulación     = 64-QAM
+Tipo de pulso  = Rectangular
+Consideren ancho de banda tal que las características espectrales del pulso hayan caído 50 dB y lean el ancho de banda gráficamente de la figura correspondiente publicada en el material de apoyo.

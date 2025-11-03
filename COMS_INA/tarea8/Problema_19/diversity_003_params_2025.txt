@@ -1,0 +1,2 @@
+Nr        = 18
+gamma_bar = 17.8 dB

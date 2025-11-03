@@ -1,0 +1,134 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{numpy}\PYG{+w}{ }\PYG{k}{as}\PYG{+w}{ }\PYG{n+nn}{np}
+\PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{matplotlib.pyplot}\PYG{+w}{ }\PYG{k}{as}\PYG{+w}{ }\PYG{n+nn}{plt}
+\PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{re}
+\PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{scipy.fft}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{fft}\PYG{p}{,} \PYG{n}{fftshift}\PYG{p}{,} \PYG{n}{ifft}\PYG{p}{,} \PYG{n}{fftfreq}
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} CONFIG \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{n}{file\PYGZus{}real} \PYG{o}{=} \PYG{l+s+s2}{\PYGZdq{}trms\PYGZus{}002\PYGZus{}h\PYGZus{}real\PYGZus{}2025.txt\PYGZdq{}}
+\PYG{n}{file\PYGZus{}imag} \PYG{o}{=} \PYG{l+s+s2}{\PYGZdq{}trms\PYGZus{}002\PYGZus{}h\PYGZus{}imag\PYGZus{}2025.txt\PYGZdq{}}
+\PYG{n}{file\PYGZus{}params} \PYG{o}{=} \PYG{l+s+s2}{\PYGZdq{}trms\PYGZus{}002\PYGZus{}h\PYGZus{}params\PYGZus{}2025.txt\PYGZdq{}}
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} FUNCIONES \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{parse\PYGZus{}params}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{):}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Extrae parámetros básicos del archivo params (busca números y etiquetas).\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{params} \PYG{o}{=} \PYG{p}{\PYGZob{}\PYGZcb{}}
+    \PYG{k}{with} \PYG{n+nb}{open}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}r\PYGZsq{}}\PYG{p}{,} \PYG{n}{encoding}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}utf\PYGZhy{}8\PYGZsq{}}\PYG{p}{)} \PYG{k}{as} \PYG{n}{f}\PYG{p}{:}
+        \PYG{n}{txt} \PYG{o}{=} \PYG{n}{f}\PYG{o}{.}\PYG{n}{read}\PYG{p}{()}
+    \PYG{c+c1}{\PYGZsh{} Buscamos Frec. muestreo (MHz), Tasa de datos (Mbps), Modulación (ej \PYGZsq{}64\PYGZhy{}QAM\PYGZsq{})}
+    \PYG{n}{m} \PYG{o}{=} \PYG{n}{re}\PYG{o}{.}\PYG{n}{search}\PYG{p}{(}\PYG{l+s+sa}{r}\PYG{l+s+s2}{\PYGZdq{}Frec\PYGZbs{}.?\PYGZbs{}s*muestreo\PYGZbs{}s*=\PYGZbs{}s*([0\PYGZhy{}9.+\PYGZhy{}eE]+)\PYGZbs{}s*\PYGZbs{}[?([\PYGZca{}\PYGZbs{}]\PYGZbs{}n]+)?\PYGZbs{}]?\PYGZdq{}}\PYG{p}{,} \PYG{n}{txt}\PYG{p}{,} \PYG{n}{re}\PYG{o}{.}\PYG{n}{I}\PYG{p}{)}
+    \PYG{k}{if} \PYG{n}{m}\PYG{p}{:}
+        \PYG{n}{val} \PYG{o}{=} \PYG{n+nb}{float}\PYG{p}{(}\PYG{n}{m}\PYG{o}{.}\PYG{n}{group}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{))}
+        \PYG{n}{unit} \PYG{o}{=} \PYG{n}{m}\PYG{o}{.}\PYG{n}{group}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{)} \PYG{o+ow}{or} \PYG{l+s+s2}{\PYGZdq{}\PYGZdq{}}
+        \PYG{n}{params}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}Fs\PYGZus{}MHz\PYGZsq{}}\PYG{p}{]} \PYG{o}{=} \PYG{n}{val}
+    \PYG{n}{m} \PYG{o}{=} \PYG{n}{re}\PYG{o}{.}\PYG{n}{search}\PYG{p}{(}\PYG{l+s+sa}{r}\PYG{l+s+s2}{\PYGZdq{}Tasa de datos\PYGZbs{}s*=\PYGZbs{}s*([0\PYGZhy{}9.+\PYGZhy{}eE]+)\PYGZbs{}s*\PYGZbs{}[?([\PYGZca{}\PYGZbs{}]\PYGZbs{}n]+)?\PYGZbs{}]?\PYGZdq{}}\PYG{p}{,} \PYG{n}{txt}\PYG{p}{,} \PYG{n}{re}\PYG{o}{.}\PYG{n}{I}\PYG{p}{)}
+    \PYG{k}{if} \PYG{n}{m}\PYG{p}{:}
+        \PYG{n}{params}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}bitrate\PYGZus{}Mbps\PYGZsq{}}\PYG{p}{]} \PYG{o}{=} \PYG{n+nb}{float}\PYG{p}{(}\PYG{n}{m}\PYG{o}{.}\PYG{n}{group}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{))}
+    \PYG{n}{m} \PYG{o}{=} \PYG{n}{re}\PYG{o}{.}\PYG{n}{search}\PYG{p}{(}\PYG{l+s+sa}{r}\PYG{l+s+s2}{\PYGZdq{}Modulaci[oó]n\PYGZbs{}s*=\PYGZbs{}s*([\PYGZca{}\PYGZbs{}n\PYGZbs{}r]+)\PYGZdq{}}\PYG{p}{,} \PYG{n}{txt}\PYG{p}{,} \PYG{n}{re}\PYG{o}{.}\PYG{n}{I}\PYG{p}{)}
+    \PYG{k}{if} \PYG{n}{m}\PYG{p}{:}
+        \PYG{n}{params}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}modulation\PYGZsq{}}\PYG{p}{]} \PYG{o}{=} \PYG{n}{m}\PYG{o}{.}\PYG{n}{group}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{o}{.}\PYG{n}{strip}\PYG{p}{()}
+    \PYG{n}{m} \PYG{o}{=} \PYG{n}{re}\PYG{o}{.}\PYG{n}{search}\PYG{p}{(}\PYG{l+s+sa}{r}\PYG{l+s+s2}{\PYGZdq{}Tipo de pulso\PYGZbs{}s*=\PYGZbs{}s*([\PYGZca{}\PYGZbs{}n\PYGZbs{}r]+)\PYGZdq{}}\PYG{p}{,} \PYG{n}{txt}\PYG{p}{,} \PYG{n}{re}\PYG{o}{.}\PYG{n}{I}\PYG{p}{)}
+    \PYG{k}{if} \PYG{n}{m}\PYG{p}{:}
+        \PYG{n}{params}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}pulse\PYGZsq{}}\PYG{p}{]} \PYG{o}{=} \PYG{n}{m}\PYG{o}{.}\PYG{n}{group}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{o}{.}\PYG{n}{strip}\PYG{p}{()}
+    \PYG{k}{return} \PYG{n}{params}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{read\PYGZus{}vector}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{):}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Lee un vector de texto, intentando columnas o una por línea.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{data} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{loadtxt}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{data}\PYG{o}{.}\PYG{n}{flatten}\PYG{p}{()}
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} LECTURA \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{n}{params} \PYG{o}{=} \PYG{n}{parse\PYGZus{}params}\PYG{p}{(}\PYG{n}{file\PYGZus{}params}\PYG{p}{)}
+\PYG{k}{if} \PYG{l+s+s1}{\PYGZsq{}Fs\PYGZus{}MHz\PYGZsq{}} \PYG{o+ow}{not} \PYG{o+ow}{in} \PYG{n}{params}\PYG{p}{:}
+    \PYG{k}{raise} \PYG{n+ne}{ValueError}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}No pude extraer Frec. muestreo del archivo params. Revisa formato.\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{Fs} \PYG{o}{=} \PYG{n}{params}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}Fs\PYGZus{}MHz\PYGZsq{}}\PYG{p}{]} \PYG{o}{*} \PYG{l+m+mf}{1e6}  \PYG{c+c1}{\PYGZsh{} Hz}
+\PYG{n}{Ts} \PYG{o}{=} \PYG{l+m+mf}{1.0} \PYG{o}{/} \PYG{n}{Fs}
+
+\PYG{k}{if} \PYG{l+s+s1}{\PYGZsq{}bitrate\PYGZus{}Mbps\PYGZsq{}} \PYG{o+ow}{in} \PYG{n}{params}\PYG{p}{:}
+    \PYG{n}{bitrate} \PYG{o}{=} \PYG{n}{params}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}bitrate\PYGZus{}Mbps\PYGZsq{}}\PYG{p}{]} \PYG{o}{*} \PYG{l+m+mf}{1e6}  \PYG{c+c1}{\PYGZsh{} bps}
+\PYG{k}{else}\PYG{p}{:}
+    \PYG{k}{raise} \PYG{n+ne}{ValueError}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}No pude extraer Tasa de datos del archivo params.\PYGZdq{}}\PYG{p}{)}
+
+\PYG{k}{if} \PYG{l+s+s1}{\PYGZsq{}modulation\PYGZsq{}} \PYG{o+ow}{in} \PYG{n}{params}\PYG{p}{:}
+    \PYG{n}{mod} \PYG{o}{=} \PYG{n}{params}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}modulation\PYGZsq{}}\PYG{p}{]}
+\PYG{k}{else}\PYG{p}{:}
+    \PYG{n}{mod} \PYG{o}{=} \PYG{l+s+s2}{\PYGZdq{}64\PYGZhy{}QAM\PYGZdq{}}  \PYG{c+c1}{\PYGZsh{} fallback}
+
+\PYG{c+c1}{\PYGZsh{} leer real e imag}
+\PYG{n}{h\PYGZus{}real} \PYG{o}{=} \PYG{n}{read\PYGZus{}vector}\PYG{p}{(}\PYG{n}{file\PYGZus{}real}\PYG{p}{)}
+\PYG{n}{h\PYGZus{}imag} \PYG{o}{=} \PYG{n}{read\PYGZus{}vector}\PYG{p}{(}\PYG{n}{file\PYGZus{}imag}\PYG{p}{)}
+\PYG{k}{if} \PYG{n}{h\PYGZus{}real}\PYG{o}{.}\PYG{n}{shape} \PYG{o}{!=} \PYG{n}{h\PYGZus{}imag}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{:}
+    \PYG{k}{raise} \PYG{n+ne}{ValueError}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Los archivos real e imag tienen distinto largo.\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{h} \PYG{o}{=} \PYG{n}{h\PYGZus{}real} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{n}{j} \PYG{o}{*} \PYG{n}{h\PYGZus{}imag}
+
+\PYG{n}{N} \PYG{o}{=} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{h}\PYG{p}{)}
+\PYG{n}{t} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{arange}\PYG{p}{(}\PYG{n}{N}\PYG{p}{)} \PYG{o}{*} \PYG{n}{Ts}  \PYG{c+c1}{\PYGZsh{} vector tiempo (s)}
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} RESPUESTA EN FRECUENCIA \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{n}{Nfft} \PYG{o}{=} \PYG{l+m+mi}{2}\PYG{o}{**}\PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{ceil}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{log2}\PYG{p}{(}\PYG{n}{N}\PYG{p}{))} \PYG{o}{+} \PYG{l+m+mi}{6}\PYG{p}{)}
+\PYG{n}{H} \PYG{o}{=} \PYG{n}{fftshift}\PYG{p}{(}\PYG{n}{fft}\PYG{p}{(}\PYG{n}{h}\PYG{p}{,} \PYG{n}{n}\PYG{o}{=}\PYG{n}{Nfft}\PYG{p}{))}
+\PYG{n}{df} \PYG{o}{=} \PYG{n}{Fs} \PYG{o}{/} \PYG{n}{Nfft}
+\PYG{n}{f} \PYG{o}{=} \PYG{n}{fftshift}\PYG{p}{(}\PYG{n}{fftfreq}\PYG{p}{(}\PYG{n}{Nfft}\PYG{p}{,} \PYG{n}{d}\PYG{o}{=}\PYG{n}{Ts}\PYG{p}{))}
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} PDP, retardo medio, rms \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{n}{P} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{h}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2}
+\PYG{n}{P\PYGZus{}sum} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{P}\PYG{p}{)}
+\PYG{k}{if} \PYG{n}{P\PYGZus{}sum} \PYG{o}{\PYGZlt{}=} \PYG{l+m+mi}{0}\PYG{p}{:}
+    \PYG{k}{raise} \PYG{n+ne}{ValueError}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}PDP con energía cero.\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{P\PYGZus{}norm} \PYG{o}{=} \PYG{n}{P} \PYG{o}{/} \PYG{n}{P\PYGZus{}sum}
+
+\PYG{n}{tau} \PYG{o}{=} \PYG{n}{t}  \PYG{c+c1}{\PYGZsh{} retardos en segundos}
+\PYG{n}{tau\PYGZus{}mean} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{tau} \PYG{o}{*} \PYG{n}{P\PYGZus{}norm}\PYG{p}{)}
+\PYG{n}{tau\PYGZus{}rms} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(((}\PYG{n}{tau} \PYG{o}{\PYGZhy{}} \PYG{n}{tau\PYGZus{}mean}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{)} \PYG{o}{*} \PYG{n}{P\PYGZus{}norm}\PYG{p}{))}
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} Coherence bandwidth \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{n}{Wc\PYGZus{}relax} \PYG{o}{=} \PYG{l+m+mf}{1.0} \PYG{o}{/} \PYG{p}{(}\PYG{l+m+mf}{5.0} \PYG{o}{*} \PYG{n}{tau\PYGZus{}rms}\PYG{p}{)} \PYG{k}{if} \PYG{n}{tau\PYGZus{}rms} \PYG{o}{\PYGZgt{}} \PYG{l+m+mi}{0} \PYG{k}{else} \PYG{n}{np}\PYG{o}{.}\PYG{n}{nan}
+\PYG{n}{Wc\PYGZus{}estrict} \PYG{o}{=} \PYG{l+m+mf}{1.0} \PYG{o}{/} \PYG{p}{(}\PYG{l+m+mf}{50.0} \PYG{o}{*} \PYG{n}{tau\PYGZus{}rms}\PYG{p}{)} \PYG{k}{if} \PYG{n}{tau\PYGZus{}rms} \PYG{o}{\PYGZgt{}} \PYG{l+m+mi}{0} \PYG{k}{else} \PYG{n}{np}\PYG{o}{.}\PYG{n}{nan}
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} Comparación con tasa de símbolo \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{\PYGZsh{} para 64\PYGZhy{}QAM: bits por símbolo = 6}
+\PYG{n}{M} \PYG{o}{=} \PYG{k+kc}{None}
+\PYG{n}{m} \PYG{o}{=} \PYG{n}{re}\PYG{o}{.}\PYG{n}{search}\PYG{p}{(}\PYG{l+s+sa}{r}\PYG{l+s+s1}{\PYGZsq{}(\PYGZbs{}d+)\PYGZbs{}s*\PYGZhy{}\PYGZbs{}s*QAM\PYGZsq{}}\PYG{p}{,} \PYG{n}{mod}\PYG{o}{.}\PYG{n}{replace}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{} \PYGZdq{}}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}\PYGZdq{}}\PYG{p}{),} \PYG{n}{re}\PYG{o}{.}\PYG{n}{I}\PYG{p}{)}
+\PYG{k}{if} \PYG{n}{m}\PYG{p}{:}
+    \PYG{n}{M} \PYG{o}{=} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{m}\PYG{o}{.}\PYG{n}{group}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{))}
+\PYG{k}{else}\PYG{p}{:}
+    \PYG{c+c1}{\PYGZsh{} si no se parsea, asumimos 64}
+    \PYG{n}{M} \PYG{o}{=} \PYG{l+m+mi}{64}
+\PYG{n}{bits\PYGZus{}per\PYGZus{}sym} \PYG{o}{=} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{log2}\PYG{p}{(}\PYG{n}{M}\PYG{p}{))}
+\PYG{n}{symbol\PYGZus{}rate} \PYG{o}{=} \PYG{n}{bitrate} \PYG{o}{/} \PYG{n}{bits\PYGZus{}per\PYGZus{}sym}  \PYG{c+c1}{\PYGZsh{} símbolos por segundo = baud}
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} Impresión y figuras \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}==== RESULTADOS ====\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}N muestras h(t): }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{N}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}Fs = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Fs}\PYG{o}{/}\PYG{l+m+mf}{1e6}\PYG{l+s+si}{:}\PYG{l+s+s2}{.6f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ MHz, Ts = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Ts}\PYG{o}{*}\PYG{l+m+mf}{1e9}\PYG{l+s+si}{:}\PYG{l+s+s2}{.3f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ ns\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}Bitrate = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{bitrate}\PYG{o}{/}\PYG{l+m+mf}{1e6}\PYG{l+s+si}{:}\PYG{l+s+s2}{.3f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ Mbps, Modulación = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{M}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZhy{}QAM \PYGZhy{}\PYGZgt{} Rs = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{symbol\PYGZus{}rate}\PYG{o}{/}\PYG{l+m+mf}{1e6}\PYG{l+s+si}{:}\PYG{l+s+s2}{.3f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ Msps\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nb}{print}\PYG{p}{()}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}Retardo medio (mean excess delay): }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{tau\PYGZus{}mean}\PYG{o}{*}\PYG{l+m+mf}{1e9}\PYG{l+s+si}{:}\PYG{l+s+s2}{.3f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ ns\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}RMS delay spread: }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{tau\PYGZus{}rms}\PYG{o}{*}\PYG{l+m+mf}{1e9}\PYG{l+s+si}{:}\PYG{l+s+s2}{.3f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ ns\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nb}{print}\PYG{p}{()}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Ancho de banda de coherencia:\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{} Bc (regla 1/(50*tau\PYGZus{}rms)) = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Wc\PYGZus{}relax}\PYG{o}{/}\PYG{l+m+mf}{1e6}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{o+ow}{not}\PYG{+w}{ }\PYG{n}{np}\PYG{o}{.}\PYG{n}{isnan}\PYG{p}{(}\PYG{n}{Wc\PYGZus{}relax}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{else}\PYG{+w}{ }\PYG{n}{np}\PYG{o}{.}\PYG{n}{nan}\PYG{l+s+si}{:}\PYG{l+s+s2}{.6f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ MHz\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{} Bc (regla 1/(5*tau\PYGZus{}rms)) = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Wc\PYGZus{}estrict}\PYG{o}{/}\PYG{l+m+mf}{1e6}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{o+ow}{not}\PYG{+w}{ }\PYG{n}{np}\PYG{o}{.}\PYG{n}{isnan}\PYG{p}{(}\PYG{n}{Wc\PYGZus{}estrict}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{else}\PYG{+w}{ }\PYG{n}{np}\PYG{o}{.}\PYG{n}{nan}\PYG{l+s+si}{:}\PYG{l+s+s2}{.6f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ MHz\PYGZdq{}}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{} Graficas \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{l+m+mi}{6}\PYG{p}{))}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{t}\PYG{o}{*}\PYG{l+m+mf}{1e9}\PYG{p}{,} \PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{h}\PYG{p}{),} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}|h(t)|\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Retardo (ns)\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}|h(t)|\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Respuesta al impulso (magnitud)\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{k+kc}{True}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{tight\PYGZus{}layout}\PYG{p}{()}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}h\PYGZus{}time\PYGZus{}domain.png\PYGZdq{}}\PYG{p}{)}
+
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{10}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{))}
+\PYG{c+c1}{\PYGZsh{} magnitud de H vs frecuencia (dB)}
+\PYG{n}{Hmag\PYGZus{}db} \PYG{o}{=} \PYG{l+m+mi}{20}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{log10}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{H}\PYG{p}{)} \PYG{o}{+} \PYG{l+m+mf}{1e\PYGZhy{}20}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{f}\PYG{o}{/}\PYG{l+m+mf}{1e6}\PYG{p}{,} \PYG{n}{Hmag\PYGZus{}db}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlim}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{Fs}\PYG{o}{/}\PYG{l+m+mi}{2}\PYG{o}{/}\PYG{l+m+mf}{1e6}\PYG{p}{)}  \PYG{c+c1}{\PYGZsh{} plot positive half para visual}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Frecuencia (MHz)\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Magnitud H(f) (dB)\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Respuesta en frecuencia H(f) (dB)\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{k+kc}{True}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{tight\PYGZus{}layout}\PYG{p}{()}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}H\PYGZus{}freq\PYGZus{}domain.png\PYGZdq{}}\PYG{p}{)}
+\end{MintedVerbatim}

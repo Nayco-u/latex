@@ -1,0 +1,53 @@
+CM  Yagi-Uda parametrizada para 4nec2
+CM --------------------- Definición de parámetros ----------------------
+CM ---- Geometría general ----
+CM ---- Longitudes relativas (fracciones de lambda) ----
+CM ---- Espaciamientos relativos (fracciones de lambda) ----
+CM --------------------- Cálculos derivados ----------------------------
+CM  Posiciones en el eje X
+CM --------------------- Definición de elementos -----------------------
+CM  Reflector
+CM  Driven
+CM  Director 1
+CM  Director 2
+CM  Director 3
+CM --------------------- Fuente y frecuencia ---------------------------
+CM --------------------- Cálculo de radiación --------------------------
+CM  Patrón de radiación: plano XZ (phi=90°)
+CM forw: 90, 0 ; back:-90, 0
+CE
+SY freq=100.1	'Frecuencia en MHz
+SY wl=299.792458/freq	'Longitud de onda [m]
+SY r=0.003	'Radio del alambre (m)
+SY h=0.0	'Altura del boom (m)
+SY Ndir=3	'Número de directores (3 -> total 5 elementos)
+SY Lref_frac=0.505
+SY Ldrv_frac=0.467
+SY Ldir_frac=0.4281
+SY S_ref_drv_frac=0.1946
+SY S_drv_dir_frac=0.1460
+SY S_between_dirs_frac=0.1460
+SY Lref=Lref_frac*wl
+SY Ldrv=Ldrv_frac*wl
+SY Ldir=Ldir_frac*wl
+SY S_ref_drv=S_ref_drv_frac*wl
+SY S_drv_dir=S_drv_dir_frac*wl
+SY S_between_dirs=S_between_dirs_frac*wl
+SY x_ref=-S_ref_drv
+SY x_drv=0
+SY x_d1=S_drv_dir
+SY x_d2=S_drv_dir+S_between_dirs
+SY x_d3=S_drv_dir+2*S_between_dirs
+GW	1	11	x_ref	-Lref/2	h	x_ref	Lref/2	h	r
+GW	2	11	x_drv	-Ldrv/2	h	x_drv	Ldrv/2	h	r
+GW	3	11	x_d1	-Ldir/2	h	x_d1	Ldir/2	h	r
+GW	4	11	x_d2	-Ldir/2	h	x_d2	Ldir/2	h	r
+GW	5	11	x_d3	-Ldir/2	h	x_d3	Ldir/2	h	r
+GE	0
+GN	-1
+EK
+EX	0	2	6	0	1	0	0	'Excitación en centro del driven (seg 6 de 11)
+FR,0,1,0,0,100.1
+PQ -1
+PT -1
+RP,0,73,1,1000,-180,0,5

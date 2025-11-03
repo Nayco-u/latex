@@ -1,0 +1,392 @@
+\documentclass[11pt]{article}
+
+% ==== Paquetes ====
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsfonts, siunitx}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{tikz}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{
+  inputencoding=utf8,
+  extendedchars=true,
+  literate=
+   {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+   {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+   {ñ}{{\~n}}1 {Ñ}{{\~N}}1
+   {¿}{{?`} }1 {¡}{{!`} }1
+}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    upquote=true,
+    inputencoding=utf8,
+}
+
+\lstset{style=mystyle}
+
+\geometry{margin=2.5cm}
+
+% ==== Datos de la tarea ====
+\title{IEE3682 - Electro-óptica \\
+Tarea 3}
+\author{Nicolás Seguel}
+\date{14 de Octubre de 2025}
+
+\begin{document}
+\maketitle
+
+\section*{Problema 1:}
+
+El coeficiente de reflexión complejo de un dispositivo multicapa es \(r_m\) cuando se coloca en un medio con índice de refracción \(n_1\) que coincide con su capa frontal. En cambio, si el dispositivo se coloca en un medio con índice de refracción \(n\), muestre que el coeficiente de reflexión complejo es
+\[
+r = \frac{r_b + r_m}{1 + r_b r_m}
+\]
+donde
+\[
+r_b = \frac{n - n_1}{n + n_1}
+\]
+es el coeficiente de reflexión complejo de la nueva interfaz. Determine \(r\) en cada uno de los siguientes casos: \(r_b = 0\), \(r_b = 1\), \(r_m = 0\) y \(r_m = 1\).
+\vspace{0.5em}
+
+\subsection*{Solución}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+
+    % === Colores ===
+    \definecolor{airwhite}{RGB}{255,255,255}
+    \definecolor{layerblue}{RGB}{173,216,230}
+    \definecolor{layergray}{RGB}{210,210,210}
+
+    % === Regiones ===
+    % Medio externo (arriba)
+    \fill[airwhite] (-4,2) rectangle (4,1);
+    \node at (-3.7,1.7) {Medio \(n\)};
+
+    % Capa rb (intermedia)
+    \fill[layerblue, opacity=0.4] (-4,1) rectangle (4,0);
+
+    % Multicapa (abajo)
+    \fill[layergray, opacity=0.5] (-4,0) rectangle (4,-1);
+
+    % === Líneas de interfaz ===
+    \draw[thick] (-4,1)--(4,1); % Interfaz superior (entre n y rb)
+    \node at (4.3,1) {$r_b$};
+    \draw[thick] (-4,0)--(4,0); % Interfaz inferior (entre rb y rm)
+    \node at (4.3,0) {$r_m$};
+
+    % === Rayos incidentes y reflejados ===
+    % Incidente desde arriba
+    \draw[thick, red] (-3,2) -- (-2,1)
+        node[pos=0.3, left, yshift=3pt] {$E_i$};
+
+    % Reflejado hacia arriba
+    \draw[thick, red] (-2,1) -- (-1,2)
+        node[pos=0.5, right, yshift=-3pt] {$E_r$};
+
+    % Transmitido hacia dentro de la capa rb
+    \draw[thick, red, opacity=0.8] (-2,1) -- (-1,0)
+        node[pos=0.6, right] {$E_t$};
+
+    % Reflexión interna dentro de la capa rb
+    \draw[thick, red, opacity=0.6] (-1,0) -- (0,1)
+        node[pos=0.5, right] {};
+    \draw[thick, red, opacity=0.6] (0,1) -- (1,2)
+        node[pos=0.4, left] {};
+
+    % Transmisión hacia el multicapa (r_m)
+    \draw[thick, red, opacity=0.6] (0,1) -- (1,0)
+        node[pos=0.4, right] {};
+
+    % === Líneas guía ===
+    \draw[dashed, gray] (-4,0)--(4,0);
+
+\end{tikzpicture}
+\label{fig:modelo_3capas}
+\end{figure}
+
+La figura \ref{fig:modelo_3capas} representa el sistema descrito en el enunciado. Cuando un rayo incide desde el medio \(n\) hacia la capa con índice \(n_1\), parte de la onda se refleja en la interfaz con coeficiente \(r_b\) y parte se transmite hacia el multicapa con coeficiente \(t_b = 1 + r_b\). La onda transmitida se refleja parcialmente en el multicapa con coeficiente \(r_m\) y vuelve a la interfaz, donde nuevamente parte se refleja hacia el multicapa y parte se transmite hacia el medio exterior.
+
+Matematicamente, la onda reflejada total \(r\) puede ser modelada como:
+
+\[
+r = r_b + (1 + r_b) \cdot r_m \cdot (1 - r_b) \cdot \sum_{k=0}^{\infty} (-r_b r_m)^{k}
+\]
+
+La serie geométrica converge para \(|r_b r_m| < 1\) y su suma es:
+
+\[
+\sum_{k=0}^{\infty} (-r_b r_m)^{k} = \frac{1}{1 + r_b r_m}
+\]
+
+Sustituyendo esta suma en la expresión de \(r\):
+
+\[
+r = r_b + \frac{(1 + r_b)(1 - r_b) r_m}{1 + r_b r_m} = r_b + \frac{(1 - r_b^2) r_m}{1 + r_b r_m}
+\]
+
+Simplificando, obtenemos:
+
+\[
+r = \frac{r_b + r_m}{1 + r_b r_m}
+\]
+
+\section*{Problema 2:}
+
+Derive expresiones para la reflectividad axial de un \emph{stack} de \(N\) capas dobles de materiales dieléctricos de igual largo de camino óptico \(n_1 d_1 = n_2 d_2 = \mathrm{OPL}\), para los casos (a) \(\mathrm{OPL} = \lambda_0/4\) y (b) \(\mathrm{OPL} = \lambda_0/2\).
+\vspace{0.5em}
+
+\subsection*{Solución}
+
+Trabajamos con la representación matricial general que relaciona los campos (eléctrico y magnético) en los dos extremos de una capa de espesor \(L\). En la forma más general (usando la impedancia característica del medio \(Z_c\) y el número de onda \(k\)) la matriz de propagación de una capa viene dada por:
+
+\[
+M(L) =
+\begin{pmatrix}
+\cos(kL) & i Z_c \sin(kL) \\[6pt]
+i \dfrac{\sin(kL)}{Z_c} & \cos(kL)
+\end{pmatrix},
+\qquad
+\begin{pmatrix} E(z+L) \\ H(z+L) \end{pmatrix} = M(L)\begin{pmatrix} E(z) \\ H(z) \end{pmatrix}.
+\tag{1}
+\]
+Esta expresión es válida en la formulación donde \(E\) y \(H\) (o sus normalizados) son continuos en las interfaces y \(Z_c\) es la impedancia característica del material.
+
+Para un sistema formado por \(N\) capas la matriz sistema es el producto de las matrices de cada capa:
+
+\[
+M_s = M_N \, M_{N-1}\, \cdots \, M_2 \, M_1.
+\tag{2}
+\]
+Conociendo \(M_s = \begin{pmatrix} M_{11} & M_{12} \\ M_{21} & M_{22}\end{pmatrix}\) podemos relacionar las amplitudes incidentes, reflejadas y transmitidas y obtener los coeficientes de amplitud totales de reflexión \(r\) y transmisión \(t\).
+
+Para el caso donde cada capa tiene un largo de camino óptico \(\mathrm{OPL} = n d\) igual a \(\lambda_0/4\), tenemos \(kL = 2\pi/\lambda_0 \cdot \lambda_0/4 = \pi/2\). Por lo tanto, la matriz de cada capa es:
+
+\[
+M\left(\frac{\lambda_0}{4}\right) =
+\begin{pmatrix}
+\cos\left(\frac{\pi}{2}\right) & i Z_c \sin\left(\frac{\pi}{2}\right) \\[6pt]
+i \dfrac{\sin\left(\frac{\pi}{2}\right)}{Z_c} & \cos\left(\frac{\pi}{2}\right)
+\end{pmatrix} =
+\begin{pmatrix}
+0 & i Z_c \\[6pt]
+i \dfrac{1}{Z_c} & 0
+\end{pmatrix}.
+\]
+
+Para una sola capa doble (dos capas con índices \(n_1\) y \(n_2\)), la matriz total es:
+
+\[
+M_{double} = M_2 \, M_1 =
+\begin{pmatrix}
+0 & i Z_{c2} \\[6pt]
+i \dfrac{1}{Z_{c2}} & 0
+\end{pmatrix}
+\begin{pmatrix}
+0 & i Z_{c1} \\[6pt]
+i \dfrac{1}{Z_{c1}} & 0
+\end{pmatrix} =
+\begin{pmatrix}
+- \dfrac{Z_{c2}}{Z_{c1}} & 0 \\[6pt]
+0 & - \dfrac{Z_{c1}}{Z_{c2}}
+\end{pmatrix}.
+\]
+
+Por lo que la matriz de \(N\) capas dobles es:
+
+\[
+M_s = (M_{double})^N =
+\begin{pmatrix}
+\left(- \dfrac{Z_{c2}}{Z_{c1}}\right)^N & 0 \\[6pt]
+0 & \left(- \dfrac{Z_{c1}}{Z_{c2}}\right)^N
+\end{pmatrix}.
+\]
+
+El coeficiente de reflexión \(r\) se obtiene de la relación entre los campos en la entrada y salida del sistema. Asumiendo que el medio de entrada y salida tiene impedancia \(Z_0\), el coeficiente de reflexión es:
+
+\[
+r = \frac{(M_{11} + M_{12}/Z_0) - (M_{21} Z_0 + M_{22})}{(M_{11} + M_{12}/Z_0) + (M_{21} Z_0 + M_{22})}.
+\]
+
+Sustituyendo los elementos de \(M_s\):
+
+\[
+r = \frac{\left(- \dfrac{Z_{c2}}{Z_{c1}}\right)^N - \left(- \dfrac{Z_{c1}}{Z_{c2}}\right)^N}{\left(- \dfrac{Z_{c2}}{Z_{c1}}\right)^N + \left(- \dfrac{Z_{c1}}{Z_{c2}}\right)^N}.
+\]
+
+Este resultado muestra que la reflectividad axial depende fuertemente del número de capas \(N\) y de la relación entre las impedancias características de las dos capas, que a su vez dependen de los índices de refracción \(n_1\) y \(n_2\).
+
+Para el caso donde \(\mathrm{OPL} = \lambda_0/2\), tenemos \(kL = 2\pi/\lambda_0 \cdot \lambda_0/2 = \pi\). La matriz de cada capa es:
+
+\[
+M\left(\frac{\lambda_0}{2}\right) =
+\begin{pmatrix}
+\cos(\pi) & i Z_c \sin(\pi) \\[6pt]
+i \dfrac{\sin(\pi)}{Z_c} & \cos(\pi)
+\end{pmatrix} =
+\begin{pmatrix}
+-1 & 0 \\[6pt]
+0 & -1
+\end{pmatrix}.
+\]
+
+Por lo tanto, la matriz de \(N\) capas dobles es:
+
+\[
+M_s = (M_{double})^N =
+\begin{pmatrix}
+(-1)^N & 0 \\[6pt]
+0 & (-1)^N
+\end{pmatrix}.
+\]
+
+El coeficiente de reflexión \(r\) en este caso es:
+
+\[
+r = \frac{(-1)^N - (-1)^N}{(-1)^N
+    + (-1)^N} = 0.
+\]
+
+Por lo que la reflectividad axial es nula para \(\mathrm{OPL} = \lambda_0/2\). Esto se debe a que cada capa introduce una fase de \(\pi\), resultando en una cancelación total de las reflexiones.
+
+\section*{Problema 3:}
+
+Muestre que el patrón difracción Fresnel de apertura \(p(x,y)\) es igual al patrón de difracción de Fraunhofer de \(p(x,y)\,e^{-j\pi(x^2+y^2)/\lambda d}\).
+
+\subsection*{Solución}
+
+Partimos de la formulación de la propagación paraxial en el régimen de Fresnel. La integral de Fresnel para la onda \(p\) a una distancia \(z=d\) es
+
+\begin{equation}
+\label{eq:fresnel}
+p(x,y,z) = \frac{j}{\lambda z}\,e^{-j\frac{k}{2z}(x^2+y^2)}
+\iint_{-\infty}^{\infty} p_0(x_0,y_0)\;
+e^{-jk\frac{(x - x_0)^2 + (y - y_0)^2}{2z}}\,dx_0\,dy_0,
+\end{equation}
+
+donde \(k=2\pi/\lambda\) y \(p(x_0,y_0)\) es la apertura en el plano \(z=0\). Expandiendo los cuadrados en el exponente de la integral, tenemos
+
+\[
+\frac{k}{2z} \big[(x^2 + y^2) - 2(xx_0 + yy_0) + (x_0^2 + y_0^2)\big]
+\]
+
+Cuando se tiene una distancia \(z\) suficientemente grande, se puede despreciar el término cuadrático en \((x_0,y_0)\) dentro del exponente, quedando
+
+\[
+p(x,y,z) = \frac{j}{\lambda z}\,e^{-j\frac{k}{2z}(x^2+y^2)}
+\iint p(x_0,y_0)\,e^{\,j\frac{k}{z}(x x_0 + y y_0)}\,dx_0dy_0.
+\]
+
+Se puede ver que la integral es una transformada de Fourier bidimensional del campo \(p(x_0,y_0)\) evaluada en las frecuencias espaciales \((\nu_x,\nu_y) = (kx/(2\pi z), ky/(2\pi z))\). Además el factor \(e^{-j\frac{k}{2z}(x^2+y^2)}\) es una fase  que depende de la posición \((x,y)\) en el plano de observación:
+
+\[
+p(x,y,z) = \frac{j}{\lambda z}\,e^{-j\frac{k}{2z}(x^2+y^2)} U_0\left(\nu_x=\frac{kx}{2\pi z}, \nu_y=\frac{ky}{2\pi z}\right),
+\]
+
+donde \(U_0(\nu_x,\nu_y) = \iint p(x_0,y_0)\,e^{-j2\pi(\nu_x x_0 + \nu_y y_0)}\,dx_0 dy_0\) es la transformada de Fourier bidimensional del campo en el plano de la apertura.
+
+\section*{Problema 4:}
+
+Muestre que el patrón de difracción de Fresnel de dos pinholes separados por una distancia \(2a\), es decir
+\[
+p(x,y) = [\delta(x-a) + \delta(x+a)]\,\delta(y),
+\]
+a una distancia de observación \(d\) es el patrón periódico
+\[
+I(x,y) = \left(\frac{2}{\lambda d}\right)^2 \cos^2\!\left(\frac{2\pi a x}{\lambda d}\right).
+\]
+
+\subsection*{Solución:}
+
+Partimos de la integral de Fresnel dada en la ecuación \eqref{eq:fresnel}. Sustituyendo la función de apertura \(p(x_0,y_0) = [\delta(x_0 - a) + \delta(x_0 + a)] \delta(y_0)\), obtenemos
+
+\begin{align*}
+p(x,y,z) &= \frac{j}{\lambda z} e^{-j\frac{k}{2z}(x^2+y^2)} \iint [\delta(x_0 - a) + \delta(x_0 + a)] \delta(y_0) e^{-jk\frac{(x - x_0)^2 + (y - y_0)^2}{2z}} dx_0 dy_0 \\
+&= \frac{j}{\lambda z} e^{-j\frac{k}{2z}(x^2+y^2)} \left( e^{-jk\frac{(x - a)^2 + y^2}{2z}} + e^{-jk\frac{(x + a)^2 + y^2}{2z}} \right).
+\end{align*}
+
+Simplificando los exponentes, tenemos
+
+\begin{align*}
+p(x,y,z) &= \frac{j}{\lambda z} e^{-j\frac{k}{2z}(x^2+y^2)} \left( e^{-j\frac{k}{2z}(x^2 - 2ax + a^2 + y^2)} + e^{-j\frac{k}{2z}(x^2 + 2ax + a^2 + y^2)} \right) \\
+&= \frac{j}{\lambda z} e^{-j\frac{k}{2z}(x^2+y^2)} e^{-j\frac{k}{2z}(x^2 + y^2 + a^2)} \left( e^{j\frac{ka x}{z}} + e^{-j\frac{ka x}{z}} \right) \\
+&= \frac{j}{\lambda z} e^{-j\frac{k}{z}(x^2 + y^2 + a^2)} \cdot 2\cos\left(\frac{ka x}{z}\right).
+\end{align*}
+
+La intensidad \(I(x,y)\) es proporcional al cuadrado del módulo de \(p(x,y,z)\):
+
+\[
+I(x,y) = |p(x,y,z)|^2 = \left(\frac{2}{\lambda z}\right)^2 \cos^2\left(\frac{ka x}{z}\right).
+\]
+
+Sustituyendo \(k = 2\pi/\lambda\), obtenemos
+
+\[
+I(x,y) = \left(\frac{2}{\lambda z}\right)^2 \cos^2\left(\frac{2\pi a x}{\lambda z}\right).
+\]
+
+\section*{Problema 5:}
+
+Un disco compacto (CD) se puede usar para construir un espectrómetro registrando con una cámara el primer orden de difracción reflejado de una fuente de luz distante como el sol, como se muestra en la figura (enunciado). Suponiendo que las pistas del CD están separadas a \(d=\SI{1.6}{\micro\metre}\) entre sí, ¿a qué distancia debe estar la cámara para registrar el espectro completo entre \(400\text{ nm}\) y \(700\text{ nm}\) como aparece en la imagen?
+
+\subsection*{Solución:}
+
+Usando la ecuación de la rejilla para el primer orden de difracción (\(m=1\)):
+
+\[
+\sin\theta(\lambda) = \frac{\lambda}{d},
+\]
+
+donde \(d = \SI{1.6}{\micro\metre}\). Calculamos los ángulos para los extremos del espectro visible:
+
+\[
+\theta_{400} = \arcsin\left(\frac{400 \times 10^{-9}}{1.6 \times 10^{-6}}\right) \approx 14.48^\circ,
+\]
+
+\[
+\theta_{700} = \arcsin\left(\frac{700 \times 10^{-9}}{1.6 \times 10^{-6}}\right) \approx 25.98^\circ.
+\]
+
+La diferencia angular es \(\Delta\theta \approx 11.5^\circ\). Si asumimos que el ancho efectivo del sensor de la cámara es \(W\), la distancia \(D\) necesaria para que el espectro completo caiga dentro del sensor es:
+
+\[
+D = \frac{W}{\tan\theta_{700} - \tan\theta_{400}}.
+\]
+
+Asumiendo un ancho típico de sensor \(W = \SI{36}{\milli\metre}\) (tamaño de sensor full-frame), tenemos:
+
+\[
+D = \frac{36 \times 10^{-3}}{\tan(25.98^\circ) - \tan(14.48^\circ)} \approx \SI{0.157}{\metre} = \SI{15.7}{\centi\metre}.
+\]
+
+\end{document}

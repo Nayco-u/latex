@@ -1,0 +1,73 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{numpy}\PYG{+w}{ }\PYG{k}{as}\PYG{+w}{ }\PYG{n+nn}{np}
+\PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{matplotlib.pyplot}\PYG{+w}{ }\PYG{k}{as}\PYG{+w}{ }\PYG{n+nn}{plt}
+
+\PYG{c+c1}{\PYGZsh{} ===============================}
+\PYG{c+c1}{\PYGZsh{} Parámetros de simulación}
+\PYG{c+c1}{\PYGZsh{} ===============================}
+\PYG{n}{np}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{seed}\PYG{p}{(}\PYG{l+m+mi}{1234}\PYG{p}{)}        \PYG{c+c1}{\PYGZsh{} Semilla reproducible}
+\PYG{n}{Ntrials} \PYG{o}{=} \PYG{l+m+mi}{10000}             \PYG{c+c1}{\PYGZsh{} Número de realizaciones}
+\PYG{n}{Nr\PYGZus{}list} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{arange}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{19}\PYG{p}{)}  \PYG{c+c1}{\PYGZsh{} Número de ramas (1 a 18)}
+\PYG{n}{gamma\PYGZus{}bar\PYGZus{}dB} \PYG{o}{=} \PYG{l+m+mf}{17.8}         \PYG{c+c1}{\PYGZsh{} SNR media por rama en dB}
+\PYG{n}{gamma\PYGZus{}bar} \PYG{o}{=} \PYG{l+m+mi}{10}\PYG{o}{**}\PYG{p}{(}\PYG{n}{gamma\PYGZus{}bar\PYGZus{}dB}\PYG{o}{/}\PYG{l+m+mi}{10}\PYG{p}{)}  \PYG{c+c1}{\PYGZsh{} Escala lineal}
+
+\PYG{c+c1}{\PYGZsh{} ===============================}
+\PYG{c+c1}{\PYGZsh{} Simulación Monte Carlo}
+\PYG{c+c1}{\PYGZsh{} ===============================}
+\PYG{n}{G\PYGZus{}mean} \PYG{o}{=} \PYG{p}{[]}   \PYG{c+c1}{\PYGZsh{} Ganancia promedio (lineal)}
+\PYG{n}{G\PYGZus{}std}  \PYG{o}{=} \PYG{p}{[]}   \PYG{c+c1}{\PYGZsh{} Desviación estándar}
+
+\PYG{k}{for} \PYG{n}{Nr} \PYG{o+ow}{in} \PYG{n}{Nr\PYGZus{}list}\PYG{p}{:}
+    \PYG{c+c1}{\PYGZsh{} Generar Ntrials realizaciones de Nr canales independientes: h \PYGZti{} CN(0,1)}
+    \PYG{n}{h} \PYG{o}{=} \PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{randn}\PYG{p}{(}\PYG{n}{Ntrials}\PYG{p}{,} \PYG{n}{Nr}\PYG{p}{)} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{n}{j}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{randn}\PYG{p}{(}\PYG{n}{Ntrials}\PYG{p}{,} \PYG{n}{Nr}\PYG{p}{))} \PYG{o}{/} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} Potencia instantánea combinada (sum |h\PYGZus{}r|\PYGZca{}2)}
+    \PYG{n}{sum\PYGZus{}abs2} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{h}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{axis}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} SNR de salida (MRC): gamma\PYGZus{}out = gamma\PYGZus{}bar * sum |h|\PYGZca{}2}
+    \PYG{n}{gamma\PYGZus{}out} \PYG{o}{=} \PYG{n}{gamma\PYGZus{}bar} \PYG{o}{*} \PYG{n}{sum\PYGZus{}abs2}
+
+    \PYG{c+c1}{\PYGZsh{} Ganancia de arreglo (lineal)}
+    \PYG{n}{G} \PYG{o}{=} \PYG{n}{sum\PYGZus{}abs2}
+    \PYG{n}{G\PYGZus{}mean}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{G}\PYG{p}{))}
+    \PYG{n}{G\PYGZus{}std}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{std}\PYG{p}{(}\PYG{n}{G}\PYG{p}{)}\PYG{o}{/}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{Ntrials}\PYG{p}{))}  \PYG{c+c1}{\PYGZsh{} error estándar de la media}
+
+\PYG{n}{G\PYGZus{}mean} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{n}{G\PYGZus{}mean}\PYG{p}{)}
+\PYG{n}{G\PYGZus{}std}  \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{n}{G\PYGZus{}std}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} Curva teórica}
+\PYG{n}{G\PYGZus{}theo} \PYG{o}{=} \PYG{n}{Nr\PYGZus{}list}
+\PYG{n}{G\PYGZus{}theo\PYGZus{}dB} \PYG{o}{=} \PYG{l+m+mi}{10} \PYG{o}{*} \PYG{n}{np}\PYG{o}{.}\PYG{n}{log10}\PYG{p}{(}\PYG{n}{G\PYGZus{}theo}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} ===============================}
+\PYG{c+c1}{\PYGZsh{} Resultados y Gráficas}
+\PYG{c+c1}{\PYGZsh{} ===============================}
+
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{8}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{))}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{errorbar}\PYG{p}{(}\PYG{n}{Nr\PYGZus{}list}\PYG{p}{,} \PYG{n}{G\PYGZus{}mean}\PYG{p}{,} \PYG{n}{yerr}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{G\PYGZus{}std}\PYG{p}{,} \PYG{n}{fmt}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}o\PYGZsq{}}\PYG{p}{,} \PYG{n}{capsize}\PYG{o}{=}\PYG{l+m+mi}{4}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}Simulación (media ± 2 sigma)\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{Nr\PYGZus{}list}\PYG{p}{,} \PYG{n}{G\PYGZus{}theo}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}r\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,} \PYG{n}{linewidth}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}Teórico: G = N\PYGZus{}r\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Número de ramas N\PYGZus{}r\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Ganancia de arreglo promedio (lineal)\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Ganancia de arreglo MRC — Monte Carlo\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{k+kc}{True}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{legend}\PYG{p}{()}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{tight\PYGZus{}layout}\PYG{p}{()}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}ganancia\PYGZus{}lineal.png\PYGZdq{}}\PYG{p}{,} \PYG{n}{dpi}\PYG{o}{=}\PYG{l+m+mi}{200}\PYG{p}{)}
+
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{8}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{))}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{Nr\PYGZus{}list}\PYG{p}{,} \PYG{l+m+mi}{10}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{log10}\PYG{p}{(}\PYG{n}{G\PYGZus{}mean}\PYG{p}{),} \PYG{l+s+s1}{\PYGZsq{}bo\PYGZhy{}\PYGZsq{}}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}Simulado\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{Nr\PYGZus{}list}\PYG{p}{,} \PYG{n}{G\PYGZus{}theo\PYGZus{}dB}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}r\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,} \PYG{n}{linewidth}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}Teórico: 10log10(N\PYGZus{}r)\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Número de ramas N\PYGZus{}r\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Ganancia de arreglo promedio (dB)\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Ganancia de arreglo MRC — Escala dB\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{k+kc}{True}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{legend}\PYG{p}{()}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{tight\PYGZus{}layout}\PYG{p}{()}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}ganancia\PYGZus{}dB.png\PYGZdq{}}\PYG{p}{,} \PYG{n}{dpi}\PYG{o}{=}\PYG{l+m+mi}{200}\PYG{p}{)}
+
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}=== Resultados promedio ===\PYGZdq{}}\PYG{p}{)}
+\PYG{k}{for} \PYG{n}{i}\PYG{p}{,} \PYG{n}{Nr} \PYG{o+ow}{in} \PYG{n+nb}{enumerate}\PYG{p}{(}\PYG{n}{Nr\PYGZus{}list}\PYG{p}{):}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}N\PYGZus{}r=}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Nr}\PYG{l+s+si}{:}\PYG{l+s+s2}{2d}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ |  G\PYGZus{}sim=}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{G\PYGZus{}mean}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{l+s+si}{:}\PYG{l+s+s2}{6.3f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ |  G\PYGZus{}theo=}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{G\PYGZus{}theo}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{l+s+si}{:}\PYG{l+s+s2}{6.3f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ |  error=}\PYG{l+s+si}{\PYGZob{}}\PYG{p}{(}\PYG{n}{G\PYGZus{}mean}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{o}{\PYGZhy{}}\PYG{n}{G\PYGZus{}theo}\PYG{p}{[}\PYG{n}{i}\PYG{p}{])}\PYG{o}{/}\PYG{n}{G\PYGZus{}theo}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{o}{*}\PYG{l+m+mi}{100}\PYG{l+s+si}{:}\PYG{l+s+s2}{5.2f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZpc{}\PYGZdq{}}\PYG{p}{)}
+
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{Figuras guardadas: ganancia\PYGZus{}lineal.png y ganancia\PYGZus{}dB.png\PYGZdq{}}\PYG{p}{)}
+\end{MintedVerbatim}

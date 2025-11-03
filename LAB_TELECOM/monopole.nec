@@ -1,0 +1,65 @@
+CM ===================================================================
+CM  Monopolo vertical parametrizado con radiales automáticos
+CM  Autor: Nicolás Seguel (GPT-5 asistido)
+CM ===================================================================
+CE
+
+'---------------------- PARÁMETROS PRINCIPALES ----------------------
+SY freq=1.0' Frecuencia en MHz
+SY wl=299.792458/freq' Longitud de onda (m)
+SY Lfrac=0.25' Longitud del monopolo (en fracción de λ)
+SY L=Lfrac*wl' Longitud real (m)
+SY r=0.2' Radio del alambre (m)
+SY h_base=0.0' Altura base (m)
+
+'---------------------- PARÁMETROS DE RADIALES ----------------------
+SY radials=4' Número de radiales (4, 8, 16, etc.)
+SY radial_len_frac=0.25' Longitud de cada radial (en λ)
+SY radial_len=radial_len_frac*wl
+SY radial_incline=0' Ángulo hacia abajo en grados (0=plano XY, positivo=caen)
+
+'---------------------- PARÁMETROS DE TIERRA ------------------------
+SY ground_type=1' -1: espacio libre | 1: plano perfecto | 2: terreno real
+SY epsr=13' Permitividad relativa (solo para ground_type=2)
+SY sigma=0.005' Conductividad (S/m, solo para ground_type=2)
+
+'====================================================================
+'                       ELEMENTO PRINCIPAL
+'====================================================================
+' Monopolo vertical sobre el eje Z, base en (0,0,h_base)
+GW 1 21 0 0 h_base  0 0 h_base+L  r
+
+'====================================================================
+'                       RADIALES AUTOMÁTICOS
+'====================================================================
+' Se distribuyen uniformemente en el plano XY (o inclinados)
+' 4nec2 expandirá este bloque en radials segmentos iguales
+DO i=1,radials,i
+   GW (1+i) 11 0 0 h_base  (radial_len*COS((i-1)*360/radials*DEG2RAD)) \
+                          (radial_len*SIN((i-1)*360/radials*DEG2RAD)) \
+                          (h_base - radial_len*SIN(radial_incline*DEG2RAD)) r
+ENDDO
+
+GE 0
+
+'====================================================================
+'                       FUENTE Y FRECUENCIA
+'====================================================================
+EX 0 1 1 0 1 0' Fuente de 1V en la base (segmento 1)
+FR 0 1 0 0 freq 0
+
+'====================================================================
+'                       PLANO DE TIERRA
+'====================================================================
+GN ground_type 0 0 epsr sigma 0 0
+' -1 = espacio libre
+'  1 = plano perfecto (ideal conductor)
+'  2 = terreno real (εr, σ definidos arriba)
+
+'====================================================================
+'                       PATRÓN DE RADIACIÓN
+'====================================================================
+' Plano vertical (phi=0), barrido theta=0–90°
+RP 0 91 1 1000 0 0 0 0 0 0
+
+EN
