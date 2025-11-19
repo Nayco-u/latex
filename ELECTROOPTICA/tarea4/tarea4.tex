@@ -1,0 +1,374 @@
+\documentclass[11pt]{article}
+
+% ==== Paquetes ====
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath, amssymb, amsfonts, siunitx}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{mdframed}
+\usepackage{hyperref}
+
+\geometry{margin=2.5cm}
+
+% ==== Metadatos ====
+\title{IEE3682 - Electro-óptica \\ Tarea 4}
+\author{Nicolás Seguel}
+\date{Noviembre 2025}
+
+\begin{document}
+\maketitle
+
+% ================= PROBLEMA 1 =================
+\section*{Problema 1}
+\noindent Use el modelo de propagación de un haz gaussiano para resolver los siguientes problemas. En algunos problemas puede ser necesario que el enfoque del haz gaussiano esté en un punto intermedio entre la fuente y el destino para optimizar el tamaño del haz en el destino.
+
+\subsection*{(a)}
+\noindent Para un haz gaussiano viajando en espacio libre, sean \(w_1\) y \(w_2\) los radios del haz en posiciones \(z_1\) y \(z_2\). Para una transmisión emitida en \(z_1\) y recibida en \(z_2\), se busca concentrar al máximo posible la luz en \(z_2\) para aumentar la eficiencia del sistema. Para una apertura de emisión determinada por \(w_1\), y una distancia fija \(h = z_2 - z_1\), ¿Cuál es el radio \(w_2\) más pequeño en que se puede concentrar el haz en la posición \(z_2\)?
+
+\vspace{0.5em}
+\noindent\textbf{Desarrollo.}
+
+Asumiendo que la apertura inicial en \(z_1\) corresponde a la cintura del haz \(w_1 = w_0\), el objetivo es minimizar \(w_2 = w(z_2)\) variando parámetros del sistema óptico entre \(z_1\) y \(z_2\).
+
+En el caso de espacio libre sin elementos adicionales, el radio en \(z_2\) viene dado por la fórmula clásica:
+
+\[
+\frac{1}{q_2} = \frac{h}{h^2 + z_{R1}^2} - j \frac{z_{R1}}{h^2 + z_{R1}^2},
+\]
+
+y 
+
+\[
+w_2^{(\mathrm{free})} = w_1\sqrt{1 + \left(\frac{h}{z_{R1}}\right)^2 }.
+\]
+
+dado que los valores del sistema son fijos, no hay posibilidad de optimización en este caso, fuera de cambiar el numero de onda \(k\) o el radio inicial \(w_1\) para minimizar la dispersión del haz.
+
+Sin embargo, si se incluye una lente delgada entre \(z_1\) y \(z_2\), es posible optimizar el radio en \(z_2\) variando la posición de la lente y su distancia focal. Utilizando la matriz ABCD del sistema se tiene:
+
+\[
+M = 
+\underbrace{\begin{pmatrix}1 & b\\ 0 & 1\end{pmatrix}}_{\text{propagación }b}
+\underbrace{\begin{pmatrix}1 & 0\\ -1/f & 1\end{pmatrix}}_{\text{lente}}
+\underbrace{\begin{pmatrix}1 & a\\ 0 & 1\end{pmatrix}}_{\text{propagación }a}.
+\]
+
+donde \(a\) es la distancia desde \(z_1\) hasta la lente y \(b = h-a\) es la distancia desde la lente hasta \(z_2\). Multiplicando las matrices se obtienen los elementos \(A,B,C,D\):
+
+\begin{align*}
+A &= 1 - \frac{b}{f},\\[4pt]
+B &= a + b\left(1-\frac{a}{f}\right) = a + b - \frac{ab}{f},\\[4pt]
+C &= -\frac{1}{f},\\[4pt]
+D &= 1 - \frac{a}{f}.
+\end{align*}
+
+Aplicando la transformación al parámetro inicial \(q_1 = j z_{R1}\):
+\[
+q_2(a,f) = \frac{A j z_{R1} + B}{C j z_{R1} + D}.
+\]
+De aquí:
+\[
+\frac{1}{q_2} = \frac{C j z_{R1} + D}{A j z_{R1} + B}.
+\]
+
+Se extrae la parte imaginaria \( \Im\{1/q_2\} \) y usar la relación para \(w(z_2)\):
+\[
+w_2(a,f) = \sqrt{-\frac{\lambda}{\pi} \frac{1}{\Im\{(C j z_{R1} + D)/(A j z_{R1} + B)\}} }.
+\]
+
+Por lo que si se busca minimizar \(w_2(a,f)\) respecto a \(a\) y \(f\):
+
+\[
+w_{2,\min} = \min_{a\in(0,h),\,f>0} \sqrt{-\frac{\lambda}{\pi} \frac{1}{\Im\!\left\{\dfrac{-\dfrac{j z_{R1}}{f} + 1 - \dfrac{a}{f}}{(1-\tfrac{b}{f})j z_{R1} + a + b - \tfrac{ab}{f}}\right\}} }.
+\]
+
+Si colocamos el lente en \(z_1\) se tiene \(a=0\), \(b=h\) y la expresión se reduce a:
+
+\[
+w_2(f) = \sqrt{-\frac{\lambda}{\pi} \frac{1}{\Im\!\left\{\dfrac{-\dfrac{j z_{R1}}{f} + 1}{(1-\tfrac{h}{f})j z_{R1} + h}\right\}} }.
+\]
+
+Esta expresión se puede minimizar respecto a \(f\) para encontrar el valor óptimo de la distancia focal que minimiza el radio en \(z_2\).
+
+% ================= PROBLEMA 1(b) =================
+\subsection*{(b)}
+En el caso anterior, cuando el haz está lo más concentrado posible en \(z_2\), ¿Cuál es el radio mínimo del haz \(w_{\min}\) en cualquier posición?
+
+\vspace{0.5em}
+\noindent\textbf{Desarrollo.}
+En el caso del sistema óptimo encontrado en (a), donde se usó una lente para minimizar \(w_2\), el radio mínimo \(w_{\min}\) corresponderá a la cintura del haz después de la lente.
+
+La lente transforma el haz gaussiano inicial creando una nueva cintura. La posición y el tamaño de esta cintura dependen de la distancia focal \(f\) de la lente y su posición \(a\) respecto a \(z_1\). El radio mínimo ocurrirá en esta nueva cintura.
+
+Para encontrar \(w_{\min}\), necesitamos el nuevo parámetro complejo del haz \(q'(z)\) después de la lente:
+
+\[
+q'(z) = \frac{Aq(z) + B}{Cq(z) + D},
+\]
+
+donde \(q(z)\) es el parámetro complejo del haz antes de la lente y \(A,B,C,D\) son los elementos de la matriz ABCD del sistema. En la cintura del haz, la parte real de \(1/q\) es cero, por lo que:
+
+\[
+\frac{1}{q'(z_{\text{min}})} = -j\frac{\lambda}{\pi w_{\min}^2}.
+\]
+
+Por lo tanto:
+\[
+w_{\min} = \sqrt{-\frac{\lambda}{\pi}\frac{1}{\Im\{1/q'(z_{\text{min}})\}}}.
+\]
+
+Este radio mínimo será más pequeño que el radio \(w_2\) encontrado en (a), ya que \(w_2\) está restringido a ocurrir específicamente en la posición \(z_2\), mientras que \(w_{\min}\) puede ocurrir en cualquier posición entre la lente y \(z_2\).
+
+La relación entre \(w_{\min}\) y \(w_2\) viene dada por:
+
+\[
+w_2 = w_{\min}\sqrt{1 + \left(\frac{z_2 - z_{\min}}{z_R'}\right)^2},
+\]
+
+donde \(z_R' = \pi w_{\min}^2/\lambda\) es la nueva longitud de Rayleigh y \(z_{\min}\) es la posición de la nueva cintura.
+
+\subsection*{(b.2)}
+Usando leyes mecánicas y datos físicos de la tierra, calcule la altura del satélite sobre el suelo.
+
+\vspace{0.5em}
+\noindent\textbf{Desarrollo.} Igualando fuerza gravitatoria y fuerza centrípeta:
+\[
+\frac{GM}{r^2} = r\omega^2,\qquad \omega = \frac{2\pi}{T}.
+\]
+Despejando \(r\):
+\[
+r^3 = \frac{GM}{\omega^2} \quad\Rightarrow\quad r = \left(\frac{GM}{\omega^2}\right)^{1/3}.
+\]
+Usando \(GM = 3.986004418\times 10^{14}\ \mathrm{m^3/s^2}\) y \(T=86400\ \mathrm{s}\):
+\[
+\omega = \frac{2\pi}{86400}\ \mathrm{rad/s}\approx 7.272205\times 10^{-5}\ \mathrm{rad/s},
+\]
+\[
+r \approx 4.2164\times 10^{7}\ \mathrm{m}.
+\]
+La altura sobre la superficie (radio terrestre \(R_e\approx 6.378\times 10^{6}\ \mathrm{m}\)) es
+\[
+\boxed{h_{\text{GEO}} = r - R_e \approx 3.5786\times 10^{7}\ \mathrm{m} \approx 35{,}786\ \mathrm{km}.}
+\]
+
+\subsection*{(c)}
+La observación de actividades en la superficie de la tierra es una importante aplicación de los satélites actuales. Suponiendo que el satélite geoestacionario tiene un lente de 50 cm de diámetro y opera con luz visible de $\lambda$ = 561 nm, ¿de qué tamaño serían los objetos más pequeños que se podrían resolver en la superficie?
+
+\vspace{0.5em}
+\noindent\textbf{Desarrollo.}
+Para determinar el tamaño mínimo de objetos que se pueden resolver, usaremos el criterio de Rayleigh para la resolución angular de un sistema óptico circular:
+
+\[
+\theta = 1.22 \frac{\lambda}{D},
+\]
+
+donde \(\theta\) es el ángulo mínimo de resolución en radianes, \(\lambda\) es la longitud de onda, y \(D\) es el diámetro de la apertura.
+
+Calculando el ángulo mínimo de resolución:
+\[
+\theta = 1.22 \frac{5.61\times 10^{-7}\ \mathrm{m}}{0.5\ \mathrm{m}} = 1.37\times 10^{-6}\ \mathrm{rad}.
+\]
+
+Para objetos en la superficie terrestre, la resolución lineal \(d\) se relaciona con el ángulo \(\theta\) y la distancia \(h\) mediante:
+\[
+d = h\theta.
+\]
+
+Por lo tanto, el tamaño mínimo de objeto resoluble es:
+\[
+d = (3.5786\times 10^7\ \mathrm{m})(1.37\times 10^{-6}\ \mathrm{rad}) = 49.03\ \mathrm{m}.
+\]
+
+El tamaño mínimo de objetos que se pueden resolver es aproximadamente 49 metros.
+
+\subsection*{(d)}
+En forma similar, ¿qué tamaño de objeto se puede resolver con la misma
+cámara y lente montado en la estación espacial internacional (422 km de altura
+actualmente)? ¿y en un avión (10 km de altura)?
+
+\vspace{0.5em}
+\noindent\textbf{Desarrollo.}
+Utilizando el mismo criterio de Rayleigh para la resolución angular:
+\[
+\theta = 1.22 \frac{\lambda}{D},
+\]
+con el mismo lente (\(D = 50\ \mathrm{cm}\)) y longitud de onda (\(\lambda = 561\ \mathrm{nm}\)).
+
+El ángulo mínimo de resolución sigue siendo:
+\[
+\theta = 1.37\times 10^{-6}\ \mathrm{rad}.
+\]
+
+Para la Estación Espacial Internacional (ISS):
+\begin{itemize}
+    \item Altura: \(h_{\text{ISS}} = 422\ \mathrm{km} = 4.22\times 10^5\ \mathrm{m}\)
+    \item Resolución lineal: \(d_{\text{ISS}} = h_{\text{ISS}}\theta = (4.22\times 10^5)(1.37\times 10^{-6}) = 0.578\ \mathrm{m}\)
+\end{itemize}
+
+Para el avión:
+\begin{itemize}
+    \item Altura: \(h_{\text{avión}} = 10\ \mathrm{km} = 1\times 10^4\ \mathrm{m}\)
+    \item Resolución lineal: \(d_{\text{avión}} = h_{\text{avión}}\theta = (1\times 10^4)(1.37\times 10^{-6}) = 0.0137\ \mathrm{m}\)
+\end{itemize}
+
+\subsection*{(e)}
+¿Qué tamaño de lente sería necesario para leer una patente desde un
+avión volando a 10 km de altura?
+
+\vspace{0.5em}
+\noindent\textbf{Desarrollo.}
+Para leer una patente de auto, necesitamos resolver caracteres de aproximadamente 5 cm de alto. Desde 10 km de altura, usando la misma longitud de onda (\(\lambda = 561\ \mathrm{nm}\)), podemos despejar el diámetro \(D\) necesario:
+
+\[
+d = h\theta = h\cdot 1.22\frac{\lambda}{D} = 0.05\ \mathrm{m} \quad\text{(tamaño deseado)}
+\]
+
+Despejando \(D\):
+\[
+D = 1.22\frac{\lambda h}{d} = 1.22\frac{(5.61\times 10^{-7})(1\times 10^4)}{0.05} = 1.37\ \mathrm{m}
+\]
+
+% ================= PROBLEMA 2 =================
+\section*{Problema 2}
+\noindent Considere un lente usado para mostrar la transformada de Fourier de una función bidimensional con frecuencias espaciales entre 20 y 200 líneas/mm. Si \(\lambda = 532\) nm, ¿Qué distancia focal debe tener el lente para que las frecuencias espaciales más alta y más baja queden separadas 9 cm en el plano de Fourier?
+
+\vspace{0.5em}
+\noindent\textbf{Desarrollo.}
+En el plano focal de una lente, la relación entre la posición \(x'\) en el plano y la frecuencia espacial \(\nu_x\) viene dada por:
+\[
+x' = \lambda f \nu_x,
+\]
+donde \(f\) es la distancia focal y \(\lambda\) es la longitud de onda.
+
+La separación entre las posiciones correspondientes a las frecuencias mínima y máxima es:
+\[
+\Delta x' = x'_{\max} - x'_{\min} = \lambda f (\nu_{\max} - \nu_{\min}).
+\]
+
+Sustituyendo los valores:
+\[
+0.09 = (5.32\times 10^{-7})(f)(2\times 10^5 - 2\times 10^4)
+\]
+\[
+0.09 = (5.32\times 10^{-7})(f)(1.8\times 10^5)
+\]
+
+Despejando \(f\):
+\[
+f = \frac{0.09}{(5.32\times 10^{-7})(1.8\times 10^5)} = 0.9398\ \mathrm{m}
+\]
+
+% ================= PROBLEMA 3 =================
+\section*{Problema 3}
+\noindent  Un láser de Argón produce un haz gaussiano de longitud de onda $\lambda = 488$ nm con radio de cintura $w_0 = 0.5$ mm. Diseñe un sistema óptico de un solo lente para enfocar la luz en un punto de diámetro 100~$\mu$m. ¿Cuál es la menor distancia focal de la lente que puede usarse?
+
+\vspace{0.5em}
+\noindent\textbf{Desarrollo.}
+Para diseñar el sistema óptico que enfoque el haz al diámetro deseado, analizaremos la transformación del haz gaussiano a través de una lente delgada.
+
+Para un haz gaussiano que pasa por una lente delgada, la transformación del parámetro complejo \(q\) viene dada por:
+
+\[
+\frac{1}{q'} = \frac{1}{q} - \frac{1}{f},
+\]
+
+donde \(q\) y \(q'\) son los parámetros del haz antes y después de la lente respectivamente.
+
+Cuando la lente se coloca en la posición de la cintura del haz, la relación entre el radio de cintura inicial \(w_0\) y el radio de cintura final \(w_0'\) en el foco viene dada por:
+
+\[
+w_0' \approx \frac{\lambda f}{\pi w_0}.
+\]
+
+Esta es la relación fundamental que usaremos para determinar la distancia focal mínima. Queremos que \(w_0' = w_{\mathrm{target}}\), por lo tanto:
+
+\[
+w_{\mathrm{target}} = \frac{\lambda f}{\pi w_0} \quad\Rightarrow\quad
+f = \frac{\pi w_0 w_{\mathrm{target}}}{\lambda}.
+\]
+
+Sustituyendo los valores numéricos:
+\[
+f_{\min} = \frac{\pi (5.0\times 10^{-4})(5.0\times 10^{-5})}{4.88\times 10^{-7}}
+= \frac{\pi \cdot 2.5\times 10^{-8}}{4.88\times 10^{-7}}
+\approx 0.161\ \mathrm{m}.
+\]
+
+% ================= PROBLEMA 4 =================
+\section*{Problema 4}
+\noindent La matriz ABCD de una lámina de índice graduado con índice de refracción cuadrático \(n(y)\approx n_0\left[1-\tfrac{1}{2}\alpha^2 y^2\right]\) y longitud \(d\) es \(A=\cos(\alpha d)\), \(B=\dfrac{1}{\alpha}\sin(\alpha d)\), \(C=-\alpha\sin(\alpha d)\), \(D=\cos(\alpha d)\) para rayos paraxiales a lo largo de la dirección \(z\). Un haz gaussiano de longitud de onda \(\lambda_0\), radio de cintura \(w_0\) en espacio libre y eje en la dirección \(z\), entra en la lámina en su cintura. Determine una expresión del ancho del haz en la dirección \(y\) como función de \(d\). Dibuje la forma del haz a medida que se propaga por el medio.
+
+\vspace{0.5em}
+\noindent\textbf{Desarrollo.}
+Para analizar la propagación del haz gaussiano en el medio GRIN, utilizaremos el formalismo de matrices ABCD junto con la transformación del parámetro complejo \(q\).
+La transformación del parámetro complejo \(q\) a través del medio viene dada por:
+
+\[
+q(d) = \frac{A q_0 + B}{C q_0 + D},
+\]
+
+donde \(q_0\) es el parámetro inicial del haz. Como el haz entra en su cintura, tenemos:
+
+\[
+q_0 = j z_R,\quad \text{donde}\quad z_R = \frac{\pi w_0^2 n_0}{\lambda_0}.
+\]
+
+Sustituyendo los elementos de la matriz ABCD:
+\[
+q(d) = \frac{\cos(\alpha d)\cdot j z_R + \frac{1}{\alpha}\sin(\alpha d)}{-\alpha\sin(\alpha d)\cdot j z_R + \cos(\alpha d)}.
+\]
+
+Para obtener el radio del haz, necesitamos la parte imaginaria de \(1/q(d)\):
+\[
+\frac{1}{q(d)} = \frac{-\alpha\sin(\alpha d)\cdot j z_R + \cos(\alpha d)}{\cos(\alpha d)\cdot j z_R + \frac{1}{\alpha}\sin(\alpha d)}.
+\]
+
+El radio del haz en cualquier posición \(d\) viene dado por:
+\[
+w(d) = \sqrt{-\frac{\lambda_0}{\pi n_0}\frac{1}{\Im\{1/q(d)\}}}.
+\]
+
+Multiplicando numerador y denominador por el conjugado del denominador:
+\[
+w(d) = w_0\sqrt{\cos^2(\alpha d) + \frac{\sin^2(\alpha d)}{(\alpha w_0)^2}}.
+\]
+
+La expresión obtenida revela el comportamiento característico del haz gaussiano en el medio GRIN. El radio del haz exhibe una oscilación periódica con periodo \(T = \frac{2\pi}{\alpha}\), donde los mínimos del radio (\(w_0\)) ocurren en posiciones \(d = \frac{2\pi n}{\alpha}\) para \(n = 0,1,2,\ldots\), y los máximos (\(w_{\max} = \frac{w_0}{\alpha w_0}\)) se alcanzan en \(d = \frac{(2n+1)\pi}{\alpha}\). Este fenómeno, conocido como autofocalización periódica, es una característica distintiva de los medios GRIN y tiene importantes aplicaciones en el diseño de guías de onda y acopladores ópticos.
+
+El radio del haz oscila periódicamente entre \(w_0\text{ y }\frac{w_0}{\alpha w_0}\text{ con periodo }\frac{2\pi}{\alpha}\)
+
+La siguiente figura muestra la evolución del radio del haz en función de la distancia \(d\) dentro del medio GRIN:
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    % Ejes
+    \draw[thick,-stealth] (0,0) -- (10,0) node[right] {$d$};
+    \draw[thick,-stealth] (0,-2) -- (0,2) node[above] {$w(d)/w_0$};
+    
+    % Cuadrícula de fondo
+    \draw[gray!30, step=1] (0,-2) grid (10,2);
+    
+    % Etiquetas de los ejes
+    \draw (0,2pt) -- (0,-2pt) node[below] {$0$};
+    \draw (3.14,2pt) -- (3.14,-2pt) node[below] {$\frac{\pi}{\alpha}$};
+    \draw (6.28,2pt) -- (6.28,-2pt) node[below] {$\frac{2\pi}{\alpha}$};
+    \draw (9.42,2pt) -- (9.42,-2pt) node[below] {$\frac{3\pi}{\alpha}$};
+    \foreach \y in {-2,-1,0,1,2}
+        \draw (2pt,\y) -- (-2pt,\y) node[left] {\y};
+    
+    % Curva del haz (usando una función sinusoidal escalada)
+    \draw[blue,thick,domain=0:10,samples=200] 
+        plot (\x,{sqrt(cos(\x*180/3.14159)*cos(\x*180/3.14159) + sin(\x*180/3.14159)*sin(\x*180/3.14159)/(1.5*1.5))});
+    
+    % Título
+    \node[below] at (5,-2.5) {Evolución del radio del haz en el medio GRIN};
+\end{tikzpicture}
+\end{center}
+
+\end{document}

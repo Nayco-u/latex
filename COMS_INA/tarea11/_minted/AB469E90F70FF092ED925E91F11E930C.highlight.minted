@@ -1,0 +1,204 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+ch}{\PYGZsh{}!/usr/bin/env python3}
+\PYG{c+c1}{\PYGZsh{} problema28.py}
+\PYG{c+c1}{\PYGZsh{} Genera Nr secuencias de desvanecimiento (usar la rutina del Problema 8)}
+\PYG{c+c1}{\PYGZsh{} Calcula pesos MRC instantáneos, SNR por rama y SNR de salida, y grafica resultados.}
+\PYG{c+c1}{\PYGZsh{} Requiere: numpy, matplotlib y la implementacion de fading\PYGZus{}rayleigh\PYGZus{}fd() del Problema 8.}
+
+\PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{numpy}\PYG{+w}{ }\PYG{k}{as}\PYG{+w}{ }\PYG{n+nn}{np}
+\PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{matplotlib.pyplot}\PYG{+w}{ }\PYG{k}{as}\PYG{+w}{ }\PYG{n+nn}{plt}
+\PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{numpy}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{pi}
+
+\PYG{c+c1}{\PYGZsh{} ===============================}
+\PYG{c+c1}{\PYGZsh{} 1. FUNCIONES BASE (del Problema 8)}
+\PYG{c+c1}{\PYGZsh{} ===============================}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{clarke\PYGZus{}psd}\PYG{p}{(}\PYG{n}{f}\PYG{p}{,} \PYG{n}{fD}\PYG{p}{,} \PYG{n}{eps}\PYG{o}{=}\PYG{l+m+mf}{1e\PYGZhy{}9}\PYG{p}{):}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Densidad espectral de potencia (PSD) del modelo de Clarke.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{S} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros\PYGZus{}like}\PYG{p}{(}\PYG{n}{f}\PYG{p}{,} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{float}\PYG{p}{)}
+    \PYG{n}{mask} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{f}\PYG{p}{)} \PYG{o}{\PYGZlt{}} \PYG{n}{fD}
+    \PYG{n}{x} \PYG{o}{=} \PYG{n}{f}\PYG{p}{[}\PYG{n}{mask}\PYG{p}{]} \PYG{o}{/} \PYG{p}{(}\PYG{n}{fD} \PYG{o}{+} \PYG{l+m+mf}{0.0}\PYG{p}{)}
+    \PYG{n}{denom} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{maximum}\PYG{p}{(}\PYG{l+m+mf}{1.0} \PYG{o}{\PYGZhy{}} \PYG{n}{x}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{eps}\PYG{p}{))}
+    \PYG{n}{S}\PYG{p}{[}\PYG{n}{mask}\PYG{p}{]} \PYG{o}{=} \PYG{l+m+mf}{1.0} \PYG{o}{/} \PYG{p}{(}\PYG{n}{pi} \PYG{o}{*} \PYG{n}{fD} \PYG{o}{*} \PYG{n}{denom}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{S}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{fading\PYGZus{}rayleigh\PYGZus{}fd}\PYG{p}{(}\PYG{n}{v}\PYG{p}{,} \PYG{n}{fc}\PYG{p}{,} \PYG{n}{Ts}\PYG{p}{,} \PYG{n}{Td}\PYG{p}{,} \PYG{n}{seed}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{Nfreq}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{):}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Genera una secuencia Rayleigh correlacionada en el tiempo usando el método FD.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{c} \PYG{o}{=} \PYG{l+m+mf}{3e8}
+    \PYG{n}{fD} \PYG{o}{=} \PYG{p}{(}\PYG{n}{v} \PYG{o}{*} \PYG{n}{fc}\PYG{p}{)} \PYG{o}{/} \PYG{n}{c}  \PYG{c+c1}{\PYGZsh{} Doppler máximo}
+    \PYG{n}{N} \PYG{o}{=} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{round}\PYG{p}{(}\PYG{n}{Td} \PYG{o}{/} \PYG{n}{Ts}\PYG{p}{))}
+    \PYG{k}{if} \PYG{n}{Nfreq} \PYG{o+ow}{is} \PYG{k+kc}{None}\PYG{p}{:}
+        \PYG{n}{Nfft} \PYG{o}{=} \PYG{l+m+mi}{1} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{p}{(}\PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{ceil}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{log2}\PYG{p}{(}\PYG{n}{N}\PYG{p}{)))} \PYG{o}{+} \PYG{l+m+mi}{2}\PYG{p}{)}
+    \PYG{k}{else}\PYG{p}{:}
+        \PYG{n}{Nfft} \PYG{o}{=} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{Nfreq}\PYG{p}{)}
+    \PYG{n}{freqs} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{fft}\PYG{o}{.}\PYG{n}{fftfreq}\PYG{p}{(}\PYG{n}{Nfft}\PYG{p}{,} \PYG{n}{d}\PYG{o}{=}\PYG{n}{Ts}\PYG{p}{)}
+    \PYG{n}{S} \PYG{o}{=} \PYG{n}{clarke\PYGZus{}psd}\PYG{p}{(}\PYG{n}{freqs}\PYG{p}{,} \PYG{n}{fD}\PYG{p}{)}
+    \PYG{n}{rng} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{default\PYGZus{}rng}\PYG{p}{(}\PYG{n}{seed}\PYG{p}{)}
+    \PYG{n}{spec} \PYG{o}{=} \PYG{p}{(}\PYG{n}{rng}\PYG{o}{.}\PYG{n}{normal}\PYG{p}{(}\PYG{n}{size}\PYG{o}{=}\PYG{n}{Nfft}\PYG{p}{)} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{n}{j} \PYG{o}{*} \PYG{n}{rng}\PYG{o}{.}\PYG{n}{normal}\PYG{p}{(}\PYG{n}{size}\PYG{o}{=}\PYG{n}{Nfft}\PYG{p}{))} \PYG{o}{*} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{S} \PYG{o}{/} \PYG{l+m+mf}{2.0}\PYG{p}{)}
+    \PYG{n}{h\PYGZus{}time} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{fft}\PYG{o}{.}\PYG{n}{ifft}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{fft}\PYG{o}{.}\PYG{n}{ifftshift}\PYG{p}{(}\PYG{n}{spec}\PYG{p}{))}
+    \PYG{n}{h} \PYG{o}{=} \PYG{n}{h\PYGZus{}time}\PYG{p}{[:}\PYG{n}{N}\PYG{p}{]}
+    \PYG{n}{h} \PYG{o}{/=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{h}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{))}  \PYG{c+c1}{\PYGZsh{} normalización RMS = 1}
+    \PYG{n}{t} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{arange}\PYG{p}{(}\PYG{n}{N}\PYG{p}{)} \PYG{o}{*} \PYG{n}{Ts}
+    \PYG{k}{return} \PYG{n}{h}\PYG{p}{,} \PYG{n}{fD}\PYG{p}{,} \PYG{n}{t}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{compute\PYGZus{}mean\PYGZus{}rms}\PYG{p}{(}\PYG{n}{r}\PYG{p}{):}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Calcula media y RMS de un vector real.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{mean\PYGZus{}r} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{r}\PYG{p}{)}
+    \PYG{n}{rms} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{r}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{))}
+    \PYG{k}{return} \PYG{n}{mean\PYGZus{}r}\PYG{p}{,} \PYG{n}{rms}
+
+
+\PYG{c+c1}{\PYGZsh{} ===============================}
+\PYG{c+c1}{\PYGZsh{} 2. FUNCIONES DE MÓDULO RECEPTOR}
+\PYG{c+c1}{\PYGZsh{} ===============================}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{plot\PYGZus{}envelopes}\PYG{p}{(}\PYG{n}{h\PYGZus{}list}\PYG{p}{,} \PYG{n}{t}\PYG{p}{,} \PYG{n}{seeds}\PYG{p}{,} \PYG{n}{savepath}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}figs/problema28\PYGZus{}envelopes.png\PYGZdq{}}\PYG{p}{):}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Grafica las envolventes de todas las ramas en dB.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{Nr} \PYG{o}{=} \PYG{n}{h\PYGZus{}list}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{10}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{))}
+    \PYG{k}{for} \PYG{n}{r} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{Nr}\PYG{p}{):}
+        \PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{t}\PYG{p}{,} \PYG{l+m+mi}{20}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{log10}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{h\PYGZus{}list}\PYG{p}{[}\PYG{n}{r}\PYG{p}{,:])} \PYG{o}{+} \PYG{l+m+mf}{1e\PYGZhy{}12}\PYG{p}{),} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}Rama }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{r}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{ (seed=}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{seeds}\PYG{p}{[}\PYG{n}{r}\PYG{p}{]}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{)\PYGZsq{}}\PYG{p}{,} \PYG{n}{alpha}\PYG{o}{=}\PYG{l+m+mf}{0.8}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Tiempo (s)\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Envolvente |h| (dB)\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}Envolventes Rayleigh \PYGZhy{} }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Nr}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ ramas\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{k+kc}{True}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{legend}\PYG{p}{(}\PYG{n}{loc}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}upper right\PYGZsq{}}\PYG{p}{,} \PYG{n}{ncol}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{fontsize}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}small\PYGZsq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{tight\PYGZus{}layout}\PYG{p}{()}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{n}{savepath}\PYG{p}{,} \PYG{n}{dpi}\PYG{o}{=}\PYG{l+m+mi}{200}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{close}\PYG{p}{()}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}[OK] Figura guardada: }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{savepath}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{mrc\PYGZus{}weights}\PYG{p}{(}\PYG{n}{h\PYGZus{}list}\PYG{p}{):}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    Calcula los pesos MRC instantáneos:}
+\PYG{l+s+sd}{        u\PYGZus{}r*(n) = h\PYGZus{}r*(n) / sqrt(sum\PYGZus{}k |h\PYGZus{}k(n)|\PYGZca{}2)}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{Nr}\PYG{p}{,} \PYG{n}{N} \PYG{o}{=} \PYG{n}{h\PYGZus{}list}\PYG{o}{.}\PYG{n}{shape}
+    \PYG{n}{denom} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{h\PYGZus{}list}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{axis}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{)} \PYG{o}{+} \PYG{l+m+mf}{1e\PYGZhy{}18}\PYG{p}{)}
+    \PYG{n}{weights} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{(}\PYG{n}{h\PYGZus{}list}\PYG{p}{)} \PYG{o}{/} \PYG{n}{denom}
+    \PYG{k}{return} \PYG{n}{weights}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{plot\PYGZus{}weights}\PYG{p}{(}\PYG{n}{weights}\PYG{p}{,} \PYG{n}{t}\PYG{p}{,} \PYG{n}{savepath}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}figs/problema28\PYGZus{}mrc\PYGZus{}weights.png\PYGZdq{}}\PYG{p}{):}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Grafica los pesos MRC instantáneos en magnitud y fase.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{Nr} \PYG{o}{=} \PYG{n}{weights}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{10}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{))}
+
+    \PYG{c+c1}{\PYGZsh{} Magnitud}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{subplot}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{)}
+    \PYG{k}{for} \PYG{n}{r} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{Nr}\PYG{p}{):}
+        \PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{t}\PYG{p}{,} \PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{weights}\PYG{p}{[}\PYG{n}{r}\PYG{p}{,:]),} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}Rama }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{r}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{alpha}\PYG{o}{=}\PYG{l+m+mf}{0.8}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Tiempo (s)\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Magnitud |u\PYGZus{}r(n)|\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Pesos MRC \PYGZhy{} Magnitud\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{k+kc}{True}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{legend}\PYG{p}{(}\PYG{n}{loc}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}upper right\PYGZsq{}}\PYG{p}{,} \PYG{n}{ncol}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{fontsize}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}small\PYGZsq{}}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} Fase}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{subplot}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{)}
+    \PYG{k}{for} \PYG{n}{r} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{Nr}\PYG{p}{):}
+        \PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{t}\PYG{p}{,} \PYG{n}{np}\PYG{o}{.}\PYG{n}{angle}\PYG{p}{(}\PYG{n}{weights}\PYG{p}{[}\PYG{n}{r}\PYG{p}{,:]),} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}Rama }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{r}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{alpha}\PYG{o}{=}\PYG{l+m+mf}{0.8}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Tiempo (s)\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Fase \PYGZlt{}u\PYGZus{}r(n) [rad]\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Pesos MRC \PYGZhy{} Fase\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{k+kc}{True}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{legend}\PYG{p}{(}\PYG{n}{loc}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}upper right\PYGZsq{}}\PYG{p}{,} \PYG{n}{ncol}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{fontsize}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}small\PYGZsq{}}\PYG{p}{)}
+
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{tight\PYGZus{}layout}\PYG{p}{()}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{n}{savepath}\PYG{p}{,} \PYG{n}{dpi}\PYG{o}{=}\PYG{l+m+mi}{200}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{close}\PYG{p}{()}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}[OK] Figura guardada: }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{savepath}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{compute\PYGZus{}snr\PYGZus{}values}\PYG{p}{(}\PYG{n}{h\PYGZus{}list}\PYG{p}{,} \PYG{n}{gamma\PYGZus{}bar}\PYG{o}{=}\PYG{l+m+mf}{1.0}\PYG{p}{):}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    Calcula SNR por rama y total:}
+\PYG{l+s+sd}{        gamma\PYGZus{}r(n) = gamma\PYGZus{}bar * |h\PYGZus{}r(n)|\PYGZca{}2}
+\PYG{l+s+sd}{        gamma(n)   = gamma\PYGZus{}bar * sum\PYGZus{}r |h\PYGZus{}r(n)|\PYGZca{}2}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{gamma\PYGZus{}r} \PYG{o}{=} \PYG{n}{gamma\PYGZus{}bar} \PYG{o}{*} \PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{h\PYGZus{}list}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2}
+    \PYG{n}{Gamma\PYGZus{}out} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{gamma\PYGZus{}r}\PYG{p}{,} \PYG{n}{axis}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{gamma\PYGZus{}r}\PYG{p}{,} \PYG{n}{Gamma\PYGZus{}out}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{plot\PYGZus{}snr\PYGZus{}per\PYGZus{}branch}\PYG{p}{(}\PYG{n}{gamma\PYGZus{}r}\PYG{p}{,} \PYG{n}{t}\PYG{p}{,} \PYG{n}{savepath}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}figs/problema28\PYGZus{}gamma\PYGZus{}r.png\PYGZdq{}}\PYG{p}{):}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Grafica la SNR por rama lineal.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{Nr} \PYG{o}{=} \PYG{n}{gamma\PYGZus{}r}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{10}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{))}
+    \PYG{k}{for} \PYG{n}{r} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{Nr}\PYG{p}{):}
+        \PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{t}\PYG{p}{,} \PYG{n}{gamma\PYGZus{}r}\PYG{p}{[}\PYG{n}{r}\PYG{p}{,:],} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}Rama }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{r}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{alpha}\PYG{o}{=}\PYG{l+m+mf}{0.8}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Tiempo (s)\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}SNR por rama gamma\PYGZus{}r(n)\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}SNR instantánea por rama (MRC)\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{k+kc}{True}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{legend}\PYG{p}{(}\PYG{n}{loc}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}upper right\PYGZsq{}}\PYG{p}{,} \PYG{n}{ncol}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{fontsize}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}small\PYGZsq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{tight\PYGZus{}layout}\PYG{p}{()}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{n}{savepath}\PYG{p}{,} \PYG{n}{dpi}\PYG{o}{=}\PYG{l+m+mi}{200}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{close}\PYG{p}{()}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}[OK] Figura guardada: }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{savepath}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{plot\PYGZus{}snr\PYGZus{}output}\PYG{p}{(}\PYG{n}{Gamma\PYGZus{}out}\PYG{p}{,} \PYG{n}{t}\PYG{p}{,} \PYG{n}{savepath}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}figs/problema28\PYGZus{}Gamma\PYGZus{}out.png\PYGZdq{}}\PYG{p}{):}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Grafica la SNR instantánea de salida del combinador.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{10}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{))}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{t}\PYG{p}{,} \PYG{l+m+mi}{10}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{log10}\PYG{p}{(}\PYG{n}{Gamma\PYGZus{}out} \PYG{o}{+} \PYG{l+m+mf}{1e\PYGZhy{}12}\PYG{p}{))}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Tiempo (s)\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}SNR salida gamma(n) [dB]\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}SNR instantánea en la salida del combinador (MRC)\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{k+kc}{True}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{tight\PYGZus{}layout}\PYG{p}{()}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{n}{savepath}\PYG{p}{,} \PYG{n}{dpi}\PYG{o}{=}\PYG{l+m+mi}{200}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{close}\PYG{p}{()}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}[OK] Figura guardada: }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{savepath}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+
+
+\PYG{c+c1}{\PYGZsh{} ===============================}
+\PYG{c+c1}{\PYGZsh{} 3. FUNCIÓN PRINCIPAL}
+\PYG{c+c1}{\PYGZsh{} ===============================}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{problema28\PYGZus{}main}\PYG{p}{():}
+    \PYG{n}{Nr} \PYG{o}{=} \PYG{l+m+mi}{4}
+    \PYG{n}{v} \PYG{o}{=} \PYG{l+m+mf}{60.0} \PYG{o}{/} \PYG{l+m+mf}{3.6}     \PYG{c+c1}{\PYGZsh{} velocidad [m/s]}
+    \PYG{n}{fc} \PYG{o}{=} \PYG{l+m+mf}{1.8e9}         \PYG{c+c1}{\PYGZsh{} frecuencia portadora [Hz]}
+    \PYG{n}{Ts} \PYG{o}{=} \PYG{l+m+mf}{100e\PYGZhy{}6}        \PYG{c+c1}{\PYGZsh{} periodo de muestreo [s]}
+    \PYG{n}{Td} \PYG{o}{=} \PYG{l+m+mf}{0.5}           \PYG{c+c1}{\PYGZsh{} duración total [s]}
+    \PYG{n}{seeds} \PYG{o}{=} \PYG{p}{[}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{l+m+mi}{20}\PYG{p}{,} \PYG{l+m+mi}{30}\PYG{p}{,} \PYG{l+m+mi}{40}\PYG{p}{]}
+    \PYG{n}{gamma\PYGZus{}bar} \PYG{o}{=} \PYG{l+m+mf}{1.0}    \PYG{c+c1}{\PYGZsh{} SNR media por rama (lineal)}
+
+    \PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{} Generación de secuencias \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+    \PYG{n}{h\PYGZus{}list} \PYG{o}{=} \PYG{p}{[]}
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{Nr}\PYG{p}{):}
+        \PYG{n}{h}\PYG{p}{,} \PYG{n}{fD}\PYG{p}{,} \PYG{n}{t} \PYG{o}{=} \PYG{n}{fading\PYGZus{}rayleigh\PYGZus{}fd}\PYG{p}{(}\PYG{n}{v}\PYG{p}{,} \PYG{n}{fc}\PYG{p}{,} \PYG{n}{Ts}\PYG{p}{,} \PYG{n}{Td}\PYG{p}{,} \PYG{n}{seed}\PYG{o}{=}\PYG{n}{seeds}\PYG{p}{[}\PYG{n}{i}\PYG{p}{])}
+        \PYG{n}{r} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{h}\PYG{p}{)}
+        \PYG{n}{mean\PYGZus{}r}\PYG{p}{,} \PYG{n}{rms} \PYG{o}{=} \PYG{n}{compute\PYGZus{}mean\PYGZus{}rms}\PYG{p}{(}\PYG{n}{r}\PYG{p}{)}
+        \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}Rama }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{i}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{: Mean |h| = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{mean\PYGZus{}r}\PYG{l+s+si}{:}\PYG{l+s+s2}{.4f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{, RMS |h| = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{rms}\PYG{l+s+si}{:}\PYG{l+s+s2}{.4f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+        \PYG{n}{h\PYGZus{}list}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{h}\PYG{p}{)}
+    \PYG{n}{h\PYGZus{}list} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{vstack}\PYG{p}{(}\PYG{n}{h\PYGZus{}list}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{} Gráficos de las envolventes \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+    \PYG{n}{plot\PYGZus{}envelopes}\PYG{p}{(}\PYG{n}{h\PYGZus{}list}\PYG{p}{,} \PYG{n}{t}\PYG{p}{,} \PYG{n}{seeds}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{} Pesos MRC y SNRs \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+    \PYG{n}{weights} \PYG{o}{=} \PYG{n}{mrc\PYGZus{}weights}\PYG{p}{(}\PYG{n}{h\PYGZus{}list}\PYG{p}{)}
+    \PYG{n}{gamma\PYGZus{}r}\PYG{p}{,} \PYG{n}{Gamma\PYGZus{}out} \PYG{o}{=} \PYG{n}{compute\PYGZus{}snr\PYGZus{}values}\PYG{p}{(}\PYG{n}{h\PYGZus{}list}\PYG{p}{,} \PYG{n}{gamma\PYGZus{}bar}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{} Gráficos de pesos MRC \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+    \PYG{n}{plot\PYGZus{}weights}\PYG{p}{(}\PYG{n}{weights}\PYG{p}{,} \PYG{n}{t}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{} Promedios y ganancia de arreglo \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+    \PYG{n}{Gamma\PYGZus{}mean} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{Gamma\PYGZus{}out}\PYG{p}{)}
+    \PYG{n}{array\PYGZus{}gain} \PYG{o}{=} \PYG{n}{Gamma\PYGZus{}mean} \PYG{o}{/} \PYG{n}{gamma\PYGZus{}bar}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{Promedio gamma\PYGZus{}mean = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Gamma\PYGZus{}mean}\PYG{l+s+si}{:}\PYG{l+s+s2}{.4f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ (lineal)\PYGZdq{}}\PYG{p}{)}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}Ganancia de arreglo = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{array\PYGZus{}gain}\PYG{l+s+si}{:}\PYG{l+s+s2}{.4f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ = }\PYG{l+s+si}{\PYGZob{}}\PYG{l+m+mi}{10}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{log10}\PYG{p}{(}\PYG{n}{array\PYGZus{}gain}\PYG{p}{)}\PYG{l+s+si}{:}\PYG{l+s+s2}{.2f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ dB\PYGZdq{}}\PYG{p}{)}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}Teoría: G\PYGZus{}arr = N\PYGZus{}r = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Nr}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{, en dB = }\PYG{l+s+si}{\PYGZob{}}\PYG{l+m+mi}{10}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{log10}\PYG{p}{(}\PYG{n}{Nr}\PYG{p}{)}\PYG{l+s+si}{:}\PYG{l+s+s2}{.2f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ dB\PYGZdq{}}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{} Graficar SNRs \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+    \PYG{n}{plot\PYGZus{}snr\PYGZus{}per\PYGZus{}branch}\PYG{p}{(}\PYG{n}{gamma\PYGZus{}r}\PYG{p}{,} \PYG{n}{t}\PYG{p}{)}
+    \PYG{n}{plot\PYGZus{}snr\PYGZus{}output}\PYG{p}{(}\PYG{n}{Gamma\PYGZus{}out}\PYG{p}{,} \PYG{n}{t}\PYG{p}{)}
+
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{Simulación completada. Resultados guardados en carpeta figs/\PYGZdq{}}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} ===============================}
+\PYG{c+c1}{\PYGZsh{} 4. EJECUCIÓN DIRECTA}
+\PYG{c+c1}{\PYGZsh{} ===============================}
+
+\PYG{k}{if} \PYG{n+nv+vm}{\PYGZus{}\PYGZus{}name\PYGZus{}\PYGZus{}} \PYG{o}{==} \PYG{l+s+s2}{\PYGZdq{}\PYGZus{}\PYGZus{}main\PYGZus{}\PYGZus{}\PYGZdq{}}\PYG{p}{:}
+    \PYG{n}{problema28\PYGZus{}main}\PYG{p}{()}
+\end{MintedVerbatim}

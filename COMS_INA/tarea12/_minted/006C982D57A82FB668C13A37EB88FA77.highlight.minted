@@ -1,0 +1,448 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{Funciones para el Problema 29 (Tarea 12)}
+\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+
+\PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{numpy}\PYG{+w}{ }\PYG{k}{as}\PYG{+w}{ }\PYG{n+nn}{np}
+\PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{matplotlib.pyplot}\PYG{+w}{ }\PYG{k}{as}\PYG{+w}{ }\PYG{n+nn}{plt}
+\PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{os}
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{\PYGZsh{} 1) Generar S (QPSK)}
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{gen\PYGZus{}S\PYGZus{}qpsk}\PYG{p}{(}\PYG{n}{seed}\PYG{p}{:} \PYG{n+nb}{int}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{:} \PYG{n+nb}{int} \PYG{o}{=} \PYG{l+m+mi}{1000}\PYG{p}{,} \PYG{n}{Es}\PYG{p}{:} \PYG{n+nb}{float} \PYG{o}{=} \PYG{l+m+mf}{1.0}\PYG{p}{)} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{:}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    Genera matriz S de símbolos QPSK iid de forma (2, Ns).}
+
+\PYG{l+s+sd}{    Parámetros}
+\PYG{l+s+sd}{    \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{l+s+sd}{    seed : int}
+\PYG{l+s+sd}{        Semilla para RNG (reproducible).}
+\PYG{l+s+sd}{    Ns : int}
+\PYG{l+s+sd}{        Número de columnas (número de bloques).}
+
+\PYG{l+s+sd}{    Retorna}
+\PYG{l+s+sd}{    \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{l+s+sd}{    S : ndarray (2, Ns)}
+\PYG{l+s+sd}{        Matriz de símbolos complejos QPSK.}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{rng} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{default\PYGZus{}rng}\PYG{p}{(}\PYG{n}{seed}\PYG{p}{)}
+    \PYG{c+c1}{\PYGZsh{} QPSK: puntos (±1 ± j)/sqrt(2) \PYGZhy{}\PYGZgt{} energía unitaria por símbolo}
+    \PYG{n}{bits\PYGZus{}i} \PYG{o}{=} \PYG{n}{rng}\PYG{o}{.}\PYG{n}{integers}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{))}
+    \PYG{n}{bits\PYGZus{}q} \PYG{o}{=} \PYG{n}{rng}\PYG{o}{.}\PYG{n}{integers}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{))}
+    \PYG{c+c1}{\PYGZsh{} map: 0 \PYGZhy{}\PYGZgt{} +1, 1 \PYGZhy{}\PYGZgt{} \PYGZhy{}1}
+    \PYG{n}{a} \PYG{o}{=} \PYG{l+m+mi}{1} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{bits\PYGZus{}i}
+    \PYG{n}{b} \PYG{o}{=} \PYG{l+m+mi}{1} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{bits\PYGZus{}q}
+    \PYG{n}{S} \PYG{o}{=} \PYG{p}{(}\PYG{n}{a} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{n}{j}\PYG{o}{*}\PYG{n}{b}\PYG{p}{)} \PYG{o}{/} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{)} \PYG{o}{*} \PYG{n}{Es}   \PYG{c+c1}{\PYGZsh{} energía por símbolo = 1}
+    \PYG{k}{return} \PYG{n}{S}
+
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{\PYGZsh{} 2) Codificador Alamouti}
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{alamouti\PYGZus{}encode}\PYG{p}{(}\PYG{n}{S}\PYG{p}{:} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{)}\PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{:}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    Codifica la matriz S (2 x Ns) usando el esquema Alamouti por bloque.}
+\PYG{l+s+sd}{    Cada columna de S: [s1; s2] se transforma en un bloque 2x2:}
+\PYG{l+s+sd}{        [ s1   \PYGZhy{}conj(s2) ]}
+\PYG{l+s+sd}{        [ s2    conj(s1) ]}
+\PYG{l+s+sd}{    Concatenando sobre Ns obtenemos X de tamaño (2, 2*Ns).}
+
+\PYG{l+s+sd}{    Parámetros}
+\PYG{l+s+sd}{    \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{l+s+sd}{    S : ndarray (2, Ns)}
+
+\PYG{l+s+sd}{    Retorna}
+\PYG{l+s+sd}{    \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{l+s+sd}{    X : ndarray (2, 2*Ns)}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{k}{if} \PYG{n}{S}\PYG{o}{.}\PYG{n}{ndim} \PYG{o}{!=} \PYG{l+m+mi}{2} \PYG{o+ow}{or} \PYG{n}{S}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{o}{!=} \PYG{l+m+mi}{2}\PYG{p}{:}
+        \PYG{k}{raise} \PYG{n+ne}{ValueError}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}S must be shape (2, Ns)\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Ns} \PYG{o}{=} \PYG{n}{S}\PYG{o}{.}\PYG{n}{shape}
+
+    \PYG{n}{s1} \PYG{o}{=} \PYG{n}{S}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{p}{:]}     \PYG{c+c1}{\PYGZsh{} fila 1}
+    \PYG{n}{s2} \PYG{o}{=} \PYG{n}{S}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{p}{:]}     \PYG{c+c1}{\PYGZsh{} fila 2}
+
+    \PYG{c+c1}{\PYGZsh{} Matriz X de 2 x (2*Ns)}
+    \PYG{n}{X} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{((}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{Ns}\PYG{p}{),} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{complex}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} Columnas impares (en Python los índices comienzan en 0 → posiciones 0,2,4,...)}
+    \PYG{n}{X}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{::}\PYG{l+m+mi}{2}\PYG{p}{]} \PYG{o}{=} \PYG{n}{s1}
+    \PYG{n}{X}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{::}\PYG{l+m+mi}{2}\PYG{p}{]} \PYG{o}{=} \PYG{n}{s2}
+
+    \PYG{c+c1}{\PYGZsh{} Columnas pares (índices 1,3,5,...)}
+    \PYG{n}{X}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{::}\PYG{l+m+mi}{2}\PYG{p}{]} \PYG{o}{=} \PYG{o}{\PYGZhy{}}\PYG{n}{np}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{(}\PYG{n}{s2}\PYG{p}{)}
+    \PYG{n}{X}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{::}\PYG{l+m+mi}{2}\PYG{p}{]} \PYG{o}{=}  \PYG{n}{np}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{(}\PYG{n}{s1}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{X}
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{\PYGZsh{} 3) Generar H (2x2) Rayleigh CN(0,1)}
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{gen\PYGZus{}H}\PYG{p}{(}\PYG{n}{seed}\PYG{p}{:} \PYG{n+nb}{int}\PYG{p}{):}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    Genera matriz H (2 x 2) con entradas CN(0,1):}
+\PYG{l+s+sd}{      real \PYGZti{} N(0, 1/2), imag \PYGZti{} N(0, 1/2)}
+\PYG{l+s+sd}{    Parámetros}
+\PYG{l+s+sd}{    \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{l+s+sd}{    seed : int}
+\PYG{l+s+sd}{        Semilla para reproducibilidad.}
+
+\PYG{l+s+sd}{    Retorna}
+\PYG{l+s+sd}{    \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{l+s+sd}{    H : ndarray (2,2) complejo}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{rng} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{default\PYGZus{}rng}\PYG{p}{(}\PYG{n}{seed}\PYG{p}{)}
+    \PYG{n}{H} \PYG{o}{=} \PYG{p}{(}\PYG{n}{rng}\PYG{o}{.}\PYG{n}{normal}\PYG{p}{(}\PYG{n}{size}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{))} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{n}{j}\PYG{o}{*}\PYG{n}{rng}\PYG{o}{.}\PYG{n}{normal}\PYG{p}{(}\PYG{n}{size}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{)))} \PYG{o}{/} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{l+m+mf}{2.0}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{H}
+
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{\PYGZsh{} 4) Generar ruido N (2 x NT)}
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{gen\PYGZus{}noise}\PYG{p}{(}\PYG{n}{seed}\PYG{p}{:} \PYG{n+nb}{int}\PYG{p}{,} \PYG{n}{N0}\PYG{p}{:} \PYG{n+nb}{float}\PYG{p}{,} \PYG{n}{NT}\PYG{p}{:} \PYG{n+nb}{int}\PYG{p}{)} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{:}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    Genera ruido complejo blanco aditivo (2 x NT) con varianza compleja N0 por}
+\PYG{l+s+sd}{    muestra (es decir, var(real)=var(imag)=N0/2).}
+
+\PYG{l+s+sd}{    Parámetros}
+\PYG{l+s+sd}{    \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{l+s+sd}{    seed : int}
+\PYG{l+s+sd}{    N0 : float}
+\PYG{l+s+sd}{        Potencia de ruido por muestra compleja.}
+\PYG{l+s+sd}{    NT : int}
+\PYG{l+s+sd}{        Número de columnas (tiempos) del bloque STB (NT = 2*Ns).}
+
+\PYG{l+s+sd}{    Retorna}
+\PYG{l+s+sd}{    \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{l+s+sd}{    N : ndarray (2, NT) complejo}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{rng} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{default\PYGZus{}rng}\PYG{p}{(}\PYG{n}{seed}\PYG{p}{)}
+    \PYG{n}{sigma} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{N0}\PYG{o}{/}\PYG{l+m+mf}{2.0}\PYG{p}{)}
+    \PYG{n}{N} \PYG{o}{=} \PYG{n}{sigma} \PYG{o}{*} \PYG{p}{(}\PYG{n}{rng}\PYG{o}{.}\PYG{n}{normal}\PYG{p}{(}\PYG{n}{size}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{NT}\PYG{p}{))} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{n}{j} \PYG{o}{*} \PYG{n}{rng}\PYG{o}{.}\PYG{n}{normal}\PYG{p}{(}\PYG{n}{size}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{NT}\PYG{p}{)))}
+    \PYG{k}{return} \PYG{n}{N}
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{\PYGZsh{} 5) Transmisión del STB X por el canal H y adición de ruido}
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{transmit\PYGZus{}STB}\PYG{p}{(}\PYG{n}{H}\PYG{p}{:} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{,} \PYG{n}{X}\PYG{p}{:} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{,} \PYG{n}{N}\PYG{p}{:} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{)} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{:}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    Transmite X por el canal H y añade ruido N:}
+\PYG{l+s+sd}{        Y = H @ X + N}
+
+\PYG{l+s+sd}{    Parámetros}
+\PYG{l+s+sd}{    \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{l+s+sd}{    H : (2,2) ndarray complejo}
+\PYG{l+s+sd}{    X : (2, NT) ndarray complejo  (NT = 2*Ns)}
+\PYG{l+s+sd}{    N : (2, NT) ndarray complejo}
+
+\PYG{l+s+sd}{    Retorna}
+\PYG{l+s+sd}{    \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{l+s+sd}{    Y : (2, NT) ndarray complejo}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{k}{return} \PYG{n}{H} \PYG{o}{@} \PYG{n}{X} \PYG{o}{+} \PYG{n}{N}
+
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{\PYGZsh{} 6) Decodificador de Alamouti (multi\PYGZhy{}receive antennas)}
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{alamouti\PYGZus{}decode}\PYG{p}{(}\PYG{n}{Y}\PYG{p}{:} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{,} \PYG{n}{H}\PYG{p}{:} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{)} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n+nb}{tuple}\PYG{p}{[}\PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{,} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{]:}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    Decodifica bloques Alamouti contenidos en Y, asumiendo H constante en todo X.}
+\PYG{l+s+sd}{    \PYGZhy{} Y : (Nr, NT) recibido donde Nr = 2, NT = 2*Ns}
+\PYG{l+s+sd}{    \PYGZhy{} H : (Nr, 2) canal complejo (2x2)}
+\PYG{l+s+sd}{    Devuelve:}
+\PYG{l+s+sd}{    \PYGZhy{} S\PYGZus{}hat : (2, Ns) estimaciones de símbolos (complejos)}
+\PYG{l+s+sd}{    \PYGZhy{} g\PYGZus{}per\PYGZus{}block : (Ns,) ganancia g para cada bloque (g = sum\PYGZus{}m |h\PYGZus{}m1|\PYGZca{}2 + |h\PYGZus{}m2|\PYGZca{}2)}
+
+\PYG{l+s+sd}{    Notas: se sigue la combinación clásica:}
+\PYG{l+s+sd}{      s1\PYGZus{}hat = sum\PYGZus{}m ( conj(h\PYGZus{}m1) * y\PYGZus{}m(2n) + h\PYGZus{}m2 * conj(y\PYGZus{}m(2n+1)) )}
+\PYG{l+s+sd}{      s2\PYGZus{}hat = sum\PYGZus{}m ( conj(h\PYGZus{}m2) * y\PYGZus{}m(2n) \PYGZhy{} h\PYGZus{}m1 * conj(y\PYGZus{}m(2n+1)) )}
+\PYG{l+s+sd}{    y se normaliza entre cada bloque por g para obtener estimates s1\PYGZus{}est = s1\PYGZus{}hat / g.}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{Nr}\PYG{p}{,} \PYG{n}{NT} \PYG{o}{=} \PYG{n}{Y}\PYG{o}{.}\PYG{n}{shape}
+    \PYG{k}{if} \PYG{n}{NT} \PYG{o}{\PYGZpc{}} \PYG{l+m+mi}{2} \PYG{o}{!=} \PYG{l+m+mi}{0}\PYG{p}{:}
+        \PYG{k}{raise} \PYG{n+ne}{ValueError}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}NT debe ser par (2*Ns).\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{Ns} \PYG{o}{=} \PYG{n}{NT} \PYG{o}{//} \PYG{l+m+mi}{2}
+
+    \PYG{c+c1}{\PYGZsh{} Extraer columnas pares/ímpares}
+    \PYG{c+c1}{\PYGZsh{} y[:, 2n] \PYGZhy{}\PYGZgt{} first timeslot, y[:, 2n+1] \PYGZhy{}\PYGZgt{} second timeslot}
+    \PYG{n}{S\PYGZus{}hat} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{((}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{),} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{complex}\PYG{p}{)}
+    \PYG{n}{g\PYGZus{}per\PYGZus{}block} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{(}\PYG{n}{Ns}\PYG{p}{,} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{float}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} Extraer h\PYGZus{}\PYGZob{}m1\PYGZcb{}, h\PYGZus{}\PYGZob{}m2\PYGZcb{}}
+    \PYG{c+c1}{\PYGZsh{} H shape (Nr, 2)}
+    \PYG{n}{h1} \PYG{o}{=} \PYG{n}{H}\PYG{p}{[:,} \PYG{l+m+mi}{0}\PYG{p}{]}   \PYG{c+c1}{\PYGZsh{} vector (Nr,)}
+    \PYG{n}{h2} \PYG{o}{=} \PYG{n}{H}\PYG{p}{[:,} \PYG{l+m+mi}{1}\PYG{p}{]}   \PYG{c+c1}{\PYGZsh{} vector (Nr,)}
+
+    \PYG{c+c1}{\PYGZsh{} Precalcular |h|\PYGZca{}2 sum por bloque (consta por bloque)}
+    \PYG{c+c1}{\PYGZsh{} g = sum\PYGZus{}m (|h\PYGZus{}m1|\PYGZca{}2 + |h\PYGZus{}m2|\PYGZca{}2)}
+    \PYG{n}{g\PYGZus{}const} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{h1}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2} \PYG{o}{+} \PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{h2}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{)}
+
+    \PYG{k}{for} \PYG{n}{n} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{Ns}\PYG{p}{):}
+        \PYG{n}{y1} \PYG{o}{=} \PYG{n}{Y}\PYG{p}{[:,} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{n}\PYG{p}{]}       \PYG{c+c1}{\PYGZsh{} (Nr,)}
+        \PYG{n}{y2} \PYG{o}{=} \PYG{n}{Y}\PYG{p}{[:,} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{n} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{]}   \PYG{c+c1}{\PYGZsh{} (Nr,)}
+
+        \PYG{c+c1}{\PYGZsh{} combinaciones por bloque (ve colas de ruido)}
+        \PYG{n}{s1\PYGZus{}hat} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{vdot}\PYG{p}{(}\PYG{n}{h1}\PYG{p}{,} \PYG{n}{y1}\PYG{p}{)} \PYG{o}{+} \PYG{n}{np}\PYG{o}{.}\PYG{n}{vdot}\PYG{p}{(}\PYG{n}{h2}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{(),} \PYG{n}{y2}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{()} \PYG{p}{)}
+
+        \PYG{n}{s1\PYGZus{}hat} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{(}\PYG{n}{h1}\PYG{p}{)} \PYG{o}{*} \PYG{n}{y1}\PYG{p}{)} \PYG{o}{+} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{h2} \PYG{o}{*} \PYG{n}{np}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{(}\PYG{n}{y2}\PYG{p}{))}
+
+        \PYG{n}{s2\PYGZus{}hat} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{(}\PYG{n}{h2}\PYG{p}{)} \PYG{o}{*} \PYG{n}{y1}\PYG{p}{)} \PYG{o}{\PYGZhy{}} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{h1} \PYG{o}{*} \PYG{n}{np}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{(}\PYG{n}{y2}\PYG{p}{))}
+
+        \PYG{c+c1}{\PYGZsh{} Ganancia g (es la misma para todos los bloques si H fijo)}
+        \PYG{n}{g} \PYG{o}{=} \PYG{n}{g\PYGZus{}const}
+
+        \PYG{c+c1}{\PYGZsh{} Guardar}
+        \PYG{n}{S\PYGZus{}hat}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{n}\PYG{p}{]} \PYG{o}{=} \PYG{n}{s1\PYGZus{}hat} \PYG{o}{/} \PYG{p}{(}\PYG{n}{g} \PYG{o}{+} \PYG{l+m+mf}{1e\PYGZhy{}18}\PYG{p}{)}
+        \PYG{n}{S\PYGZus{}hat}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{n}\PYG{p}{]} \PYG{o}{=} \PYG{n}{s2\PYGZus{}hat} \PYG{o}{/} \PYG{p}{(}\PYG{n}{g} \PYG{o}{+} \PYG{l+m+mf}{1e\PYGZhy{}18}\PYG{p}{)}
+        \PYG{n}{g\PYGZus{}per\PYGZus{}block}\PYG{p}{[}\PYG{n}{n}\PYG{p}{]} \PYG{o}{=} \PYG{n}{g}
+
+    \PYG{k}{return} \PYG{n}{S\PYGZus{}hat}\PYG{p}{,} \PYG{n}{g\PYGZus{}per\PYGZus{}block}
+
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{\PYGZsh{} 7) Calcular la SNR de cada símbolo en la salida del decodificador}
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{snr\PYGZus{}per\PYGZus{}symbol\PYGZus{}from\PYGZus{}g}\PYG{p}{(}\PYG{n}{g\PYGZus{}per\PYGZus{}block}\PYG{p}{:} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{,} \PYG{n}{Es}\PYG{p}{:} \PYG{n+nb}{float}\PYG{p}{,} \PYG{n}{N0}\PYG{p}{:} \PYG{n+nb}{float}\PYG{p}{)} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{:}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    Calcula la SNR por símbolo (lineal) a partir de g por bloque:}
+\PYG{l+s+sd}{        gamma\PYGZus{}sym = (E\PYGZus{}sym / N0) * g}
+\PYG{l+s+sd}{    donde E\PYGZus{}sym = Es/2 (energía por símbolo por antena) en la convención usada.}
+
+\PYG{l+s+sd}{    Parámetros}
+\PYG{l+s+sd}{    \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{l+s+sd}{    g\PYGZus{}per\PYGZus{}block : (Ns,) ndarray}
+\PYG{l+s+sd}{        g para cada bloque.}
+\PYG{l+s+sd}{    Es : float}
+\PYG{l+s+sd}{        Energía total por instante (suma sobre transmit antennas).}
+\PYG{l+s+sd}{    N0 : float}
+\PYG{l+s+sd}{        Potencia de ruido por muestra compleja.}
+
+\PYG{l+s+sd}{    Retorna}
+\PYG{l+s+sd}{    \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{l+s+sd}{    gamma\PYGZus{}sym : (Ns,) ndarray}
+\PYG{l+s+sd}{        SNR por símbolo (lineal). Cada bloque tiene dos símbolos con mismo gamma.}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{E\PYGZus{}sym} \PYG{o}{=} \PYG{n}{Es} \PYG{o}{/} \PYG{l+m+mf}{2.0}
+    \PYG{n}{gamma\PYGZus{}sym} \PYG{o}{=} \PYG{p}{(}\PYG{n}{E\PYGZus{}sym} \PYG{o}{/} \PYG{n}{N0}\PYG{p}{)} \PYG{o}{*} \PYG{n}{g\PYGZus{}per\PYGZus{}block}
+    \PYG{c+c1}{\PYGZsh{} Cada bloque corresponde a DOS símbolos (s1 y s2) con la misma SNR:}
+    \PYG{c+c1}{\PYGZsh{} Para conveniencia devolvemos vector con longitud Ns (una SNR por par),}
+    \PYG{c+c1}{\PYGZsh{} quien necesite SNR por símbolo puede replicar cada valor dos veces.}
+    \PYG{k}{return} \PYG{n}{gamma\PYGZus{}sym}
+
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{\PYGZsh{} 8) Promedio de la SNR por símbolos de la realización (sobre Ns pares)}
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{mean\PYGZus{}snr\PYGZus{}per\PYGZus{}realization}\PYG{p}{(}\PYG{n}{gamma\PYGZus{}sym}\PYG{p}{:} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{)} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n+nb}{float}\PYG{p}{:}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    Calcula la SNR promedio sobre todos los símbolos (a partir de gamma por bloque).}
+\PYG{l+s+sd}{    Para convertir a promedio por símbolo: replicar cada gamma\PYGZus{}sym dos veces si hace falta,}
+\PYG{l+s+sd}{    pero la media de bloques es la misma que la media por símbolo.}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{k}{return} \PYG{n+nb}{float}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{gamma\PYGZus{}sym}\PYG{p}{))}
+
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{\PYGZsh{} 9 y 10) Loop Monte Carlo sobre NH canales: repetir pasos 1..8 y acumular estadísticas}
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{montecarlo\PYGZus{}runs}\PYG{p}{(}\PYG{n}{NH}\PYG{p}{:} \PYG{n+nb}{int}\PYG{p}{,}
+                    \PYG{n}{Ns}\PYG{p}{:} \PYG{n+nb}{int}\PYG{p}{,}
+                    \PYG{n}{Es}\PYG{p}{:} \PYG{n+nb}{float}\PYG{p}{,}
+                    \PYG{n}{N0}\PYG{p}{:} \PYG{n+nb}{float}\PYG{p}{,}
+                    \PYG{n}{seed\PYGZus{}base\PYGZus{}symbols}\PYG{p}{:} \PYG{n+nb}{int} \PYG{o}{=} \PYG{l+m+mi}{1000}\PYG{p}{,}
+                    \PYG{n}{seed\PYGZus{}base\PYGZus{}channel}\PYG{p}{:} \PYG{n+nb}{int} \PYG{o}{=} \PYG{l+m+mi}{2000}\PYG{p}{,}
+                    \PYG{n}{seed\PYGZus{}base\PYGZus{}noise}\PYG{p}{:} \PYG{n+nb}{int} \PYG{o}{=} \PYG{l+m+mi}{3000}\PYG{p}{)} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n+nb}{dict}\PYG{p}{:}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    Ejecuta NH realizaciones independientes del canal. Para cada i:}
+\PYG{l+s+sd}{      \PYGZhy{} genera S con semilla seed\PYGZus{}base\PYGZus{}symbols + i}
+\PYG{l+s+sd}{      \PYGZhy{} codifica Alamouti \PYGZhy{}\PYGZgt{} X}
+\PYG{l+s+sd}{      \PYGZhy{} genera H con semilla seed\PYGZus{}base\PYGZus{}channel + i}
+\PYG{l+s+sd}{      \PYGZhy{} genera ruido N con semilla seed\PYGZus{}base\PYGZus{}noise + i}
+\PYG{l+s+sd}{      \PYGZhy{} transmite Y = H X + N}
+\PYG{l+s+sd}{      \PYGZhy{} decodifica S\PYGZus{}hat, obtiene g\PYGZus{}per\PYGZus{}block}
+\PYG{l+s+sd}{      \PYGZhy{} calcula gamma\PYGZus{}sym por bloque y su media sobre Ns}
+\PYG{l+s+sd}{    Devuelve estadísticas:}
+\PYG{l+s+sd}{      \PYGZhy{} mean\PYGZus{}snr\PYGZus{}list : list de NH valores (SNR media por realización, lineal)}
+\PYG{l+s+sd}{      \PYGZhy{} overall\PYGZus{}mean\PYGZus{}snr : promedio sobre las NH realizaciones}
+\PYG{l+s+sd}{      \PYGZhy{} array\PYGZus{}gain\PYGZus{}est : overall\PYGZus{}mean\PYGZus{}snr / gamma\PYGZus{}bar  (donde gamma\PYGZus{}bar = Es/N0)}
+\PYG{l+s+sd}{      \PYGZhy{} adicional: histogram data y vectores}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+
+    \PYG{n}{mean\PYGZus{}snr\PYGZus{}list} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{(}\PYG{n}{NH}\PYG{p}{,} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{float}\PYG{p}{)}
+
+    \PYG{n}{NT} \PYG{o}{=} \PYG{l+m+mi}{2} \PYG{o}{*} \PYG{n}{Ns}
+    \PYG{c+c1}{\PYGZsh{} barra\PYGZus{}gamma de referencia (según convención usada antes)}
+    \PYG{n}{gamma\PYGZus{}bar} \PYG{o}{=} \PYG{n}{Es} \PYG{o}{/} \PYG{n}{N0}
+
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{NH}\PYG{p}{):}
+        \PYG{c+c1}{\PYGZsh{} semillas separadas}
+        \PYG{n}{s\PYGZus{}seed} \PYG{o}{=} \PYG{n}{seed\PYGZus{}base\PYGZus{}symbols} \PYG{o}{+} \PYG{n}{i}
+        \PYG{n}{h\PYGZus{}seed} \PYG{o}{=} \PYG{n}{seed\PYGZus{}base\PYGZus{}channel} \PYG{o}{+} \PYG{n}{i}
+        \PYG{n}{n\PYGZus{}seed} \PYG{o}{=} \PYG{n}{seed\PYGZus{}base\PYGZus{}noise} \PYG{o}{+} \PYG{n}{i}
+
+        \PYG{c+c1}{\PYGZsh{} 1) símbolos S}
+        \PYG{n}{S} \PYG{o}{=} \PYG{n}{gen\PYGZus{}S\PYGZus{}qpsk}\PYG{p}{(}\PYG{n}{seed}\PYG{o}{=}\PYG{n}{s\PYGZus{}seed}\PYG{p}{,} \PYG{n}{Ns}\PYG{o}{=}\PYG{n}{Ns}\PYG{p}{,} \PYG{n}{Es}\PYG{o}{=}\PYG{n}{Es}\PYG{p}{)}        \PYG{c+c1}{\PYGZsh{} (2, Ns)}
+
+        \PYG{c+c1}{\PYGZsh{} 2) codificar Alamouti}
+        \PYG{n}{X} \PYG{o}{=} \PYG{n}{alamouti\PYGZus{}encode}\PYG{p}{(}\PYG{n}{S}\PYG{p}{)}                           \PYG{c+c1}{\PYGZsh{} (2, 2*Ns)}
+
+        \PYG{c+c1}{\PYGZsh{} 3) generar canal}
+        \PYG{n}{H} \PYG{o}{=} \PYG{n}{gen\PYGZus{}H}\PYG{p}{(}\PYG{n}{seed}\PYG{o}{=}\PYG{n}{h\PYGZus{}seed}\PYG{p}{)}                           \PYG{c+c1}{\PYGZsh{} (2,2)}
+
+        \PYG{c+c1}{\PYGZsh{} 4) ruido}
+        \PYG{n}{N} \PYG{o}{=} \PYG{n}{gen\PYGZus{}noise}\PYG{p}{(}\PYG{n}{seed}\PYG{o}{=}\PYG{n}{n\PYGZus{}seed}\PYG{p}{,} \PYG{n}{N0}\PYG{o}{=}\PYG{n}{N0}\PYG{p}{,} \PYG{n}{NT}\PYG{o}{=}\PYG{n}{NT}\PYG{p}{)}         \PYG{c+c1}{\PYGZsh{} (2, NT)}
+
+        \PYG{c+c1}{\PYGZsh{} 5) transmitir}
+        \PYG{n}{Y} \PYG{o}{=} \PYG{n}{transmit\PYGZus{}STB}\PYG{p}{(}\PYG{n}{H}\PYG{p}{,} \PYG{n}{X}\PYG{p}{,} \PYG{n}{N}\PYG{p}{)}                        \PYG{c+c1}{\PYGZsh{} (2, NT)}
+
+        \PYG{c+c1}{\PYGZsh{} 6) decodificar}
+        \PYG{n}{S\PYGZus{}hat}\PYG{p}{,} \PYG{n}{g\PYGZus{}per\PYGZus{}block} \PYG{o}{=} \PYG{n}{alamouti\PYGZus{}decode}\PYG{p}{(}\PYG{n}{Y}\PYG{p}{,} \PYG{n}{H}\PYG{p}{)}
+
+        \PYG{c+c1}{\PYGZsh{} 7) calcular SNR por bloque (par de símbolos)}
+        \PYG{n}{gamma\PYGZus{}sym} \PYG{o}{=} \PYG{n}{snr\PYGZus{}per\PYGZus{}symbol\PYGZus{}from\PYGZus{}g}\PYG{p}{(}\PYG{n}{g\PYGZus{}per\PYGZus{}block}\PYG{p}{,} \PYG{n}{Es}\PYG{p}{,} \PYG{n}{N0}\PYG{p}{)}  \PYG{c+c1}{\PYGZsh{} length Ns}
+
+        \PYG{c+c1}{\PYGZsh{} 8) promedio por realización}
+        \PYG{n}{mean\PYGZus{}gamma} \PYG{o}{=} \PYG{n}{mean\PYGZus{}snr\PYGZus{}per\PYGZus{}realization}\PYG{p}{(}\PYG{n}{gamma\PYGZus{}sym}\PYG{p}{)}
+        \PYG{n}{mean\PYGZus{}snr\PYGZus{}list}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{=} \PYG{n}{mean\PYGZus{}gamma}
+
+        \PYG{c+c1}{\PYGZsh{} opcional: progreso}
+        \PYG{k}{if} \PYG{p}{(}\PYG{n}{i}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{p}{)} \PYG{o}{\PYGZpc{}} \PYG{l+m+mi}{1000} \PYG{o}{==} \PYG{l+m+mi}{0}\PYG{p}{:}
+            \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}MonteCarlo: }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{i}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{/}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{NH}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ realizados ...\PYGZdq{}}\PYG{p}{)}
+
+    \PYG{n}{overall\PYGZus{}mean\PYGZus{}snr} \PYG{o}{=} \PYG{n+nb}{float}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{mean\PYGZus{}snr\PYGZus{}list}\PYG{p}{))}
+    \PYG{n}{array\PYGZus{}gain\PYGZus{}est} \PYG{o}{=} \PYG{n}{overall\PYGZus{}mean\PYGZus{}snr} \PYG{o}{/} \PYG{n}{gamma\PYGZus{}bar}
+
+    \PYG{n}{results} \PYG{o}{=} \PYG{p}{\PYGZob{}}
+        \PYG{l+s+s2}{\PYGZdq{}mean\PYGZus{}snr\PYGZus{}list\PYGZdq{}}\PYG{p}{:} \PYG{n}{mean\PYGZus{}snr\PYGZus{}list}\PYG{p}{,}
+        \PYG{l+s+s2}{\PYGZdq{}overall\PYGZus{}mean\PYGZus{}snr\PYGZdq{}}\PYG{p}{:} \PYG{n}{overall\PYGZus{}mean\PYGZus{}snr}\PYG{p}{,}
+        \PYG{l+s+s2}{\PYGZdq{}array\PYGZus{}gain\PYGZus{}est\PYGZdq{}}\PYG{p}{:} \PYG{n}{array\PYGZus{}gain\PYGZus{}est}\PYG{p}{,}
+        \PYG{l+s+s2}{\PYGZdq{}gamma\PYGZus{}bar\PYGZdq{}}\PYG{p}{:} \PYG{n}{gamma\PYGZus{}bar}
+    \PYG{p}{\PYGZcb{}}
+    \PYG{k}{return} \PYG{n}{results}
+
+\PYG{c+c1}{\PYGZsh{} ==========================}
+\PYG{c+c1}{\PYGZsh{} Función auxiliar: scatter plot}
+\PYG{c+c1}{\PYGZsh{} ==========================}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{plot\PYGZus{}constellation}\PYG{p}{(}\PYG{n}{S}\PYG{p}{,} \PYG{n}{title}\PYG{p}{,} \PYG{n}{filename}\PYG{p}{):}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    Dibuja la constelación QPSK de una fila de S (Ns símbolos).}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mf}{4.5}\PYG{p}{,} \PYG{l+m+mf}{4.5}\PYG{p}{))}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{real}\PYG{p}{(}\PYG{n}{S}\PYG{p}{),} \PYG{n}{np}\PYG{o}{.}\PYG{n}{imag}\PYG{p}{(}\PYG{n}{S}\PYG{p}{),} \PYG{l+s+s1}{\PYGZsq{}o\PYGZsq{}}\PYG{p}{,} \PYG{n}{markersize}\PYG{o}{=}\PYG{l+m+mi}{4}\PYG{p}{,} \PYG{n}{alpha}\PYG{o}{=}\PYG{l+m+mf}{0.7}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{axhline}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{color}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}gray\PYGZsq{}}\PYG{p}{,} \PYG{n}{linestyle}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,} \PYG{n}{linewidth}\PYG{o}{=}\PYG{l+m+mf}{0.8}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{axvline}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{color}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}gray\PYGZsq{}}\PYG{p}{,} \PYG{n}{linestyle}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,} \PYG{n}{linewidth}\PYG{o}{=}\PYG{l+m+mf}{0.8}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{k+kc}{True}\PYG{p}{,} \PYG{n}{linestyle}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,} \PYG{n}{alpha}\PYG{o}{=}\PYG{l+m+mf}{0.5}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{n}{title}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Re\PYGZbs{}\PYGZob{}s\PYGZbs{}\PYGZcb{}\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Im\PYGZbs{}\PYGZob{}s\PYGZbs{}\PYGZcb{}\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{gca}\PYG{p}{()}\PYG{o}{.}\PYG{n}{set\PYGZus{}aspect}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}equal\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}box\PYGZsq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{tight\PYGZus{}layout}\PYG{p}{()}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}figs/}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{filename}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{dpi}\PYG{o}{=}\PYG{l+m+mi}{300}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{close}\PYG{p}{()}
+
+\PYG{c+c1}{\PYGZsh{} ==========================}
+\PYG{c+c1}{\PYGZsh{} (2) Graficar estructura Alamouti codificada}
+\PYG{c+c1}{\PYGZsh{} ==========================}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{plot\PYGZus{}alamouti\PYGZus{}structure}\PYG{p}{(}\PYG{n}{S}\PYG{p}{):}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    Codifica S con Alamouti y muestra un bloque ilustrativo de los 4 primeros símbolos.}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{X} \PYG{o}{=} \PYG{n}{alamouti\PYGZus{}encode}\PYG{p}{(}\PYG{n}{S}\PYG{p}{)}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}X generada: shape=}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{X}\PYG{o}{.}\PYG{n}{shape}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ (bloques Alamouti)\PYGZdq{}}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} Seleccionar primer bloque (dos tiempos)}
+    \PYG{n}{s1} \PYG{o}{=} \PYG{n}{S}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{]}
+    \PYG{n}{s2} \PYG{o}{=} \PYG{n}{S}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{]}
+    \PYG{n}{block} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{([[}\PYG{n}{s1}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{n}{np}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{(}\PYG{n}{s2}\PYG{p}{)],}
+                      \PYG{p}{[}\PYG{n}{s2}\PYG{p}{,}  \PYG{n}{np}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{(}\PYG{n}{s1}\PYG{p}{)]])}
+
+    \PYG{n}{fig}\PYG{p}{,} \PYG{n}{ax} \PYG{o}{=} \PYG{n}{plt}\PYG{o}{.}\PYG{n}{subplots}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{5}\PYG{p}{,} \PYG{l+m+mi}{3}\PYG{p}{))}
+    \PYG{n}{im} \PYG{o}{=} \PYG{n}{ax}\PYG{o}{.}\PYG{n}{imshow}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{angle}\PYG{p}{(}\PYG{n}{block}\PYG{p}{),} \PYG{n}{cmap}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}twilight\PYGZdq{}}\PYG{p}{,} \PYG{n}{vmin}\PYG{o}{=\PYGZhy{}}\PYG{n}{np}\PYG{o}{.}\PYG{n}{pi}\PYG{p}{,} \PYG{n}{vmax}\PYG{o}{=}\PYG{n}{np}\PYG{o}{.}\PYG{n}{pi}\PYG{p}{)}
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{):}
+        \PYG{k}{for} \PYG{n}{j} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{):}
+            \PYG{n}{text} \PYG{o}{=} \PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{block}\PYG{p}{[}\PYG{n}{i}\PYG{p}{,}\PYG{n}{j}\PYG{p}{]}\PYG{o}{.}\PYG{n}{real}\PYG{l+s+si}{:}\PYG{l+s+s2}{+.2f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{+}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{block}\PYG{p}{[}\PYG{n}{i}\PYG{p}{,}\PYG{n}{j}\PYG{p}{]}\PYG{o}{.}\PYG{n}{imag}\PYG{l+s+si}{:}\PYG{l+s+s2}{+.2f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{j\PYGZdq{}}
+            \PYG{n}{ax}\PYG{o}{.}\PYG{n}{text}\PYG{p}{(}\PYG{n}{j}\PYG{p}{,} \PYG{n}{i}\PYG{p}{,} \PYG{n}{text}\PYG{p}{,} \PYG{n}{ha}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}center\PYGZsq{}}\PYG{p}{,} \PYG{n}{va}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}center\PYGZsq{}}\PYG{p}{,} \PYG{n}{color}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}w\PYGZsq{}}\PYG{p}{,} \PYG{n}{fontsize}\PYG{o}{=}\PYG{l+m+mi}{8}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{xticks}\PYG{p}{([}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{],} \PYG{p}{[}\PYG{l+s+sa}{r}\PYG{l+s+s2}{\PYGZdq{}t\PYGZdl{}\PYGZus{}1\PYGZdl{}\PYGZdq{}}\PYG{p}{,} \PYG{l+s+sa}{r}\PYG{l+s+s2}{\PYGZdq{}t\PYGZdl{}\PYGZus{}2\PYGZdl{}\PYGZdq{}}\PYG{p}{])}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{yticks}\PYG{p}{([}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{],} \PYG{p}{[}\PYG{l+s+sa}{r}\PYG{l+s+s2}{\PYGZdq{}Antena 1\PYGZdq{}}\PYG{p}{,} \PYG{l+s+sa}{r}\PYG{l+s+s2}{\PYGZdq{}Antena 2\PYGZdq{}}\PYG{p}{])}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Estructura del bloque Alamouti\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{colorbar}\PYG{p}{(}\PYG{n}{im}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}Fase [rad]\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{tight\PYGZus{}layout}\PYG{p}{()}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}figs/problema29\PYGZus{}alamouti\PYGZus{}block.png\PYGZdq{}}\PYG{p}{,} \PYG{n}{dpi}\PYG{o}{=}\PYG{l+m+mi}{300}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{close}\PYG{p}{()}
+
+    \PYG{k}{return} \PYG{n}{X}
+
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{\PYGZsh{} Ejemplo de uso / calibración}
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{example\PYGZus{}usage}\PYG{p}{():}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    Ejemplo de cómo invocar el MonteCarlo.}
+\PYG{l+s+sd}{    ADVERTENCIA: NH=10000 puede tardar; prueba con NH=200 primero.}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{NH} \PYG{o}{=} \PYG{l+m+mi}{10000}
+    \PYG{n}{Ns} \PYG{o}{=} \PYG{l+m+mi}{1000}
+    \PYG{c+c1}{\PYGZsh{} calibración: gamma=7 dB, N0=1 \PYGZhy{}\PYGZgt{} Es = gamma\PYGZus{}lin * N0}
+    \PYG{n}{gamma\PYGZus{}db} \PYG{o}{=} \PYG{l+m+mf}{7.0}
+    \PYG{n}{gamma\PYGZus{}lin} \PYG{o}{=} \PYG{l+m+mi}{10}\PYG{o}{**}\PYG{p}{(}\PYG{n}{gamma\PYGZus{}db}\PYG{o}{/}\PYG{l+m+mf}{10.0}\PYG{p}{)}
+    \PYG{n}{N0} \PYG{o}{=} \PYG{l+m+mf}{1.0}
+    \PYG{n}{Es} \PYG{o}{=} \PYG{n}{gamma\PYGZus{}lin} \PYG{o}{*} \PYG{n}{N0}
+
+    \PYG{n}{seed\PYGZus{}symbols} \PYG{o}{=} \PYG{l+m+mi}{123}
+    \PYG{n}{seed\PYGZus{}channel} \PYG{o}{=} \PYG{l+m+mi}{456}
+    \PYG{n}{seed\PYGZus{}noise} \PYG{o}{=} \PYG{l+m+mi}{789}
+    
+    \PYG{n}{os}\PYG{o}{.}\PYG{n}{makedirs}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}figs\PYGZdq{}}\PYG{p}{,} \PYG{n}{exist\PYGZus{}ok}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{)}
+
+
+    \PYG{c+c1}{\PYGZsh{} 1) generar S}
+    \PYG{n}{S} \PYG{o}{=} \PYG{n}{gen\PYGZus{}S\PYGZus{}qpsk}\PYG{p}{(}\PYG{n}{seed}\PYG{o}{=}\PYG{n}{seed\PYGZus{}symbols}\PYG{p}{,} \PYG{n}{Ns}\PYG{o}{=}\PYG{n}{Ns}\PYG{p}{,} \PYG{n}{Es}\PYG{o}{=}\PYG{n}{Es}\PYG{p}{)}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}S shape:\PYGZdq{}}\PYG{p}{,} \PYG{n}{S}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}E[|s|\PYGZca{}2] per symbol (each antenna):\PYGZdq{}}\PYG{p}{,} \PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{S}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{))}
+    \PYG{n}{plot\PYGZus{}constellation}\PYG{p}{(}\PYG{n}{S}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{p}{:],} \PYG{l+s+s2}{\PYGZdq{}Constelación QPSK \PYGZhy{} Antena 1\PYGZdq{}}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}problema29\PYGZus{}constellation\PYGZus{}antenna1.png\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{plot\PYGZus{}constellation}\PYG{p}{(}\PYG{n}{S}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{p}{:],} \PYG{l+s+s2}{\PYGZdq{}Constelación QPSK \PYGZhy{} Antena 2\PYGZdq{}}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}problema29\PYGZus{}constellation\PYGZus{}antenna2.png\PYGZdq{}}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} 2) codificar Alamouti}
+    \PYG{n}{X} \PYG{o}{=} \PYG{n}{alamouti\PYGZus{}encode}\PYG{p}{(}\PYG{n}{S}\PYG{p}{)}
+    \PYG{n}{plot\PYGZus{}alamouti\PYGZus{}structure}\PYG{p}{(}\PYG{n}{S}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} 3) generar H (2x2)}
+    \PYG{n}{H} \PYG{o}{=} \PYG{n}{gen\PYGZus{}H}\PYG{p}{(}\PYG{n}{seed}\PYG{o}{=}\PYG{n}{seed\PYGZus{}channel}\PYG{p}{)}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}H:}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{H}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} 4) generar ruido N (2 x NT)}
+    \PYG{n}{NT} \PYG{o}{=} \PYG{n}{X}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}
+    \PYG{n}{N} \PYG{o}{=} \PYG{n}{gen\PYGZus{}noise}\PYG{p}{(}\PYG{n}{seed}\PYG{o}{=}\PYG{n}{seed\PYGZus{}noise}\PYG{p}{,} \PYG{n}{N0}\PYG{o}{=}\PYG{n}{N0}\PYG{p}{,} \PYG{n}{NT}\PYG{o}{=}\PYG{n}{NT}\PYG{p}{)}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}N shape:\PYGZdq{}}\PYG{p}{,} \PYG{n}{N}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} 5) transmitir}
+    \PYG{n}{Y} \PYG{o}{=} \PYG{n}{transmit\PYGZus{}STB}\PYG{p}{(}\PYG{n}{H}\PYG{p}{,} \PYG{n}{X}\PYG{p}{,} \PYG{n}{N}\PYG{p}{)}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Y shape:\PYGZdq{}}\PYG{p}{,} \PYG{n}{Y}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} 6) decodificar}
+    \PYG{n}{S} \PYG{o}{=} \PYG{n}{alamouti\PYGZus{}decode}\PYG{p}{(}\PYG{n}{Y}\PYG{p}{,} \PYG{n}{H}\PYG{p}{)}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}S\PYGZus{}hat shape:\PYGZdq{}}\PYG{p}{,} \PYG{n}{S}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} 7 y 8) calcular SNR por bloque}
+    \PYG{n}{g\PYGZus{}per\PYGZus{}block} \PYG{o}{=} \PYG{n}{S}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}
+    \PYG{n}{gamma\PYGZus{}sym} \PYG{o}{=} \PYG{n}{snr\PYGZus{}per\PYGZus{}symbol\PYGZus{}from\PYGZus{}g}\PYG{p}{(}\PYG{n}{g\PYGZus{}per\PYGZus{}block}\PYG{p}{,} \PYG{n}{Es}\PYG{p}{,} \PYG{n}{N0}\PYG{p}{)}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}gamma\PYGZus{}sym shape:\PYGZdq{}}\PYG{p}{,} \PYG{n}{gamma\PYGZus{}sym}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{)}
+    \PYG{n}{mean\PYGZus{}gamma} \PYG{o}{=} \PYG{n}{mean\PYGZus{}snr\PYGZus{}per\PYGZus{}realization}\PYG{p}{(}\PYG{n}{gamma\PYGZus{}sym}\PYG{p}{)}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Mean SNR per realization (lineal):\PYGZdq{}}\PYG{p}{,} \PYG{n}{mean\PYGZus{}gamma}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} 9 y 10) MonteCarlo}
+    \PYG{n}{res} \PYG{o}{=} \PYG{n}{montecarlo\PYGZus{}runs}\PYG{p}{(}\PYG{n}{NH}\PYG{o}{=}\PYG{n}{NH}\PYG{p}{,}
+                          \PYG{n}{Ns}\PYG{o}{=}\PYG{n}{Ns}\PYG{p}{,}
+                          \PYG{n}{Es}\PYG{o}{=}\PYG{n}{Es}\PYG{p}{,}
+                          \PYG{n}{N0}\PYG{o}{=}\PYG{n}{N0}\PYG{p}{,}
+                          \PYG{n}{seed\PYGZus{}base\PYGZus{}symbols}\PYG{o}{=}\PYG{l+m+mi}{1000}\PYG{p}{,}
+                          \PYG{n}{seed\PYGZus{}base\PYGZus{}channel}\PYG{o}{=}\PYG{l+m+mi}{2000}\PYG{p}{,}
+                          \PYG{n}{seed\PYGZus{}base\PYGZus{}noise}\PYG{o}{=}\PYG{l+m+mi}{3000}\PYG{p}{)}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Overall mean SNR (lineal):\PYGZdq{}}\PYG{p}{,} \PYG{n}{res}\PYG{p}{[}\PYG{l+s+s2}{\PYGZdq{}overall\PYGZus{}mean\PYGZus{}snr\PYGZdq{}}\PYG{p}{])}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Gamma\PYGZus{}bar (ref):\PYGZdq{}}\PYG{p}{,} \PYG{n}{res}\PYG{p}{[}\PYG{l+s+s2}{\PYGZdq{}gamma\PYGZus{}bar\PYGZdq{}}\PYG{p}{])}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Estimated array gain (linear):\PYGZdq{}}\PYG{p}{,} \PYG{n}{res}\PYG{p}{[}\PYG{l+s+s2}{\PYGZdq{}array\PYGZus{}gain\PYGZus{}est\PYGZdq{}}\PYG{p}{])}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Estimated array gain (dB):\PYGZdq{}}\PYG{p}{,} \PYG{l+m+mi}{10}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{log10}\PYG{p}{(}\PYG{n}{res}\PYG{p}{[}\PYG{l+s+s2}{\PYGZdq{}array\PYGZus{}gain\PYGZus{}est\PYGZdq{}}\PYG{p}{]))}
+
+\PYG{k}{if} \PYG{n+nv+vm}{\PYGZus{}\PYGZus{}name\PYGZus{}\PYGZus{}} \PYG{o}{==} \PYG{l+s+s2}{\PYGZdq{}\PYGZus{}\PYGZus{}main\PYGZus{}\PYGZus{}\PYGZdq{}}\PYG{p}{:}
+    \PYG{n}{example\PYGZus{}usage}\PYG{p}{()}
+\end{MintedVerbatim}

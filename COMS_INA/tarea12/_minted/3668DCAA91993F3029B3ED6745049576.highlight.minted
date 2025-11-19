@@ -1,0 +1,58 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{\PYGZsh{} 6) Decodificador de Alamouti (multi\PYGZhy{}receive antennas)}
+\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{alamouti\PYGZus{}decode}\PYG{p}{(}\PYG{n}{Y}\PYG{p}{:} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{,} \PYG{n}{H}\PYG{p}{:} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{)} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n+nb}{tuple}\PYG{p}{[}\PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{,} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ndarray}\PYG{p}{]:}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    Decodifica bloques Alamouti contenidos en Y, asumiendo H constante en todo X.}
+\PYG{l+s+sd}{    \PYGZhy{} Y : (Nr, NT) recibido donde Nr = 2, NT = 2*Ns}
+\PYG{l+s+sd}{    \PYGZhy{} H : (Nr, 2) canal complejo (2x2)}
+\PYG{l+s+sd}{    Devuelve:}
+\PYG{l+s+sd}{    \PYGZhy{} S\PYGZus{}hat : (2, Ns) estimaciones de símbolos (complejos)}
+\PYG{l+s+sd}{    \PYGZhy{} g\PYGZus{}per\PYGZus{}block : (Ns,) ganancia g para cada bloque (g = sum\PYGZus{}m |h\PYGZus{}m1|\PYGZca{}2 + |h\PYGZus{}m2|\PYGZca{}2)}
+
+\PYG{l+s+sd}{    Notas: se sigue la combinación clásica:}
+\PYG{l+s+sd}{      s1\PYGZus{}hat = sum\PYGZus{}m ( conj(h\PYGZus{}m1) * y\PYGZus{}m(2n) + h\PYGZus{}m2 * conj(y\PYGZus{}m(2n+1)) )}
+\PYG{l+s+sd}{      s2\PYGZus{}hat = sum\PYGZus{}m ( conj(h\PYGZus{}m2) * y\PYGZus{}m(2n) \PYGZhy{} h\PYGZus{}m1 * conj(y\PYGZus{}m(2n+1)) )}
+\PYG{l+s+sd}{    y se normaliza entre cada bloque por g para obtener estimates s1\PYGZus{}est = s1\PYGZus{}hat / g.}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{Nr}\PYG{p}{,} \PYG{n}{NT} \PYG{o}{=} \PYG{n}{Y}\PYG{o}{.}\PYG{n}{shape}
+    \PYG{k}{if} \PYG{n}{NT} \PYG{o}{\PYGZpc{}} \PYG{l+m+mi}{2} \PYG{o}{!=} \PYG{l+m+mi}{0}\PYG{p}{:}
+        \PYG{k}{raise} \PYG{n+ne}{ValueError}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}NT debe ser par (2*Ns).\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{Ns} \PYG{o}{=} \PYG{n}{NT} \PYG{o}{//} \PYG{l+m+mi}{2}
+
+    \PYG{c+c1}{\PYGZsh{} Extraer columnas pares/ímpares}
+    \PYG{c+c1}{\PYGZsh{} y[:, 2n] \PYGZhy{}\PYGZgt{} first timeslot, y[:, 2n+1] \PYGZhy{}\PYGZgt{} second timeslot}
+    \PYG{n}{S\PYGZus{}hat} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{((}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{),} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{complex}\PYG{p}{)}
+    \PYG{n}{g\PYGZus{}per\PYGZus{}block} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{(}\PYG{n}{Ns}\PYG{p}{,} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{float}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} Extraer h\PYGZus{}\PYGZob{}m1\PYGZcb{}, h\PYGZus{}\PYGZob{}m2\PYGZcb{}}
+    \PYG{c+c1}{\PYGZsh{} H shape (Nr, 2)}
+    \PYG{n}{h1} \PYG{o}{=} \PYG{n}{H}\PYG{p}{[:,} \PYG{l+m+mi}{0}\PYG{p}{]}   \PYG{c+c1}{\PYGZsh{} vector (Nr,)}
+    \PYG{n}{h2} \PYG{o}{=} \PYG{n}{H}\PYG{p}{[:,} \PYG{l+m+mi}{1}\PYG{p}{]}   \PYG{c+c1}{\PYGZsh{} vector (Nr,)}
+
+    \PYG{c+c1}{\PYGZsh{} Precalcular |h|\PYGZca{}2 sum por bloque (consta por bloque)}
+    \PYG{c+c1}{\PYGZsh{} g = sum\PYGZus{}m (|h\PYGZus{}m1|\PYGZca{}2 + |h\PYGZus{}m2|\PYGZca{}2)}
+    \PYG{n}{g\PYGZus{}const} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{h1}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2} \PYG{o}{+} \PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{h2}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{)}
+
+    \PYG{k}{for} \PYG{n}{n} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{Ns}\PYG{p}{):}
+        \PYG{n}{y1} \PYG{o}{=} \PYG{n}{Y}\PYG{p}{[:,} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{n}\PYG{p}{]}       \PYG{c+c1}{\PYGZsh{} (Nr,)}
+        \PYG{n}{y2} \PYG{o}{=} \PYG{n}{Y}\PYG{p}{[:,} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{n} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{]}   \PYG{c+c1}{\PYGZsh{} (Nr,)}
+
+        \PYG{c+c1}{\PYGZsh{} combinaciones por bloque (ve colas de ruido)}
+        \PYG{n}{s1\PYGZus{}hat} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{vdot}\PYG{p}{(}\PYG{n}{h1}\PYG{p}{,} \PYG{n}{y1}\PYG{p}{)} \PYG{o}{+} \PYG{n}{np}\PYG{o}{.}\PYG{n}{vdot}\PYG{p}{(}\PYG{n}{h2}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{(),} \PYG{n}{y2}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{()} \PYG{p}{)}
+
+        \PYG{n}{s1\PYGZus{}hat} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{(}\PYG{n}{h1}\PYG{p}{)} \PYG{o}{*} \PYG{n}{y1}\PYG{p}{)} \PYG{o}{+} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{h2} \PYG{o}{*} \PYG{n}{np}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{(}\PYG{n}{y2}\PYG{p}{))}
+
+        \PYG{n}{s2\PYGZus{}hat} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{(}\PYG{n}{h2}\PYG{p}{)} \PYG{o}{*} \PYG{n}{y1}\PYG{p}{)} \PYG{o}{\PYGZhy{}} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{h1} \PYG{o}{*} \PYG{n}{np}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{(}\PYG{n}{y2}\PYG{p}{))}
+
+        \PYG{c+c1}{\PYGZsh{} Ganancia g (es la misma para todos los bloques si H fijo)}
+        \PYG{n}{g} \PYG{o}{=} \PYG{n}{g\PYGZus{}const}
+
+        \PYG{c+c1}{\PYGZsh{} Guardar}
+        \PYG{n}{S\PYGZus{}hat}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{n}\PYG{p}{]} \PYG{o}{=} \PYG{n}{s1\PYGZus{}hat} \PYG{o}{/} \PYG{p}{(}\PYG{n}{g} \PYG{o}{+} \PYG{l+m+mf}{1e\PYGZhy{}18}\PYG{p}{)}
+        \PYG{n}{S\PYGZus{}hat}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{n}\PYG{p}{]} \PYG{o}{=} \PYG{n}{s2\PYGZus{}hat} \PYG{o}{/} \PYG{p}{(}\PYG{n}{g} \PYG{o}{+} \PYG{l+m+mf}{1e\PYGZhy{}18}\PYG{p}{)}
+        \PYG{n}{g\PYGZus{}per\PYGZus{}block}\PYG{p}{[}\PYG{n}{n}\PYG{p}{]} \PYG{o}{=} \PYG{n}{g}
+
+    \PYG{k}{return} \PYG{n}{S\PYGZus{}hat}\PYG{p}{,} \PYG{n}{g\PYGZus{}per\PYGZus{}block}
+\end{MintedVerbatim}
