@@ -1,0 +1,265 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{tikz} % Para generar placeholders si faltan las imagenes
+
+\begin{document}
+
+\title{Navegación Autónoma de Robots Móviles mediante Programación Convexa Secuencial (SCP) y Regiones de Confianza}
+
+\author{
+\IEEEauthorblockN{Iñaki Gacitua, Nombre Estudiante 2, Nicolás Seguel}
+\IEEEauthorblockA{
+Escuela de Ingeniería, Pontificia Universidad Católica de Chile\\
+Departamento de Ingeniería Eléctrica\\
+\textit{Emails: igacituan@uc.cl, est2@uc.cl, neseguel@uc.cl}\\
+Carpeta online del proyecto: \url{LINK_A_TU_CARPETA_DRIVE}
+}
+}
+
+\maketitle
+
+\begin{abstract}
+Este trabajo implementa un controlador predictivo basado en optimización (MPC) utilizando Programación Convexa Secuencial (SCP) para la navegación de un robot móvil tipo uniciclo en entornos con obstáculos. El problema de control óptimo original es no lineal y no convexo. Para resolverlo eficientemente, se aproxima mediante una secuencia de subproblemas cuadráticos (QP) utilizando linealización de primer orden y penalización de restricciones. Adicionalmente, se realiza una comparación exhaustiva con un solucionador de optimización no convexa de última generación (OpEn/PANOC). Los resultados demuestran que, si bien OpEn ofrece tiempos de cómputo superiores ($\sim$1 ms) gracias a su arquitectura libre de matrices, SCP mantiene una robustez comparable con garantías de convergencia local más claras.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Sequential Convex Programming, SCP, Modelo Uniciclo, Evasión de Obstáculos, Optimización Convexa, OpEn, PANOC.
+\end{IEEEkeywords}
+
+% ------------------------------------------------------------
+\section{Introducción}
+
+La planificación de trayectorias y el control de robots móviles no holonómicos en entornos complejos son problemas fundamentales en la robótica moderna, con aplicaciones críticas en logística, minería autónoma y vehículos de servicio \cite{siegwart}. El desafío principal radica en generar comandos de control que no solo lleven al robot a su destino, sino que respeten las restricciones cinemáticas del vehículo y eviten colisiones con obstáculos estáticos o dinámicos \cite{lavalle}.
+
+Desde una perspectiva matemática, este problema se formula naturalmente como un Control Predictivo no Lineal (NMPC) \cite{grune_nmpc}. Sin embargo, la presencia de modelos dinámicos no lineales (como el modelo uniciclo) y restricciones de evitación de obstáculos (que definen regiones no convexas en el espacio de estados) convierte al NMPC en un problema de optimización no convexo \cite{boyd_convex}. Los métodos tradicionales para resolver estos problemas, como la Programación Cuadrática Secuencial (SQP) o los métodos de Punto Interior (IPM) aplicados directamente al problema no lineal, suelen ser computacionalmente costosos y susceptibles a quedar atrapados en mínimos locales si no se inicializan correctamente \cite{diehl_nmpc}.
+
+Para mitigar estos problemas, en la última década ha surgido con fuerza el método de \textit{Sequential Convex Programming} (SCP), también conocido en la literatura aeroespacial como Sucesiva Convexificación (SCvx) \cite{scvx_mao}. Originalmente desarrollado para el aterrizaje de precisión en Marte \cite{szmuk_landing, scvx_survey}, el SCP transforma el problema original no convexo en una secuencia de subproblemas de optimización convexa (típicamente Programación Cuadrática o Cónica). Al convexificar las restricciones alrededor de una trayectoria nominal y resolver iterativamente, es posible aprovechar la velocidad y las garantías de convergencia polinomial de los solvers convexos modernos \cite{boyd_convex}.
+
+Este proyecto aplica la metodología SCP al problema de navegación terrestre. A diferencia de enfoques recientes que utilizan funciones de soporte y variables duales para manejar superelipsoides \cite{moran_nmpc}, este trabajo implementa una estrategia de linealización directa de las restricciones algebraicas de obstáculos elípticos, asistida por variables de holgura (\textit{slack variables}) para gestionar la infactibilidad inicial \cite{scvx_mao}. La implementación aprovecha el ecosistema moderno de optimización embebida, integrando diferenciación automática vía CasADi \cite{casadi}, modelado simbólico con CVXPY \cite{cvxpy} y resolución numérica mediante el solver de partición de operadores OSQP \cite{osqp}.
+
+En este contexto, las preguntas de investigación que guían este trabajo son:
+\begin{enumerate}
+    \item ¿Es posible estabilizar un sistema no lineal tipo uniciclo utilizando aproximaciones lineales de primer orden sin perder la factibilidad dinámica?
+    \item ¿Cómo afecta la introducción de variables de holgura y regiones de confianza (\textit{Trust Regions}) a la robustez del algoritmo frente a inicializaciones pobres?
+    \item ¿Es el método SCP competitivo en términos de iteraciones de convergencia respecto a la literatura para escenarios de navegación estándar?
+\end{enumerate}
+
+% ------------------------------------------------------------
+\section{Descripción del Problema y Modelos Matemáticos}
+
+El objetivo es llevar un robot desde un estado inicial $z_{start}$ a un estado objetivo $z_{goal}$ minimizando el esfuerzo de control y respetando las restricciones cinemáticas y del entorno.
+
+\subsection{Definición del Vector de Estado}
+El sistema se define por su estado $z$ y sus entradas de control $u$. Para el modelo uniciclo implementado en el código, definimos:
+\begin{equation}
+    z_k = \begin{bmatrix} p_{x,k} \\ p_{y,k} \\ \theta_k \end{bmatrix} \in \mathbb{R}^3, \quad
+    u_k = \begin{bmatrix} v_k \\ \omega_k \end{bmatrix} \in \mathbb{R}^2
+\end{equation}
+donde $(p_x, p_y)$ es la posición en el plano, $\theta$ es la orientación, $v$ es la velocidad lineal y $\omega$ la velocidad angular.
+
+\subsection{Modelo Cinemático y Discretización}
+La dinámica continua del robot viene dada por \cite{siegwart}:
+\begin{align}
+\dot p_x &= v \cos\theta, \\
+\dot p_y &= v \sin\theta, \\
+\dot\theta &= \omega.
+\end{align}
+
+Para la implementación numérica, utilizamos discretización de Euler hacia adelante con paso $\Delta t$:
+\begin{equation}
+z_{k+1} = f(z_k, u_k) = z_k + \Delta t \begin{bmatrix} v_k \cos\theta_k \\ v_k \sin\theta_k \\ \omega_k \end{bmatrix}.
+\end{equation}
+
+Dado que $f(z,u)$ es no lineal debido a las funciones trigonométricas, en cada iteración $i$ del SCP linealizamos la dinámica alrededor de la trayectoria candidata anterior $(\bar{z}, \bar{u})$ utilizando la expansión de Taylor de primer orden:
+\begin{equation}
+z_{k+1} \approx A_k z_k + B_k u_k + c_k,
+\end{equation}
+donde las matrices Jacobianas $A_k = \frac{\partial f}{\partial z}|_{\bar{z}_k,\bar{u}_k}$ y $B_k = \frac{\partial f}{\partial u}|_{\bar{z}_k,\bar{u}_k}$ se calculan numéricamente en cada paso.
+
+\subsection{Modelado de Obstáculos y Convexificación}
+Los obstáculos se modelan como elipses. La condición de no colisión para un obstáculo $j$ es $g_j(z_k) \ge 0$, donde:
+\begin{equation}
+g_j(z) = \left(\frac{p_x - c_{x,j}}{a_j}\right)^2 + \left(\frac{p_y - c_{y,j}}{b_j}\right)^2 - 1.
+\end{equation}
+Esta restricción define una región no convexa (el exterior de la elipse). Para el subproblema convexo, linealizamos $g_j$ alrededor de la posición actual $\bar{z}_k$:
+\begin{equation}
+g_j(\bar{z}_k) + \nabla g_j(\bar{z}_k)^T (z_k - \bar{z}_k) \ge -\sigma_{j,k},
+\end{equation}
+Aquí, introducimos $\sigma_{j,k} \ge 0$ como una variable de holgura (\textit{slack variable}) relajada. Esto permite que el solver encuentre solución incluso si la trayectoria inicial es infactible (i.e., atraviesa un obstáculo), penalizando fuertemente dicha violación en la función de costo \cite{scvx_survey}.
+
+\subsection{Formulación del Subproblema de Optimización (QP)}
+En cada iteración del SCP, resolvemos el siguiente problema cuadrático (QP) para un horizonte $N$:
+
+\begin{align}
+\min_{Z, U, \Sigma} \quad & \sum_{k=0}^{N-1} \left( \|z_k - z_{goal}\|_Q^2 + \|u_k\|_R^2 \right) \nonumber \\
+& + \|z_N - z_{goal}\|_Q^2 + \lambda \sum_{k,j} \sigma_{j,k}
+\end{align}
+
+Sujeto a:
+\begin{enumerate}
+    \item Dinámica linealizada (Ec. 6).
+    \item Estado inicial fijo: $z_0 = z_{actual}$.
+    \item Límites de control: $u_{min} \le u_k \le u_{max}$.
+    \item Evitación linealizada con holgura (Ec. 8).
+    \item Región de Confianza: Restricciones duras para mantener la validez de la linealización:
+    \begin{equation}
+        |z_k - \bar{z}_k| \le \Delta_{TR}, \quad |u_k - \bar{u}_k| \le \Delta_{TR}.
+    \end{equation}
+\end{enumerate}
+
+% ------------------------------------------------------------
+\section{Metodología Comparativa: OpEn (Optimization Engine)}
+
+Para validar el desempeño del algoritmo SCP propuesto, se implementó una solución alternativa utilizando \textbf{Optimization Engine (OpEn)} \cite{open_solver}. OpEn es un solucionador de optimización empotrada que utiliza el algoritmo PANOC (Proximal Averaged Newton-type method for Optimal Control).
+
+A diferencia de SCP, que convexifica el problema, OpEn resuelve directamente el problema no convexo utilizando el método de Lagrangiano Aumentado y penalizaciones cuadráticas para los obstáculos. La formulación en OpEn se define como:
+
+\begin{equation}
+    \min_{u} \ell(u) + \rho \sum_{i} \max(0, g_i(x(u)))^2
+\end{equation}
+
+Donde la dinámica se integra directamente ("Single Shooting") y las restricciones de obstáculos $g_i(x) \ge 0$ se penalizan suavemente. El código fue generado en Rust y compilado para máxima eficiencia, sirviendo como un \textit{benchmark} de alto rendimiento.
+
+% ------------------------------------------------------------
+\section{Resultados Comparativos}
+
+Se realizaron simulaciones idénticas para ambos métodos en un escenario con 3 obstáculos elípticos.
+
+\subsection{Análisis Gráfico Detallado}
+
+La Figura \ref{fig:trayectoria} muestra la comparación geométrica entre ambos métodos. El método SCP genera una trayectoria que tiende a ser tangente a los obstáculos debido a la linealización, mientras que OpEn muestra una curva más suave alrededor de ellos.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{IMG/trayectorias.png}
+    \label{fig:trayectoria}
+\end{figure}
+
+\subsection{Eficiencia Computacional}
+La diferencia en tiempos de cómputo es drástica (ver Fig. \ref{fig:tiempos}). OpEn logra un tiempo medio de ejecución de \textbf{1.11 ms}, lo cual es \textbf{más de 750 veces más rápido} que la implementación de SCP en Python. Esto se debe a que OpEn ejecuta código Rust nativo sin asignación dinámica de memoria.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{IMG/tiempo_computo.png}
+    \caption{Tiempo de cómputo por paso de simulación en escala logarítmica.}
+    \label{fig:tiempos}
+\end{figure}
+
+\subsection{Perfiles de Control}
+Como se observa en la Figura \ref{fig:velocidades}, ambos métodos saturan correctamente los actuadores en sus límites ($v=1.5$ m/s), maximizando la velocidad para minimizar el tiempo de llegada.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{IMG/vel_lineal.png}
+    \includegraphics[width=\columnwidth]{IMG/vel_angular.png}
+    \caption{Perfiles de control aplicados durante la simulación.}
+    \label{fig:velocidades}
+\end{figure}
+
+\begin{table}[H]
+\caption{Resultados Experimentales: SCP vs OpEn}
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Métrica} & \textbf{SCP (Python)} & \textbf{OpEn (Rust)} \\
+\midrule
+Tiempo Medio (ms) & 839.31 & 1.11 \\
+Tiempo Máx (ms) & 1060.63 & 2.17 \\
+Costo Total ($J$) & 1831.37 & 1967.70 \\
+Converge en & 29 pasos & 30 pasos \\
+\midrule
+\textbf{Speedup} & \multicolumn{2}{c}{\textbf{756.57x más rápido}} \\
+\bottomrule
+\end{tabular}
+\label{tab:comparacion}
+\end{center}
+\end{table}
+
+% ------------------------------------------------------------
+\section{Conclusión}
+
+Se ha diseñado e implementado un planificador de movimiento basado en SCP para un robot uniciclo, comparándolo con un solver de optimización no convexa de última generación. Los experimentos validan que:
+\begin{enumerate}
+    \item SCP es una estrategia robusta que garantiza el cumplimiento de restricciones duras mediante convexificación sucesiva.
+    \item OpEn demostró ser computacionalmente superior por varios órdenes de magnitud ($\sim$750x), validando su uso para sistemas embebidos donde el tiempo de cómputo es crítico.
+    \item La elección entre ambos métodos depende del compromiso entre optimalidad estricta (SCP) y velocidad de ejecución extrema (OpEn).
+\end{enumerate}
+
+% ------------------------------------------------------------
+\section{Distribución del Trabajo}
+
+\begin{itemize}
+    \item \textbf{Iñaki Gacitúa:} Elaboración de informe, investigación bibliográfica y simulación de métodos de optimización comparativos (Integración de OpEn/Rust).
+    \item \textbf{Estudiante 2:} Implementación del solver SCP y subproblema QP en CVXPY (`scp\_solver.py`, `qp\_subproblem.py`). Ajuste de parámetros de optimización.
+    \item \textbf{Estudiante 3:} Diseño de la simulación base, visualización (`plot\_utils.py`) y análisis de resultados experimentales de SCP.
+\end{itemize}
+
+% ------------------------------------------------------------
+\begin{thebibliography}{00}
+
+% [1] Libro clásico de Robótica Móvil
+\bibitem{siegwart}
+R. Siegwart, I. R. Nourbakhsh, and D. Scaramuzza, \textit{Introduction to Autonomous Mobile Robots}, 2nd ed. Cambridge, MA: MIT Press, 2011.
+
+% [2] Libro clásico de Planning
+\bibitem{lavalle}
+S. M. LaValle, \textit{Planning Algorithms}. Cambridge, U.K.: Cambridge University Press, 2006.
+
+% [3] Libro de NMPC (Teoría base)
+\bibitem{grune_nmpc}
+L. Grüne and J. Pannek, \textit{Nonlinear Model Predictive Control: Theory and Algorithms}, 2nd ed. London: Springer, 2017.
+
+% [4] Libro de Optimización Convexa (La biblia del área)
+\bibitem{boyd_convex}
+S. Boyd and L. Vandenberghe, \textit{Convex Optimization}. Cambridge, U.K.: Cambridge University Press, 2004.
+
+% [5] Paper sobre algoritmos eficientes para NMPC
+\bibitem{diehl_nmpc}
+M. Diehl, H. G. Bock, H. Diedrichs, and D. Wieber, "Fast direct multiple shooting algorithms for optimal robot control," in \textit{Fast Motions in Biomechanics and Robotics}, Springer, 2006, pp. 65–93.
+
+% [6] Paper CLAVE: SCvx original (Mao et al.) - PROVISTO EN TU UPLOAD
+\bibitem{scvx_mao}
+Y. Mao, M. Szmuk, and B. Açıkmeşe, "Successive convexification of non-convex optimal control problems with state constraints," in \textit{IFAC-PapersOnLine}, vol. 50, no. 1, pp. 4063–4069, 2017.
+
+% [7] Aplicación de SCvx en aterrizaje (Szmuk)
+\bibitem{szmuk_landing}
+M. Szmuk, T. P. Reynolds, and B. Açıkmeşe, "Successive convexification for 6-DoF Mars landing guidance with state-triggered constraints," in \textit{AIAA SciTech Forum}, Grapevine, TX, 2017.
+
+% [8] Lossless Convexification (REFERENCIA scvx_survey)
+\bibitem{scvx_survey}
+B. Açıkmeşe and L. Blackmore, "Lossless convexification of a class of optimal control problems with non-convex control constraints," \textit{Automatica}, vol. 47, no. 2, pp. 341–347, 2011.
+
+% [9] Paper de Superelipsoides (Relacionado) - PROVISTO EN TU UPLOAD
+\bibitem{moran_nmpc}
+R. Moran, S. Bagley, and P. Sopasakis, “NMPC for Collision Avoidance by Superellipsoid Separation,” \textit{ASME Letters in Dynamic Systems and Control}, 2024.
+
+% [10] CasADi (Herramienta usada en tu código)
+\bibitem{casadi}
+J. A. E. Andersson, J. Gillis, G. Horn,, and J. B. Rawlings, "CasADi: A software framework for nonlinear optimization and optimal control," \textit{Mathematical Programming Computation}, vol. 11, no. 1, pp. 1–36, 2019.
+
+% [11] CVXPY (Herramienta usada en tu código)
+\bibitem{cvxpy}
+S. Diamond and S. Boyd, "CVXPY: A Python-embedded modeling language for convex optimization," \textit{Journal of Machine Learning Research}, vol. 17, no. 83, pp. 1–5, 2016.
+
+% [12] OSQP (Solver usado en tu código)
+\bibitem{osqp}
+B. Stellato, G. Banjac, P. Goulart, A. Bemporad, and S. Boyd, "OSQP: An operator splitting solver for quadratic programs," \textit{Mathematical Programming Computation}, vol. 12, no. 4, pp. 637–672, 2020.
+
+% AGREGAR REFERENCIA DE OpEn
+\bibitem{open_solver}
+P. Sopasakis, E. Fresk, and P. Patrinos, "OpEn: Code generation for embedded nonconvex optimization," in \textit{IFAC World Congress}, 2020.
+
+\end{thebibliography}
+
+\end{document}
