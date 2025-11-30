@@ -1,0 +1,368 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Cell: Imports and environment detection}
+\PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{os}\PYG{o}{,}\PYG{+w}{ }\PYG{n+nn}{time}\PYG{o}{,}\PYG{+w}{ }\PYG{n+nn}{math}
+\PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{numpy}\PYG{+w}{ }\PYG{k}{as}\PYG{+w}{ }\PYG{n+nn}{np}
+\PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{matplotlib.pyplot}\PYG{+w}{ }\PYG{k}{as}\PYG{+w}{ }\PYG{n+nn}{plt}
+\PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{scipy.special}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{erfc}
+\PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{tqdm}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{tqdm}
+\PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{multiprocessing}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{Pool}\PYG{p}{,} \PYG{n}{cpu\PYGZus{}count}
+
+\PYG{c+c1}{\PYGZsh{} Detect CuPy (GPU) availability}
+\PYG{k}{try}\PYG{p}{:}
+    \PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{cupy}\PYG{+w}{ }\PYG{k}{as}\PYG{+w}{ }\PYG{n+nn}{cp}
+    \PYG{n}{gpu\PYGZus{}available} \PYG{o}{=} \PYG{k+kc}{True}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}CuPy available. GPU mode possible.\PYGZsq{}}\PYG{p}{)}
+\PYG{k}{except} \PYG{n+ne}{Exception}\PYG{p}{:}
+    \PYG{n}{cp} \PYG{o}{=} \PYG{k+kc}{None}
+    \PYG{n}{gpu\PYGZus{}available} \PYG{o}{=} \PYG{k+kc}{False}
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}CuPy not available; GPU mode disabled.\PYGZsq{}}\PYG{p}{)}
+
+
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}xp}\PYG{p}{(}\PYG{n}{use\PYGZus{}gpu}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{):}
+    \PYG{k}{return} \PYG{n}{cp} \PYG{k}{if} \PYG{p}{(}\PYG{n}{use\PYGZus{}gpu} \PYG{o+ow}{and} \PYG{n}{gpu\PYGZus{}available}\PYG{p}{)} \PYG{k}{else} \PYG{n}{np}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{qpsk\PYGZus{}mod\PYGZus{}bits\PYGZus{}to\PYGZus{}symbols}\PYG{p}{(}\PYG{n}{bits}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{):}
+    \PYG{n}{b0} \PYG{o}{=} \PYG{l+m+mi}{1} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{bits}\PYG{p}{[}\PYG{o}{...}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{]}
+    \PYG{n}{b1} \PYG{o}{=} \PYG{l+m+mi}{1} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{bits}\PYG{p}{[}\PYG{o}{...}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{]}
+    \PYG{k}{return} \PYG{p}{(}\PYG{n}{b0} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{n}{j}\PYG{o}{*}\PYG{n}{b1}\PYG{p}{)} \PYG{o}{/} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{)}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{qpsk\PYGZus{}demod\PYGZus{}symbols\PYGZus{}to\PYGZus{}bits}\PYG{p}{(}\PYG{n}{symbols}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{):}
+    \PYG{n}{bits0} \PYG{o}{=} \PYG{p}{(}\PYG{n}{symbols}\PYG{o}{.}\PYG{n}{real} \PYG{o}{\PYGZlt{}} \PYG{l+m+mi}{0}\PYG{p}{)}\PYG{o}{.}\PYG{n}{astype}\PYG{p}{(}\PYG{n}{xp}\PYG{o}{.}\PYG{n}{int8}\PYG{p}{)}
+    \PYG{n}{bits1} \PYG{o}{=} \PYG{p}{(}\PYG{n}{symbols}\PYG{o}{.}\PYG{n}{imag} \PYG{o}{\PYGZlt{}} \PYG{l+m+mi}{0}\PYG{p}{)}\PYG{o}{.}\PYG{n}{astype}\PYG{p}{(}\PYG{n}{xp}\PYG{o}{.}\PYG{n}{int8}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{stack}\PYG{p}{([}\PYG{n}{bits0}\PYG{p}{,} \PYG{n}{bits1}\PYG{p}{],} \PYG{n}{axis}\PYG{o}{=\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{awgn\PYGZus{}noise}\PYG{p}{(}\PYG{n}{shape}\PYG{p}{,} \PYG{n}{N0}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{):}
+    \PYG{n}{sigma} \PYG{o}{=} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{N0}\PYG{o}{/}\PYG{l+m+mf}{2.0}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{sigma} \PYG{o}{*} \PYG{p}{(}\PYG{n}{xp}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{normal}\PYG{p}{(}\PYG{n}{size}\PYG{o}{=}\PYG{n}{shape}\PYG{p}{)} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{n}{j} \PYG{o}{*} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{normal}\PYG{p}{(}\PYG{n}{size}\PYG{o}{=}\PYG{n}{shape}\PYG{p}{))}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{ber\PYGZus{}qpsk\PYGZus{}awgn}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{):}
+    \PYG{k}{return} \PYG{l+m+mf}{0.5} \PYG{o}{*} \PYG{n}{erfc}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{))}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{ber\PYGZus{}qpsk\PYGZus{}rayleigh}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{):}
+    \PYG{k}{return} \PYG{l+m+mf}{0.5} \PYG{o}{*} \PYG{p}{(}\PYG{l+m+mi}{1} \PYG{o}{\PYGZhy{}} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}lin} \PYG{o}{/} \PYG{p}{(}\PYG{l+m+mi}{1} \PYG{o}{+} \PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{)))}
+
+\PYG{c+c1}{\PYGZsh{} CHECKPOINT QPSK rápido (CPU)}
+\PYG{n}{xp\PYGZus{}test} \PYG{o}{=} \PYG{n}{np}
+\PYG{n}{bits\PYGZus{}test} \PYG{o}{=} \PYG{n}{xp\PYGZus{}test}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{randint}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,(}\PYG{l+m+mi}{50000}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{))}
+\PYG{n}{s\PYGZus{}test} \PYG{o}{=} \PYG{n}{qpsk\PYGZus{}mod\PYGZus{}bits\PYGZus{}to\PYGZus{}symbols}\PYG{p}{(}\PYG{n}{bits\PYGZus{}test}\PYG{p}{,} \PYG{n}{xp\PYGZus{}test}\PYG{p}{)}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{CHECKPOINT QPSK: E[|s|\PYGZca{}2] =\PYGZdq{}}\PYG{p}{,} \PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{s\PYGZus{}test}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{),} \PYG{l+s+s2}{\PYGZdq{}(=1)\PYGZdq{}}\PYG{p}{)}
+
+
+
+\PYG{c+c1}{\PYGZsh{} Cell: Generadores batch}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{gen\PYGZus{}rayleigh\PYGZus{}channel\PYGZus{}batch}\PYG{p}{(}\PYG{n}{N}\PYG{p}{,} \PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{):}
+    \PYG{n}{real} \PYG{o}{=} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{normal}\PYG{p}{(}\PYG{n}{size}\PYG{o}{=}\PYG{p}{(}\PYG{n}{N}\PYG{p}{,} \PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{))}
+    \PYG{n}{imag} \PYG{o}{=} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{normal}\PYG{p}{(}\PYG{n}{size}\PYG{o}{=}\PYG{p}{(}\PYG{n}{N}\PYG{p}{,} \PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{))}
+    \PYG{k}{return} \PYG{p}{(}\PYG{n}{real} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{n}{j}\PYG{o}{*}\PYG{n}{imag}\PYG{p}{)} \PYG{o}{/} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{l+m+mf}{2.0}\PYG{p}{)}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{gen\PYGZus{}qpsk\PYGZus{}symbols\PYGZus{}batch}\PYG{p}{(}\PYG{n}{N}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{,} \PYG{n}{Es\PYGZus{}per\PYGZus{}stream}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{):}
+    \PYG{c+c1}{\PYGZsh{} Devuelve S\PYGZus{}symbols shape (N, Nt, Ns) y bits (N,Nt,Ns,2)}
+    \PYG{n}{bits} \PYG{o}{=} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{randint}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{p}{(}\PYG{n}{N}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{))}
+    \PYG{n}{S} \PYG{o}{=} \PYG{n}{qpsk\PYGZus{}mod\PYGZus{}bits\PYGZus{}to\PYGZus{}symbols}\PYG{p}{(}\PYG{n}{bits}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}   \PYG{c+c1}{\PYGZsh{} (N, Nt, Ns)}
+    \PYG{n}{S} \PYG{o}{=} \PYG{n}{S} \PYG{o}{*} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{Es\PYGZus{}per\PYGZus{}stream}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{S}\PYG{p}{,} \PYG{n}{bits}
+
+
+
+\PYG{c+c1}{\PYGZsh{} Cell: Transmisión + decodificación ZF en receptor}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{transmit\PYGZus{}and\PYGZus{}zf\PYGZus{}decode}\PYG{p}{(}\PYG{n}{H}\PYG{p}{,} \PYG{n}{S\PYGZus{}streams}\PYG{p}{,} \PYG{n}{N0}\PYG{p}{,} \PYG{n}{Es}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{):}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    H: (N, Nr, Nt)}
+\PYG{l+s+sd}{    S\PYGZus{}streams: (N, Nt, Ns) \PYGZhy{}\PYGZgt{} símbolos transmitidos por cada antena tx}
+\PYG{l+s+sd}{    Retorna: S\PYGZus{}hat (N, Nt, Ns), S\PYGZus{}streams (N,Nt,Ns)}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{N}\PYG{p}{,} \PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt} \PYG{o}{=} \PYG{n}{H}\PYG{o}{.}\PYG{n}{shape}
+    \PYG{n}{\PYGZus{}}\PYG{p}{,} \PYG{n}{Nt2}\PYG{p}{,} \PYG{n}{Ns} \PYG{o}{=} \PYG{n}{S\PYGZus{}streams}\PYG{o}{.}\PYG{n}{shape}
+    \PYG{k}{assert} \PYG{n}{Nt2} \PYG{o}{==} \PYG{n}{Nt}
+
+    \PYG{c+c1}{\PYGZsh{} Transmitir: X = S\PYGZus{}streams (cada antena tx transmite su secuencia)}
+    \PYG{n}{X} \PYG{o}{=} \PYG{n}{S\PYGZus{}streams}  \PYG{c+c1}{\PYGZsh{} (N, Nt, Ns)}
+    \PYG{n}{Y} \PYG{o}{=} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{einsum}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}nij, njs \PYGZhy{}\PYGZgt{} nis\PYGZsq{}}\PYG{p}{,} \PYG{n}{H}\PYG{p}{,} \PYG{n}{X}\PYG{p}{)}          \PYG{c+c1}{\PYGZsh{} (N, Nr, Ns)}
+    \PYG{n}{Y} \PYG{o}{+=} \PYG{n}{awgn\PYGZus{}noise}\PYG{p}{(}\PYG{n}{Y}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{,} \PYG{n}{N0}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} Decodificación ZF: W\PYGZus{}zf = (H\PYGZca{}H H)\PYGZca{}\PYGZob{}\PYGZhy{}1\PYGZcb{} H\PYGZca{}H   \PYGZhy{}\PYGZgt{} shape (N, Nt, Nr)}
+    \PYG{n}{H\PYGZus{}H} \PYG{o}{=} \PYG{n}{H}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{()}\PYG{o}{.}\PYG{n}{transpose}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{)}              \PYG{c+c1}{\PYGZsh{} (N, Nt, Nr)}
+    \PYG{n}{R} \PYG{o}{=} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{matmul}\PYG{p}{(}\PYG{n}{H\PYGZus{}H}\PYG{p}{,} \PYG{n}{H}\PYG{p}{)}                          \PYG{c+c1}{\PYGZsh{} (N, Nt, Nt)}
+
+    \PYG{c+c1}{\PYGZsh{} Chequeo de invertibilidad: usar pseudo\PYGZhy{}inversa si necesario}
+    \PYG{n}{s\PYGZus{}hat} \PYG{o}{=} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{((}\PYG{n}{N}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{),} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{complex}\PYG{p}{)}
+    \PYG{n}{eps} \PYG{o}{=} \PYG{l+m+mf}{1e\PYGZhy{}12}
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{N}\PYG{p}{):}
+        \PYG{k}{try}\PYG{p}{:}
+            \PYG{n}{Rinv} \PYG{o}{=} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{linalg}\PYG{o}{.}\PYG{n}{inv}\PYG{p}{(}\PYG{n}{R}\PYG{p}{[}\PYG{n}{i}\PYG{p}{])}
+        \PYG{k}{except} \PYG{n+ne}{Exception}\PYG{p}{:}
+            \PYG{c+c1}{\PYGZsh{} si no invertible, usar pseudo\PYGZhy{}inversa}
+            \PYG{n}{Rinv} \PYG{o}{=} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{linalg}\PYG{o}{.}\PYG{n}{pinv}\PYG{p}{(}\PYG{n}{R}\PYG{p}{[}\PYG{n}{i}\PYG{p}{])}
+        \PYG{n}{Wz} \PYG{o}{=} \PYG{n}{Rinv} \PYG{o}{@} \PYG{n}{H\PYGZus{}H}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}                          \PYG{c+c1}{\PYGZsh{} (Nt, Nr)}
+        \PYG{n}{s\PYGZus{}hat}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{=} \PYG{p}{(}\PYG{n}{Wz} \PYG{o}{@} \PYG{n}{Y}\PYG{p}{[}\PYG{n}{i}\PYG{p}{])}                     \PYG{c+c1}{\PYGZsh{} (Nt, Ns)}
+
+    \PYG{k}{return} \PYG{n}{s\PYGZus{}hat}\PYG{p}{,} \PYG{n}{S\PYGZus{}streams}
+
+
+
+\PYG{c+c1}{\PYGZsh{} Cell: Transmisión + Decodificación MMSE (batch, CPU/GPU compatible)}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{transmit\PYGZus{}and\PYGZus{}mmse\PYGZus{}decode}\PYG{p}{(}\PYG{n}{H}\PYG{p}{,} \PYG{n}{S\PYGZus{}streams}\PYG{p}{,} \PYG{n}{N0}\PYG{p}{,} \PYG{n}{Es}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{):}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    Decodificación MMSE en el receptor.}
+\PYG{l+s+sd}{    H: (N, Nr, Nt)}
+\PYG{l+s+sd}{    S\PYGZus{}streams: (N, Nt, Ns) \PYGZhy{}\PYGZgt{} símbolos transmitidos por cada antena tx}
+\PYG{l+s+sd}{    N0: ruido}
+\PYG{l+s+sd}{    Es: energía total por símbolo (se reparte en Nt streams)}
+\PYG{l+s+sd}{    xp: numpy o cupy}
+\PYG{l+s+sd}{    Retorna: s\PYGZus{}hat (N, Nt, Ns), S\PYGZus{}streams (verdaderos)}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{N}\PYG{p}{,} \PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt} \PYG{o}{=} \PYG{n}{H}\PYG{o}{.}\PYG{n}{shape}
+    \PYG{n}{\PYGZus{}}\PYG{p}{,} \PYG{n}{Nt2}\PYG{p}{,} \PYG{n}{Ns} \PYG{o}{=} \PYG{n}{S\PYGZus{}streams}\PYG{o}{.}\PYG{n}{shape}
+    \PYG{k}{assert} \PYG{n}{Nt2} \PYG{o}{==} \PYG{n}{Nt}
+
+    \PYG{c+c1}{\PYGZsh{} Transmisión}
+    \PYG{n}{X} \PYG{o}{=} \PYG{n}{S\PYGZus{}streams}                          \PYG{c+c1}{\PYGZsh{} (N,Nt,Ns)}
+    \PYG{n}{Y} \PYG{o}{=} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{einsum}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}nij, njs \PYGZhy{}\PYGZgt{} nis\PYGZsq{}}\PYG{p}{,} \PYG{n}{H}\PYG{p}{,} \PYG{n}{X}\PYG{p}{)} \PYG{c+c1}{\PYGZsh{} (N,Nr,Ns)}
+    \PYG{n}{Y} \PYG{o}{+=} \PYG{n}{awgn\PYGZus{}noise}\PYG{p}{(}\PYG{n}{Y}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{,} \PYG{n}{N0}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} Parámetro de regularización: N0 / E\PYGZus{}s\PYGZus{}stream}
+    \PYG{n}{E\PYGZus{}s\PYGZus{}stream} \PYG{o}{=} \PYG{n}{Es} \PYG{o}{/} \PYG{n}{Nt}
+    \PYG{n}{reg} \PYG{o}{=} \PYG{n}{N0} \PYG{o}{/} \PYG{p}{(}\PYG{n}{E\PYGZus{}s\PYGZus{}stream} \PYG{o}{+} \PYG{l+m+mf}{1e\PYGZhy{}18}\PYG{p}{)}
+
+    \PYG{n}{s\PYGZus{}hat} \PYG{o}{=} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{((}\PYG{n}{N}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{),} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{complex}\PYG{p}{)}
+    \PYG{n}{ident} \PYG{o}{=} \PYG{k+kc}{None}
+
+    \PYG{c+c1}{\PYGZsh{} Calculamos W\PYGZus{}mmse por realización (puede vectorizarse si xp soporta batched solve)}
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{N}\PYG{p}{):}
+        \PYG{n}{Hi} \PYG{o}{=} \PYG{n}{H}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}                          \PYG{c+c1}{\PYGZsh{} (Nr, Nt)}
+        \PYG{n}{H\PYGZus{}H} \PYG{o}{=} \PYG{n}{Hi}\PYG{o}{.}\PYG{n}{conj}\PYG{p}{()}\PYG{o}{.}\PYG{n}{T}                  \PYG{c+c1}{\PYGZsh{} (Nt, Nr)}
+        \PYG{n}{A} \PYG{o}{=} \PYG{n}{H\PYGZus{}H} \PYG{o}{@} \PYG{n}{Hi}                       \PYG{c+c1}{\PYGZsh{} (Nt, Nt)}
+        \PYG{k}{if} \PYG{n}{ident} \PYG{o+ow}{is} \PYG{k+kc}{None} \PYG{o+ow}{or} \PYG{n}{ident}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{o}{!=} \PYG{n}{Nt}\PYG{p}{:}
+            \PYG{n}{ident} \PYG{o}{=} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{eye}\PYG{p}{(}\PYG{n}{Nt}\PYG{p}{,} \PYG{n}{dtype}\PYG{o}{=}\PYG{n}{A}\PYG{o}{.}\PYG{n}{dtype}\PYG{p}{)}
+        \PYG{n}{A\PYGZus{}reg} \PYG{o}{=} \PYG{n}{A} \PYG{o}{+} \PYG{n}{reg} \PYG{o}{*} \PYG{n}{ident}
+        \PYG{c+c1}{\PYGZsh{} Resolver W = A\PYGZus{}reg\PYGZca{}\PYGZob{}\PYGZhy{}1\PYGZcb{} H\PYGZca{}H}
+        \PYG{c+c1}{\PYGZsh{} Usar solve para mejores propiedades numéricas: solve(A\PYGZus{}reg, H\PYGZus{}H)}
+        \PYG{k}{try}\PYG{p}{:}
+            \PYG{n}{Ainv\PYGZus{}HH} \PYG{o}{=} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{linalg}\PYG{o}{.}\PYG{n}{solve}\PYG{p}{(}\PYG{n}{A\PYGZus{}reg}\PYG{p}{,} \PYG{n}{H\PYGZus{}H}\PYG{p}{)}  \PYG{c+c1}{\PYGZsh{} (Nt, Nr)}
+        \PYG{k}{except} \PYG{n+ne}{Exception}\PYG{p}{:}
+            \PYG{c+c1}{\PYGZsh{} fallback psiuedo\PYGZhy{}inversa si falla}
+            \PYG{n}{Ainv\PYGZus{}HH} \PYG{o}{=} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{linalg}\PYG{o}{.}\PYG{n}{pinv}\PYG{p}{(}\PYG{n}{A\PYGZus{}reg}\PYG{p}{)} \PYG{o}{@} \PYG{n}{H\PYGZus{}H}
+        \PYG{n}{W} \PYG{o}{=} \PYG{n}{Ainv\PYGZus{}HH}                           \PYG{c+c1}{\PYGZsh{} (Nt, Nr)}
+        \PYG{n}{s\PYGZus{}hat}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{=} \PYG{n}{W} \PYG{o}{@} \PYG{n}{Y}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}                   \PYG{c+c1}{\PYGZsh{} (Nt, Ns)}
+
+    \PYG{k}{return} \PYG{n}{s\PYGZus{}hat}\PYG{p}{,} \PYG{n}{S\PYGZus{}streams}
+
+
+
+\PYG{c+c1}{\PYGZsh{} Cell: Worker CPU para ZF (para map/Pool)}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{simulate\PYGZus{}for\PYGZus{}EbN0\PYGZus{}zf\PYGZus{}cpu}\PYG{p}{(}\PYG{n}{args}\PYG{p}{):}
+    \PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{,} \PYG{n}{Nreal}\PYG{p}{,} \PYG{n}{seed} \PYG{o}{=} \PYG{n}{args}
+    \PYG{n}{xp} \PYG{o}{=} \PYG{n}{np}
+    \PYG{n}{rng} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{default\PYGZus{}rng}\PYG{p}{(}\PYG{n}{seed}\PYG{p}{)}
+    \PYG{n}{N0} \PYG{o}{=} \PYG{l+m+mf}{1.0}
+    \PYG{n}{Es} \PYG{o}{=} \PYG{n}{EbN0\PYGZus{}lin} \PYG{o}{*} \PYG{p}{(}\PYG{l+m+mi}{2} \PYG{o}{*} \PYG{n}{N0}\PYG{p}{)}     \PYG{c+c1}{\PYGZsh{} convención: Es = EbN0 * (2*N0)}
+    \PYG{n}{Es\PYGZus{}per\PYGZus{}stream} \PYG{o}{=} \PYG{n}{Es} \PYG{o}{/} \PYG{n}{Nt}      \PYG{c+c1}{\PYGZsh{} se reparte entre antenas tx}
+    \PYG{n}{chunk} \PYG{o}{=} \PYG{l+m+mi}{200}
+    \PYG{n}{total\PYGZus{}errors} \PYG{o}{=} \PYG{l+m+mi}{0}
+    \PYG{n}{total\PYGZus{}bits} \PYG{o}{=} \PYG{l+m+mi}{0}
+
+    \PYG{k}{for} \PYG{n}{start} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{Nreal}\PYG{p}{,} \PYG{n}{chunk}\PYG{p}{):}
+        \PYG{n}{thisN} \PYG{o}{=} \PYG{n+nb}{min}\PYG{p}{(}\PYG{n}{chunk}\PYG{p}{,} \PYG{n}{Nreal} \PYG{o}{\PYGZhy{}} \PYG{n}{start}\PYG{p}{)}
+        \PYG{n}{H} \PYG{o}{=} \PYG{n}{gen\PYGZus{}rayleigh\PYGZus{}channel\PYGZus{}batch}\PYG{p}{(}\PYG{n}{thisN}\PYG{p}{,} \PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+        \PYG{n}{S\PYGZus{}streams}\PYG{p}{,} \PYG{n}{bits\PYGZus{}streams} \PYG{o}{=} \PYG{n}{gen\PYGZus{}qpsk\PYGZus{}symbols\PYGZus{}batch}\PYG{p}{(}\PYG{n}{thisN}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{,} \PYG{n}{Es\PYGZus{}per\PYGZus{}stream}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+        \PYG{n}{s\PYGZus{}hat}\PYG{p}{,} \PYG{n}{s\PYGZus{}true} \PYG{o}{=} \PYG{n}{transmit\PYGZus{}and\PYGZus{}zf\PYGZus{}decode}\PYG{p}{(}\PYG{n}{H}\PYG{p}{,} \PYG{n}{S\PYGZus{}streams}\PYG{p}{,} \PYG{n}{N0}\PYG{p}{,} \PYG{n}{Es}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+
+        \PYG{c+c1}{\PYGZsh{} Demodular y contar errores (replicar bits shape compat)}
+        \PYG{n}{bits\PYGZus{}hat} \PYG{o}{=} \PYG{n}{qpsk\PYGZus{}demod\PYGZus{}symbols\PYGZus{}to\PYGZus{}bits}\PYG{p}{(}\PYG{n}{s\PYGZus{}hat}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}  \PYG{c+c1}{\PYGZsh{} (N, Nt, Ns, 2)}
+        \PYG{n}{total\PYGZus{}errors} \PYG{o}{+=} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{bits\PYGZus{}hat} \PYG{o}{!=} \PYG{n}{bits\PYGZus{}streams}\PYG{p}{))}
+        \PYG{n}{total\PYGZus{}bits} \PYG{o}{+=} \PYG{n}{bits\PYGZus{}hat}\PYG{o}{.}\PYG{n}{size}
+
+    \PYG{n}{Pb} \PYG{o}{=} \PYG{n}{total\PYGZus{}errors} \PYG{o}{/} \PYG{n}{total\PYGZus{}bits}
+    \PYG{k}{return} \PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{,} \PYG{n}{Pb}
+
+\PYG{c+c1}{\PYGZsh{} GPU worker (similar, en batch si Cupy está disponible)}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{simulate\PYGZus{}for\PYGZus{}EbN0\PYGZus{}zf\PYGZus{}gpu}\PYG{p}{(}\PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{,} \PYG{n}{Nreal}\PYG{p}{,} \PYG{n}{seed}\PYG{p}{):}
+    \PYG{n}{xp} \PYG{o}{=} \PYG{n}{cp}
+    \PYG{n}{rng} \PYG{o}{=} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{default\PYGZus{}rng}\PYG{p}{(}\PYG{n}{seed}\PYG{p}{)}
+    \PYG{n}{N0} \PYG{o}{=} \PYG{l+m+mf}{1.0}
+    \PYG{n}{Es} \PYG{o}{=} \PYG{n}{EbN0\PYGZus{}lin} \PYG{o}{*} \PYG{p}{(}\PYG{l+m+mi}{2} \PYG{o}{*} \PYG{n}{N0}\PYG{p}{)}
+    \PYG{n}{Es\PYGZus{}per\PYGZus{}stream} \PYG{o}{=} \PYG{n}{Es} \PYG{o}{/} \PYG{n}{Nt}
+
+    \PYG{n}{H} \PYG{o}{=} \PYG{n}{gen\PYGZus{}rayleigh\PYGZus{}channel\PYGZus{}batch}\PYG{p}{(}\PYG{n}{Nreal}\PYG{p}{,} \PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+    \PYG{n}{S\PYGZus{}streams}\PYG{p}{,} \PYG{n}{bits\PYGZus{}streams} \PYG{o}{=} \PYG{n}{gen\PYGZus{}qpsk\PYGZus{}symbols\PYGZus{}batch}\PYG{p}{(}\PYG{n}{Nreal}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{,} \PYG{n}{Es\PYGZus{}per\PYGZus{}stream}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+    \PYG{n}{s\PYGZus{}hat}\PYG{p}{,} \PYG{n}{s\PYGZus{}true} \PYG{o}{=} \PYG{n}{transmit\PYGZus{}and\PYGZus{}zf\PYGZus{}decode}\PYG{p}{(}\PYG{n}{H}\PYG{p}{,} \PYG{n}{S\PYGZus{}streams}\PYG{p}{,} \PYG{n}{N0}\PYG{p}{,} \PYG{n}{Es}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+
+    \PYG{n}{bits\PYGZus{}hat} \PYG{o}{=} \PYG{n}{qpsk\PYGZus{}demod\PYGZus{}symbols\PYGZus{}to\PYGZus{}bits}\PYG{p}{(}\PYG{n}{s\PYGZus{}hat}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+    \PYG{n}{errors} \PYG{o}{=} \PYG{n+nb}{int}\PYG{p}{((}\PYG{n}{bits\PYGZus{}hat} \PYG{o}{!=} \PYG{n}{bits\PYGZus{}streams}\PYG{p}{)}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{()}\PYG{o}{.}\PYG{n}{get}\PYG{p}{())}
+    \PYG{n}{total\PYGZus{}bits} \PYG{o}{=} \PYG{n}{bits\PYGZus{}hat}\PYG{o}{.}\PYG{n}{size}
+    \PYG{n}{Pb} \PYG{o}{=} \PYG{n}{errors} \PYG{o}{/} \PYG{n}{total\PYGZus{}bits}
+    \PYG{k}{return} \PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{,} \PYG{n}{Pb}
+
+
+
+\PYG{c+c1}{\PYGZsh{} Cell: Workers MMSE (CPU / GPU)}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{simulate\PYGZus{}for\PYGZus{}EbN0\PYGZus{}mmse\PYGZus{}cpu}\PYG{p}{(}\PYG{n}{args}\PYG{p}{):}
+    \PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{,} \PYG{n}{Nreal}\PYG{p}{,} \PYG{n}{seed} \PYG{o}{=} \PYG{n}{args}
+    \PYG{n}{xp} \PYG{o}{=} \PYG{n}{np}
+    \PYG{n}{rng} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{default\PYGZus{}rng}\PYG{p}{(}\PYG{n}{seed}\PYG{p}{)}
+    \PYG{n}{N0} \PYG{o}{=} \PYG{l+m+mf}{1.0}
+    \PYG{n}{Es} \PYG{o}{=} \PYG{n}{EbN0\PYGZus{}lin} \PYG{o}{*} \PYG{p}{(}\PYG{l+m+mi}{2} \PYG{o}{*} \PYG{n}{N0}\PYG{p}{)}
+    \PYG{n}{Es\PYGZus{}per\PYGZus{}stream} \PYG{o}{=} \PYG{n}{Es} \PYG{o}{/} \PYG{n}{Nt}
+    \PYG{n}{chunk} \PYG{o}{=} \PYG{l+m+mi}{200}
+    \PYG{n}{total\PYGZus{}errors} \PYG{o}{=} \PYG{l+m+mi}{0}
+    \PYG{n}{total\PYGZus{}bits} \PYG{o}{=} \PYG{l+m+mi}{0}
+
+    \PYG{k}{for} \PYG{n}{start} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{Nreal}\PYG{p}{,} \PYG{n}{chunk}\PYG{p}{):}
+        \PYG{n}{thisN} \PYG{o}{=} \PYG{n+nb}{min}\PYG{p}{(}\PYG{n}{chunk}\PYG{p}{,} \PYG{n}{Nreal} \PYG{o}{\PYGZhy{}} \PYG{n}{start}\PYG{p}{)}
+        \PYG{n}{H} \PYG{o}{=} \PYG{n}{gen\PYGZus{}rayleigh\PYGZus{}channel\PYGZus{}batch}\PYG{p}{(}\PYG{n}{thisN}\PYG{p}{,} \PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+        \PYG{n}{S\PYGZus{}streams}\PYG{p}{,} \PYG{n}{bits\PYGZus{}streams} \PYG{o}{=} \PYG{n}{gen\PYGZus{}qpsk\PYGZus{}symbols\PYGZus{}batch}\PYG{p}{(}\PYG{n}{thisN}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{,} \PYG{n}{Es\PYGZus{}per\PYGZus{}stream}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+        \PYG{n}{s\PYGZus{}hat}\PYG{p}{,} \PYG{n}{s\PYGZus{}true} \PYG{o}{=} \PYG{n}{transmit\PYGZus{}and\PYGZus{}mmse\PYGZus{}decode}\PYG{p}{(}\PYG{n}{H}\PYG{p}{,} \PYG{n}{S\PYGZus{}streams}\PYG{p}{,} \PYG{n}{N0}\PYG{p}{,} \PYG{n}{Es}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+
+        \PYG{n}{bits\PYGZus{}hat} \PYG{o}{=} \PYG{n}{qpsk\PYGZus{}demod\PYGZus{}symbols\PYGZus{}to\PYGZus{}bits}\PYG{p}{(}\PYG{n}{s\PYGZus{}hat}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+        \PYG{n}{total\PYGZus{}errors} \PYG{o}{+=} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{bits\PYGZus{}hat} \PYG{o}{!=} \PYG{n}{bits\PYGZus{}streams}\PYG{p}{))}
+        \PYG{n}{total\PYGZus{}bits} \PYG{o}{+=} \PYG{n}{bits\PYGZus{}hat}\PYG{o}{.}\PYG{n}{size}
+
+    \PYG{n}{Pb} \PYG{o}{=} \PYG{n}{total\PYGZus{}errors} \PYG{o}{/} \PYG{n}{total\PYGZus{}bits}
+    \PYG{k}{return} \PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{,} \PYG{n}{Pb}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{simulate\PYGZus{}for\PYGZus{}EbN0\PYGZus{}mmse\PYGZus{}gpu}\PYG{p}{(}\PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{,} \PYG{n}{Nreal}\PYG{p}{,} \PYG{n}{seed}\PYG{p}{):}
+    \PYG{n}{xp} \PYG{o}{=} \PYG{n}{cp}
+    \PYG{n}{rng} \PYG{o}{=} \PYG{n}{xp}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{default\PYGZus{}rng}\PYG{p}{(}\PYG{n}{seed}\PYG{p}{)}
+    \PYG{n}{N0} \PYG{o}{=} \PYG{l+m+mf}{1.0}
+    \PYG{n}{Es} \PYG{o}{=} \PYG{n}{EbN0\PYGZus{}lin} \PYG{o}{*} \PYG{p}{(}\PYG{l+m+mi}{2} \PYG{o}{*} \PYG{n}{N0}\PYG{p}{)}
+    \PYG{n}{Es\PYGZus{}per\PYGZus{}stream} \PYG{o}{=} \PYG{n}{Es} \PYG{o}{/} \PYG{n}{Nt}
+
+    \PYG{n}{H} \PYG{o}{=} \PYG{n}{gen\PYGZus{}rayleigh\PYGZus{}channel\PYGZus{}batch}\PYG{p}{(}\PYG{n}{Nreal}\PYG{p}{,} \PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+    \PYG{n}{S\PYGZus{}streams}\PYG{p}{,} \PYG{n}{bits\PYGZus{}streams} \PYG{o}{=} \PYG{n}{gen\PYGZus{}qpsk\PYGZus{}symbols\PYGZus{}batch}\PYG{p}{(}\PYG{n}{Nreal}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{,} \PYG{n}{Es\PYGZus{}per\PYGZus{}stream}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+    \PYG{n}{s\PYGZus{}hat}\PYG{p}{,} \PYG{n}{s\PYGZus{}true} \PYG{o}{=} \PYG{n}{transmit\PYGZus{}and\PYGZus{}mmse\PYGZus{}decode}\PYG{p}{(}\PYG{n}{H}\PYG{p}{,} \PYG{n}{S\PYGZus{}streams}\PYG{p}{,} \PYG{n}{N0}\PYG{p}{,} \PYG{n}{Es}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+
+    \PYG{n}{bits\PYGZus{}hat} \PYG{o}{=} \PYG{n}{qpsk\PYGZus{}demod\PYGZus{}symbols\PYGZus{}to\PYGZus{}bits}\PYG{p}{(}\PYG{n}{s\PYGZus{}hat}\PYG{p}{,} \PYG{n}{xp}\PYG{p}{)}
+    \PYG{n}{errors} \PYG{o}{=} \PYG{n+nb}{int}\PYG{p}{((}\PYG{n}{bits\PYGZus{}hat} \PYG{o}{!=} \PYG{n}{bits\PYGZus{}streams}\PYG{p}{)}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{()}\PYG{o}{.}\PYG{n}{get}\PYG{p}{())}
+    \PYG{n}{total\PYGZus{}bits} \PYG{o}{=} \PYG{n}{bits\PYGZus{}hat}\PYG{o}{.}\PYG{n}{size}
+    \PYG{n}{Pb} \PYG{o}{=} \PYG{n}{errors} \PYG{o}{/} \PYG{n}{total\PYGZus{}bits}
+    \PYG{k}{return} \PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{,} \PYG{n}{Pb}
+
+
+
+\PYG{c+c1}{\PYGZsh{} Cell: Orquestador ZF decoding (CPU/GPU)}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{run\PYGZus{}zf\PYGZus{}decoding\PYGZus{}simulation}\PYG{p}{(}\PYG{n}{configs}\PYG{p}{,} \PYG{n}{EbN0\PYGZus{}dB}\PYG{p}{,} \PYG{n}{Ns}\PYG{o}{=}\PYG{l+m+mi}{1000}\PYG{p}{,} \PYG{n}{Nreal}\PYG{o}{=}\PYG{l+m+mi}{10000}\PYG{p}{,} \PYG{n}{use\PYGZus{}gpu}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{,} \PYG{n}{nprocs}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{):}
+    \PYG{n}{EbN0\PYGZus{}lin\PYGZus{}list} \PYG{o}{=} \PYG{l+m+mi}{10}\PYG{o}{**}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}dB}\PYG{o}{/}\PYG{l+m+mi}{10}\PYG{p}{)}
+    \PYG{n}{results} \PYG{o}{=} \PYG{p}{\PYGZob{}\PYGZcb{}}
+    \PYG{k}{if} \PYG{n}{use\PYGZus{}gpu} \PYG{o+ow}{and} \PYG{n}{gpu\PYGZus{}available}\PYG{p}{:}
+        \PYG{k}{for} \PYG{p}{(}\PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{)} \PYG{o+ow}{in} \PYG{n}{configs}\PYG{p}{:}
+            \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}GPU mode: running }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Nr}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{x}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Nt}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{ with ZF decoding\PYGZsq{}}\PYG{p}{)}
+            \PYG{n}{Pb\PYGZus{}list} \PYG{o}{=} \PYG{p}{[]}
+            \PYG{k}{for} \PYG{n}{EbN0\PYGZus{}lin} \PYG{o+ow}{in} \PYG{n}{EbN0\PYGZus{}lin\PYGZus{}list}\PYG{p}{:}
+                \PYG{n}{\PYGZus{}}\PYG{p}{,} \PYG{n}{Pb} \PYG{o}{=} \PYG{n}{simulate\PYGZus{}for\PYGZus{}EbN0\PYGZus{}zf\PYGZus{}gpu}\PYG{p}{(}\PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{,} \PYG{n}{Nreal}\PYG{p}{,} \PYG{n}{seed}\PYG{o}{=}\PYG{l+m+mi}{12345}\PYG{p}{)}
+                \PYG{n}{Pb\PYGZus{}list}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{Pb}\PYG{p}{)}
+            \PYG{n}{results}\PYG{p}{[(}\PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{)]} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{n}{Pb\PYGZus{}list}\PYG{p}{)}
+    \PYG{k}{else}\PYG{p}{:}
+        \PYG{k}{if} \PYG{n}{nprocs} \PYG{o+ow}{is} \PYG{k+kc}{None}\PYG{p}{:}
+            \PYG{n}{nprocs} \PYG{o}{=} \PYG{n+nb}{max}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{cpu\PYGZus{}count}\PYG{p}{()}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)}
+        \PYG{n}{pool} \PYG{o}{=} \PYG{n}{Pool}\PYG{p}{(}\PYG{n}{processes}\PYG{o}{=}\PYG{n}{nprocs}\PYG{p}{)}
+        \PYG{k}{try}\PYG{p}{:}
+            \PYG{k}{for} \PYG{p}{(}\PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{)} \PYG{o+ow}{in} \PYG{n}{configs}\PYG{p}{:}
+                \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}CPU multi: running }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Nr}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{x}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Nt}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{ (nprocs=}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{nprocs}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{) with ZF decoding\PYGZsq{}}\PYG{p}{)}
+                \PYG{n}{args} \PYG{o}{=} \PYG{p}{[(}\PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{,} \PYG{n+nb}{max}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{Nreal}\PYG{o}{//}\PYG{n}{nprocs}\PYG{p}{),} \PYG{l+m+mi}{1000} \PYG{o}{+} \PYG{n}{i}\PYG{p}{)}
+                        \PYG{k}{for} \PYG{n}{i}\PYG{p}{,} \PYG{n}{EbN0\PYGZus{}lin} \PYG{o+ow}{in} \PYG{n+nb}{enumerate}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}lin\PYGZus{}list}\PYG{p}{)]}
+                \PYG{n}{res} \PYG{o}{=} \PYG{n}{pool}\PYG{o}{.}\PYG{n}{map}\PYG{p}{(}\PYG{n}{simulate\PYGZus{}for\PYGZus{}EbN0\PYGZus{}zf\PYGZus{}cpu}\PYG{p}{,} \PYG{n}{args}\PYG{p}{)}
+                \PYG{c+c1}{\PYGZsh{} ordenar por EbN0}
+                \PYG{n}{res\PYGZus{}sorted} \PYG{o}{=} \PYG{n+nb}{sorted}\PYG{p}{(}\PYG{n}{res}\PYG{p}{,} \PYG{n}{key}\PYG{o}{=}\PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}lin\PYGZus{}list}\PYG{p}{)}\PYG{o}{.}\PYG{n}{index}\PYG{p}{(}\PYG{n}{x}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]))}
+                \PYG{n}{Pb\PYGZus{}list} \PYG{o}{=} \PYG{p}{[}\PYG{n}{r}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{k}{for} \PYG{n}{r} \PYG{o+ow}{in} \PYG{n}{res\PYGZus{}sorted}\PYG{p}{]}
+                \PYG{n}{results}\PYG{p}{[(}\PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{)]} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{n}{Pb\PYGZus{}list}\PYG{p}{)}
+        \PYG{k}{finally}\PYG{p}{:}
+            \PYG{n}{pool}\PYG{o}{.}\PYG{n}{close}\PYG{p}{()}
+            \PYG{n}{pool}\PYG{o}{.}\PYG{n}{join}\PYG{p}{()}
+    \PYG{k}{return} \PYG{n}{results}
+
+
+
+\PYG{c+c1}{\PYGZsh{} Cell: Orquestador MMSE (CPU/GPU)}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{run\PYGZus{}mmse\PYGZus{}decoding\PYGZus{}simulation}\PYG{p}{(}\PYG{n}{configs}\PYG{p}{,} \PYG{n}{EbN0\PYGZus{}dB}\PYG{p}{,} \PYG{n}{Ns}\PYG{o}{=}\PYG{l+m+mi}{1000}\PYG{p}{,} \PYG{n}{Nreal}\PYG{o}{=}\PYG{l+m+mi}{10000}\PYG{p}{,} \PYG{n}{use\PYGZus{}gpu}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{,} \PYG{n}{nprocs}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{):}
+    \PYG{n}{EbN0\PYGZus{}lin\PYGZus{}list} \PYG{o}{=} \PYG{l+m+mi}{10}\PYG{o}{**}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}dB}\PYG{o}{/}\PYG{l+m+mi}{10}\PYG{p}{)}
+    \PYG{n}{results} \PYG{o}{=} \PYG{p}{\PYGZob{}\PYGZcb{}}
+    \PYG{k}{if} \PYG{n}{use\PYGZus{}gpu} \PYG{o+ow}{and} \PYG{n}{gpu\PYGZus{}available}\PYG{p}{:}
+        \PYG{k}{for} \PYG{p}{(}\PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{)} \PYG{o+ow}{in} \PYG{n}{configs}\PYG{p}{:}
+            \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}GPU: running MMSE }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Nr}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{x}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Nt}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+            \PYG{n}{Pb\PYGZus{}list} \PYG{o}{=} \PYG{p}{[]}
+            \PYG{k}{for} \PYG{n}{EbN0\PYGZus{}lin} \PYG{o+ow}{in} \PYG{n}{EbN0\PYGZus{}lin\PYGZus{}list}\PYG{p}{:}
+                \PYG{n}{\PYGZus{}}\PYG{p}{,} \PYG{n}{Pb} \PYG{o}{=} \PYG{n}{simulate\PYGZus{}for\PYGZus{}EbN0\PYGZus{}mmse\PYGZus{}gpu}\PYG{p}{(}\PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{,} \PYG{n}{Nreal}\PYG{p}{,} \PYG{n}{seed}\PYG{o}{=}\PYG{l+m+mi}{12345}\PYG{p}{)}
+                \PYG{n}{Pb\PYGZus{}list}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{Pb}\PYG{p}{)}
+            \PYG{n}{results}\PYG{p}{[(}\PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{)]} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{n}{Pb\PYGZus{}list}\PYG{p}{)}
+    \PYG{k}{else}\PYG{p}{:}
+        \PYG{k}{if} \PYG{n}{nprocs} \PYG{o+ow}{is} \PYG{k+kc}{None}\PYG{p}{:}
+            \PYG{n}{nprocs} \PYG{o}{=} \PYG{n+nb}{max}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{cpu\PYGZus{}count}\PYG{p}{()}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)}
+        \PYG{n}{pool} \PYG{o}{=} \PYG{n}{Pool}\PYG{p}{(}\PYG{n}{processes}\PYG{o}{=}\PYG{n}{nprocs}\PYG{p}{)}
+        \PYG{k}{try}\PYG{p}{:}
+            \PYG{k}{for} \PYG{p}{(}\PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{)} \PYG{o+ow}{in} \PYG{n}{configs}\PYG{p}{:}
+                \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}CPU multi: running MMSE }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Nr}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{x}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Nt}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{ (nprocs=}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{nprocs}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{)\PYGZsq{}}\PYG{p}{)}
+                \PYG{n}{args} \PYG{o}{=} \PYG{p}{[(}\PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{,} \PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{,} \PYG{n}{Ns}\PYG{p}{,} \PYG{n+nb}{max}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{Nreal}\PYG{o}{//}\PYG{n}{nprocs}\PYG{p}{),} \PYG{l+m+mi}{2000} \PYG{o}{+} \PYG{n}{i}\PYG{p}{)}
+                        \PYG{k}{for} \PYG{n}{i}\PYG{p}{,} \PYG{n}{EbN0\PYGZus{}lin} \PYG{o+ow}{in} \PYG{n+nb}{enumerate}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}lin\PYGZus{}list}\PYG{p}{)]}
+                \PYG{n}{res} \PYG{o}{=} \PYG{n}{pool}\PYG{o}{.}\PYG{n}{map}\PYG{p}{(}\PYG{n}{simulate\PYGZus{}for\PYGZus{}EbN0\PYGZus{}mmse\PYGZus{}cpu}\PYG{p}{,} \PYG{n}{args}\PYG{p}{)}
+                \PYG{n}{res\PYGZus{}sorted} \PYG{o}{=} \PYG{n+nb}{sorted}\PYG{p}{(}\PYG{n}{res}\PYG{p}{,} \PYG{n}{key}\PYG{o}{=}\PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}lin\PYGZus{}list}\PYG{p}{)}\PYG{o}{.}\PYG{n}{index}\PYG{p}{(}\PYG{n}{x}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]))}
+                \PYG{n}{Pb\PYGZus{}list} \PYG{o}{=} \PYG{p}{[}\PYG{n}{r}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{k}{for} \PYG{n}{r} \PYG{o+ow}{in} \PYG{n}{res\PYGZus{}sorted}\PYG{p}{]}
+                \PYG{n}{results}\PYG{p}{[(}\PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{)]} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{n}{Pb\PYGZus{}list}\PYG{p}{)}
+        \PYG{k}{finally}\PYG{p}{:}
+            \PYG{n}{pool}\PYG{o}{.}\PYG{n}{close}\PYG{p}{()}
+            \PYG{n}{pool}\PYG{o}{.}\PYG{n}{join}\PYG{p}{()}
+    \PYG{k}{return} \PYG{n}{results}
+
+
+
+\PYG{c+c1}{\PYGZsh{} Cell: Parámetros y ejecución ZF decoding}
+\PYG{n}{EbN0\PYGZus{}dB} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{arange}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{31}\PYG{p}{,} \PYG{l+m+mi}{3}\PYG{p}{)}
+\PYG{n}{configs} \PYG{o}{=} \PYG{p}{[(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{),} \PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{),} \PYG{p}{(}\PYG{l+m+mi}{4}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{),} \PYG{p}{(}\PYG{l+m+mi}{8}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{)]}   \PYG{c+c1}{\PYGZsh{} (Nr, Nt)}
+\PYG{n}{Ns} \PYG{o}{=} \PYG{l+m+mi}{1000}
+\PYG{n}{Nreal} \PYG{o}{=} \PYG{l+m+mi}{10000}
+\PYG{n}{use\PYGZus{}gpu} \PYG{o}{=} \PYG{n}{gpu\PYGZus{}available}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Modo:\PYGZdq{}}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}GPU\PYGZdq{}} \PYG{k}{if} \PYG{n}{use\PYGZus{}gpu} \PYG{k}{else} \PYG{l+s+s2}{\PYGZdq{}CPU\PYGZdq{}}\PYG{p}{)}
+
+\PYG{n}{start} \PYG{o}{=} \PYG{n}{time}\PYG{o}{.}\PYG{n}{time}\PYG{p}{()}
+\PYG{n}{results\PYGZus{}zf} \PYG{o}{=} \PYG{n}{run\PYGZus{}zf\PYGZus{}decoding\PYGZus{}simulation}\PYG{p}{(}\PYG{n}{configs}\PYG{p}{,} \PYG{n}{EbN0\PYGZus{}dB}\PYG{p}{,} \PYG{n}{Ns}\PYG{o}{=}\PYG{n}{Ns}\PYG{p}{,} \PYG{n}{Nreal}\PYG{o}{=}\PYG{n}{Nreal}\PYG{p}{,} \PYG{n}{use\PYGZus{}gpu}\PYG{o}{=}\PYG{n}{use\PYGZus{}gpu}\PYG{p}{,} \PYG{n}{nprocs}\PYG{o}{=}\PYG{l+m+mi}{4}\PYG{p}{)}
+\PYG{n}{end} \PYG{o}{=} \PYG{n}{time}\PYG{o}{.}\PYG{n}{time}\PYG{p}{()}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Tiempo total (s):\PYGZdq{}}\PYG{p}{,} \PYG{n}{end} \PYG{o}{\PYGZhy{}} \PYG{n}{start}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} Cell: Plot resultados ZF decoding}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{10}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{))}
+\PYG{n}{EbN0\PYGZus{}lin} \PYG{o}{=} \PYG{l+m+mi}{10}\PYG{o}{**}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}dB}\PYG{o}{/}\PYG{l+m+mi}{10}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{semilogy}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}dB}\PYG{p}{,} \PYG{n}{ber\PYGZus{}qpsk\PYGZus{}awgn}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{),} \PYG{l+s+s1}{\PYGZsq{}k\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}QPSK AWGN (1x1 teórico)\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{semilogy}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}dB}\PYG{p}{,} \PYG{n}{ber\PYGZus{}qpsk\PYGZus{}rayleigh}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{),} \PYG{l+s+s1}{\PYGZsq{}k:\PYGZsq{}}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}QPSK Rayleigh (1x1 teórico)\PYGZsq{}}\PYG{p}{)}
+\PYG{k}{for} \PYG{p}{(}\PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{),} \PYG{n}{Pb} \PYG{o+ow}{in} \PYG{n}{results\PYGZus{}zf}\PYG{o}{.}\PYG{n}{items}\PYG{p}{():}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{semilogy}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}dB}\PYG{p}{,} \PYG{n}{Pb}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}o\PYGZhy{}\PYGZsq{}}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}ZF decoding }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Nr}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{x}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Nt}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}BER vs Eb/N0 \PYGZhy{} ZF decoding\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}Eb/N0 [dB]\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}BER promedio\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{k+kc}{True}\PYG{p}{,} \PYG{n}{which}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}both\PYGZsq{}}\PYG{p}{,} \PYG{n}{ls}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,} \PYG{n}{alpha}\PYG{o}{=}\PYG{l+m+mf}{0.6}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylim}\PYG{p}{(}\PYG{l+m+mf}{1e\PYGZhy{}6}\PYG{p}{,} \PYG{l+m+mf}{0.5}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{legend}\PYG{p}{()}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{show}\PYG{p}{()}
+
+
+
+\PYG{c+c1}{\PYGZsh{} Cell: Ejecución MMSE}
+\PYG{n}{EbN0\PYGZus{}dB} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{arange}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{31}\PYG{p}{,} \PYG{l+m+mi}{3}\PYG{p}{)}
+\PYG{n}{configs\PYGZus{}test} \PYG{o}{=} \PYG{p}{[(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{),} \PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{),} \PYG{p}{(}\PYG{l+m+mi}{4}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{),} \PYG{p}{(}\PYG{l+m+mi}{8}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{)]}
+\PYG{n}{Ns} \PYG{o}{=} \PYG{l+m+mi}{1000}
+\PYG{n}{Nreal} \PYG{o}{=} \PYG{l+m+mi}{2000}   \PYG{c+c1}{\PYGZsh{} reduce para pruebas rápidas; poner 10000 en corrida final}
+\PYG{n}{use\PYGZus{}gpu} \PYG{o}{=} \PYG{n}{gpu\PYGZus{}available}
+
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Running MMSE decoding sims (may take time)... mode:\PYGZdq{}}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}GPU\PYGZdq{}} \PYG{k}{if} \PYG{n}{use\PYGZus{}gpu} \PYG{k}{else} \PYG{l+s+s2}{\PYGZdq{}CPU\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{t0} \PYG{o}{=} \PYG{n}{time}\PYG{o}{.}\PYG{n}{time}\PYG{p}{()}
+\PYG{n}{results\PYGZus{}mmse} \PYG{o}{=} \PYG{n}{run\PYGZus{}mmse\PYGZus{}decoding\PYGZus{}simulation}\PYG{p}{(}\PYG{n}{configs\PYGZus{}test}\PYG{p}{,} \PYG{n}{EbN0\PYGZus{}dB}\PYG{p}{,} \PYG{n}{Ns}\PYG{o}{=}\PYG{n}{Ns}\PYG{p}{,} \PYG{n}{Nreal}\PYG{o}{=}\PYG{n}{Nreal}\PYG{p}{,} \PYG{n}{use\PYGZus{}gpu}\PYG{o}{=}\PYG{n}{use\PYGZus{}gpu}\PYG{p}{,} \PYG{n}{nprocs}\PYG{o}{=}\PYG{l+m+mi}{4}\PYG{p}{)}
+\PYG{n}{t1} \PYG{o}{=} \PYG{n}{time}\PYG{o}{.}\PYG{n}{time}\PYG{p}{()}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Elapsed (s):\PYGZdq{}}\PYG{p}{,} \PYG{n}{t1}\PYG{o}{\PYGZhy{}}\PYG{n}{t0}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} Cell: Plot comparación (MMSE)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{10}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{))}
+\PYG{n}{EbN0\PYGZus{}lin} \PYG{o}{=} \PYG{l+m+mi}{10}\PYG{o}{**}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}dB}\PYG{o}{/}\PYG{l+m+mi}{10}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{semilogy}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}dB}\PYG{p}{,} \PYG{n}{ber\PYGZus{}qpsk\PYGZus{}awgn}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{),} \PYG{l+s+s1}{\PYGZsq{}k\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}QPSK AWGN (1x1 teórico)\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{semilogy}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}dB}\PYG{p}{,} \PYG{n}{ber\PYGZus{}qpsk\PYGZus{}rayleigh}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}lin}\PYG{p}{),} \PYG{l+s+s1}{\PYGZsq{}k:\PYGZsq{}}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}QPSK Rayleigh (1x1 teórico)\PYGZsq{}}\PYG{p}{)}
+\PYG{k}{for} \PYG{p}{(}\PYG{n}{Nr}\PYG{p}{,} \PYG{n}{Nt}\PYG{p}{),} \PYG{n}{Pb} \PYG{o+ow}{in} \PYG{n}{results\PYGZus{}mmse}\PYG{o}{.}\PYG{n}{items}\PYG{p}{():}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{semilogy}\PYG{p}{(}\PYG{n}{EbN0\PYGZus{}dB}\PYG{p}{,} \PYG{n}{Pb}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}o\PYGZhy{}\PYGZsq{}}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}MMSE }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Nr}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{x}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{Nt}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} si tienes ZF results, plotealas también:}
+\PYG{c+c1}{\PYGZsh{} for (Nr,Nt), Pb in results\PYGZus{}zf.items(): plt.semilogy(EbN0\PYGZus{}dB, Pb, \PYGZsq{}s\PYGZhy{}\PYGZhy{}\PYGZsq{}, label=f\PYGZsq{}ZF \PYGZob{}Nr\PYGZcb{}x\PYGZob{}Nt\PYGZcb{}\PYGZsq{})}
+
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}BER vs Eb/N0 \PYGZhy{} MMSE decoding\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}Eb/N0 [dB]\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}BER promedio\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{k+kc}{True}\PYG{p}{,} \PYG{n}{which}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}both\PYGZsq{}}\PYG{p}{,} \PYG{n}{ls}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,} \PYG{n}{alpha}\PYG{o}{=}\PYG{l+m+mf}{0.6}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylim}\PYG{p}{(}\PYG{l+m+mf}{1e\PYGZhy{}6}\PYG{p}{,} \PYG{l+m+mf}{0.5}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{legend}\PYG{p}{()}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{show}\PYG{p}{()}
+\end{MintedVerbatim}
