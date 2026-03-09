@@ -4,6 +4,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[spanish]{babel}
+\usepackage{biblatex}
 \usepackage{amsmath, amssymb, amsfonts}
 \usepackage{graphicx}
 \usepackage{caption}
@@ -172,13 +173,204 @@ cantidades:
 
 \begin{figure}[H]
     \centering
-    %\includegraphics[width=0.6\textwidth]{img.png}
+    \includegraphics[width=0.6\textwidth]{img.jpg}
     \caption{Muestra plana de microesferas fluorescentes.}
 \end{figure}
 
 \subsection*{Solución (a)}
 
+Para obtener la resolución del microscopio, primero debemos determinar su apertura numérica (NA). De la imágen la, podemos observar que las microesferas siguen un patrón de difracción gaussiano con una desviación estándar de:
 
+\begin{center}
+\begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{N} & \textbf{$\sigma$ (píxeles)} & \textbf{$\sigma$ ($\mu$m)} \\
+    \hline
+    1 & 2.608 & 0.4173 \\
+    2 & 2.518 & 0.4029 \\
+    3 & 2.350 & 0.3760 \\
+    4 & 1.586 & 0.2538 \\
+    5 & 2.168 & 0.3469 \\
+    \hline
+\end{tabular}
+\end{center}
+
+Promediando los valores obtenemos una desviación estándar promedio de $\sigma \approx 0.3394\ \mu$m.
+
+La resolución de un microscopio se define como la distancia mínima entre dos puntos que pueden ser distinguidos como separados. Utilizamos el FWHM (Full Width at Half Maximum) para estimar la resolución:
+
+\begin{align*}
+    \text{R} \approx \text{FWHM} &= 2 \sqrt{2 \ln(2)} \cdot \sigma \\
+    &\approx 2.355 \cdot 0.3394\ \mu\text{m} \\
+    &\approx 0.799\ \mu\text{m}
+\end{align*}
+
+Ahora, utilizando difracción de Airy para una apertura circular, la resolución también se puede relacionar con la apertura numérica (NA) y la longitud de onda ($\lambda$):
+
+\begin{align*}
+    \text{R} &= \frac{0.61 \lambda}{\text{NA}} \\
+    \text{NA} &= \frac{0.61 \lambda}{\text{R}} \\
+    &= \frac{0.61 \cdot 0.518\ \mu\text{m}}{0.799\ \mu\text{m}} \\
+    &\approx 0.395
+\end{align*}
+
+\subsection*{Solución (b)}
+
+Utilizando ImageJ, se seleccionan varias regiones del fondo de la imagen (donde no hay microesferas) y se calcula el promedio de las cuentas de intensidad.
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|l|l|l|}
+    \hline
+        ~ & Area & Mean & Min & Max \\ \hline
+        1 & 3850 & 138.905 & 98 & 193 \\ \hline
+        2 & 2784 & 139.161 & 101 & 179 \\ \hline
+        3 & 5940 & 138.916 & 99 & 193 \\ \hline
+        4 & 4070 & 139.173 & 87 & 184 \\ \hline
+    \end{tabular}
+\end{table}
+
+Promediando los valores obtenemos un valor promedio de cuentas de intensidad del fondo de iluminación de aproximadamente 139.04 cuentas. Considerando el offset de 100 cuentas, el valor neto del fondo es:
+
+\begin{equation*}
+    I_{\text{fondo}} \approx 139.04 - 100 = 39.04\ \text{cuentas}
+\end{equation*}
+
+\subsection*{Solución (c)}
+
+Seleccionando varias microesferas en la imagen y midiendo las cuentas de intensidad totales, se obtiene:
+
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{|l|l|l|l|l|}
+    \hline
+        ~ & Area & Mean & Min & Max \\ \hline
+        1 & 52 & 232.712 & 176 & 336 \\ \hline
+        2 & 52 & 207.885 & 156 & 265 \\ \hline
+        3 & 52 & 234.750 & 177 & 312 \\ \hline
+        4 & 52 & 218.750 & 150 & 297 \\ \hline
+        5 & 52 & 215.231 & 166 & 270 \\ \hline
+    \end{tabular}
+\end{table}
+
+Promediando los valores obtenemos un valor promedio de cuentas de intensidad en las microesferas de aproximadamente 221.46 cuentas. Considerando el offset de 100 cuentas y el fondo de iluminación, el valor neto de las microesferas es:
+
+\begin{equation*}
+    I_{\text{microesfera}} \approx 221.46 - 100 - 39.04 = 82.42\ \text{cuentas}
+\end{equation*}
+
+\subsection*{Solución (d)}
+
+Cada cuenta de intensidad corresponde a 0.46 electrones, por lo que el número total de electrones generados por una microesfera es:
+
+\begin{equation*}
+    N_e = I_{\text{microesfera}} \times 0.46 \approx 82.42 \times 0.46 \approx 37.91\ \text{electrones}
+\end{equation*}
+
+La carga total generada es:
+
+\begin{equation*}
+    Q = N_e \times e \approx 37.91 \times 1.602 \times 10^{-19}\ \text{C} \approx 6.07 \times 10^{-18}\ \text{C}
+\end{equation*}
+
+La corriente total generada en la cámara por una microesfera durante el tiempo de exposición de 1 s es:
+
+\begin{equation*}
+    I = \frac{Q}{t} \approx \frac{6.07 \times 10^{-18}\ \text{C}}{1\ \text{s}} = 6.07 \times 10^{-18}\ \text{A}
+\end{equation*}
+
+\subsection*{Solución (e)}
+
+La pontecia óptica incidente se puede calcular a partir de la corriente de salida y la responsividad del fotodiodo.
+
+\begin{equation*}
+    P_{\text{opt, inc}} = \frac{I}{R}
+\end{equation*}
+
+La responsividad $R$ se calcula como:
+
+\begin{equation*}
+    R = \frac{\eta q \lambda}{h c}
+\end{equation*}
+
+donde $\eta$ es la eficiencia cuántica (0.8), $q$ es la carga del electrón, $\lambda$ es la longitud de onda (518 nm), $h$ es la constante de Planck y $c$ es la velocidad de la luz.
+
+Calculando $R$:
+
+\begin{align*}
+    R &\approx \frac{0.8 \times 1.602 \times 10^{-19}\ \text{C} \times 518 \times 10^{-9}\ \text{m}}{6.626 \times 10^{-34}\ \text{J·s} \times 3 \times 10^{8}\ \text{m/s}} \\
+    &\approx 0.1003\ \text{A/W}
+\end{align*}
+
+Finalmente, la potencia óptica incidente es:
+
+\begin{equation*}
+    P_{\text{opt, inc}} \approx \frac{6.07 \times 10^{-18}\ \text{A}}{0.1003\ \text{A/W}} \approx 6.05 \times 10^{-17}\ \text{W}
+\end{equation*}
+
+\subsection*{Solución (f)}
+
+La potencia irradiada total se obtiene corrigiendo por la fracción de captura angular del objetivo y por la transmisión del sistema óptico:
+\[
+P_{\text{rad}} = 
+\frac{P_{\text{opt, inc}}}{F_{\text{cap}} \, T_{\text{sys}}}.
+\]
+
+donde $F_{\text{cap}}$ es la fracción del ángulo sólido capturado por el objetivo y $T_{\text{sys}}$ es la transmisión del sistema óptico (0.9).
+
+El objetivo recoge la luz emitida dentro de un cono definido por la apertura numérica (NA).  
+Asumiendo emisión isotrópica y un medio de índice $n \approx 1$:
+\[
+\text{NA} = \sin\theta_a,
+\]
+donde $\theta_a$ es el ángulo de aceptación del objetivo.  
+La fracción de luz capturada, dada por el ángulo sólido correspondiente, es:
+\[
+F_{\text{cap}} = \frac{1}{2}\left(1 - \cos\theta_a\right).
+\]
+
+Usando la relación:
+\[
+\cos\theta_a = \sqrt{1 - \text{NA}^2},
+\]
+se obtiene:
+\[
+F_{\text{cap}} = \frac{1}{2}\left(1 - \sqrt{1 - \text{NA}^2}\right).
+\]
+
+Sustituyendo los valores numéricos:
+
+\begin{align*}
+F_{\text{cap}} &\approx \frac{1}{2}\left(1 - \sqrt{1 - (0.395)^2}\right) \\
+&\approx \frac{1}{2}\left(1 - \sqrt{1 - 0.156}\right) \\
+&\approx \frac{1}{2}\left(1 - \sqrt{0.844}\right) \\
+&\approx \frac{1}{2}\left(1 - 0.919\right) \\
+&\approx \frac{1}{2} \cdot 0.081
+\end{align*}
+
+\begin{equation*}
+    F_{\text{cap}} \approx 0.0405
+\end{equation*}
+
+Finalmente, la potencia óptica irradiada por una microesfera es:
+
+\begin{equation*}
+    P_{\text{rad}} \approx \frac{6.05 \times 10^{-17}\ \text{W}}{0.0405 \times 0.9} \approx 1.66 \times 10^{-15}\ \text{W}
+\end{equation*}
+
+\subsection*{Solución (g)}
+
+Para determinar el tiempo de exposición mínimo que permita detectar las microesferas con una $SNR = 2$ por sobre el nivel de ruido del fondo, Utilizamos el numero de cuentas de intensidad netas de la microesfera y del fondo:
+
+\begin{align*}
+    SNR &= \frac{I_{\text{microesfera}} \cdot t}{\sqrt{(I_{\text{microesfera}} + I_{\text{fondo}}) \cdot t}} \\
+    2 &= \frac{82.42 \cdot t}{\sqrt{(82.42 + 39.04) \cdot t}} \\
+    2 &= \frac{82.42 \cdot t}{\sqrt{121.46 \cdot t}} \\
+    2 &= \frac{82.42 \cdot \sqrt{t}}{\sqrt{121.46}} \\
+    \sqrt{t} &= \frac{2 \cdot \sqrt{121.46}}{82.42} \\
+    t &= \left(\frac{2 \cdot \sqrt{121.46}}{82.42}\right)^2 \\
+    t &\approx 0.0715\ \text{s}
+\end{align*}
 
 % ---------------------------------------------------------
 
@@ -207,5 +399,167 @@ I(\vec{\rho}, t) = \sum_{n=1}^{N} \text{PSF}(\vec{\rho} - \vec{\rho}_n)\, f_n(t)
     \item[(c)] Compruebe que no se obtiene el mismo resultado al simplemente elevar al cuadrado 
     la imagen inicial, es decir, compare el resultado anterior con $\langle I(\vec{\rho}) \rangle^2$.
 \end{enumerate}
+
+\subsection*{Solución (a)}
+
+Partimos del modelo de intensidad registrado por la cámara:
+\[
+I(\vec{\rho}, t) = \sum_{n=1}^{N} 
+\text{PSF}(\vec{\rho} - \vec{\rho}_n)\, f_n(t).
+\]
+
+La varianza temporal se define como:
+\[
+\sigma_I^2(\vec{\rho}) = 
+\langle I(\vec{\rho}, t)^2 \rangle -
+\langle I(\vec{\rho}, t) \rangle^2.
+\]
+
+El valor promedio es:
+\[
+\langle I(\vec{\rho}) \rangle =
+\sum_{n=1}^{N} \text{PSF}(\vec{\rho} - \vec{\rho}_n)\,
+\langle f_n \rangle .
+\]
+
+El promedio del cuadrado es:
+\[
+\langle I^2(\vec{\rho}) \rangle
+=\sum_{n=1}^{N} \sum_{m=1}^{N}
+\text{PSF}(\vec{\rho} - \vec{\rho}_n)\,
+\text{PSF}(\vec{\rho} - \vec{\rho}_m)\,
+\langle f_n f_m \rangle.
+\]
+
+Si las fluctuaciones de fluorescencia $f_n(t)$ son independientes entre sí, entonces:
+\[
+\langle f_n f_m \rangle =
+\begin{cases}
+\langle f_n \rangle \langle f_m \rangle, & n \neq m, \\[4pt]
+\langle f_n^2 \rangle, & n = m.
+\end{cases}
+\]
+
+Separando términos diagonales y no diagonales:
+\[
+\langle I^2 \rangle
+= \sum_{n\neq m}
+\text{PSF}_n \text{PSF}_m 
+\langle f_n \rangle \langle f_m \rangle
++ \sum_{n=1}^{N} \text{PSF}_n^2 \langle f_n^2 \rangle.
+\]
+
+El cuadrado del promedio es:
+\[
+\langle I \rangle^2
+= \sum_{n\neq m}
+\text{PSF}_n \text{PSF}_m 
+\langle f_n \rangle \langle f_m \rangle
++ \sum_{n=1}^{N}
+\text{PSF}_n^2 \langle f_n \rangle^2.
+\]
+
+Restando ambas expresiones, los términos cruzados se cancelan idénticamente:
+\[
+\sigma_I^2(\vec{\rho})
+= \sum_{n=1}^{N}
+\text{PSF}^2(\vec{\rho}-\vec{\rho}_n)\,
+\left( \langle f_n^2 \rangle - \langle f_n \rangle^2 \right).
+\]
+
+Por definición,
+\[
+\sigma_n^2 = 
+\langle f_n^2 \rangle - \langle f_n \rangle^2.
+\]
+
+Por lo tanto:
+\[
+\sigma_I^2(\vec{\rho})
+= \sum_{n=1}^{N}
+\text{PSF}^2(\vec{\rho}-\vec{\rho}_n)\;
+\sigma_n^2
+\]
+
+Esta imagen basada en la varianza depende de $\text{PSF}^2$ en lugar de PSF, propiedad fundamental utilizada en SOFI para obtener superresolución.
+
+
+\subsection*{Solución (b)}
+
+Para moléculas que presentan fluorescencia con estadística gaussiana o Poissoniana, la varianza de la señal es proporcional a su media. En particular, para ruido de disparo (shot noise):
+\[
+\sigma_n^2 = \langle f_n \rangle.
+\]
+
+Reemplazando en la expresión obtenida en (a),
+\[
+\sigma_I^2(\vec{\rho})
+= \sum_{n=1}^{N}
+\text{PSF}^2(\vec{\rho} - \vec{\rho}_n)\,
+\langle f_n \rangle.
+\]
+
+De modo que la imagen de varianza queda expresada como una combinación ponderada de $\text{PSF}^2$ por los niveles medios de fluorescencia:
+\[
+\sigma_I^2(\vec{\rho})
+\propto
+\sum_{n=1}^{N}
+\text{PSF}^2(\vec{\rho} - \vec{\rho}_n)
+\, \langle f_n \rangle
+\]
+
+
+\subsection*{Solución (c)}
+
+El promedio temporal de la intensidad es:
+\[
+\langle I(\vec{\rho}) \rangle
+= \sum_{n=1}^{N}
+\text{PSF}(\vec{\rho} - \vec{\rho}_n)
+\langle f_n \rangle.
+\]
+
+Entonces:
+\[
+\langle I(\vec{\rho}) \rangle^2
+= \left(
+\sum_{n=1}^{N}
+\text{PSF}_n \langle f_n \rangle
+\right)^2.
+\]
+
+Al expandir:
+\[
+\langle I \rangle^2
+=
+\sum_{n=1}^{N}
+\text{PSF}_n^2 \langle f_n \rangle^2
++ \sum_{n \neq m}
+\text{PSF}_n \text{PSF}_m\,
+\langle f_n \rangle \langle f_m \rangle.
+\]
+
+Comparando con el resultado de la varianza en (a), observamos que allí:
+\[
+\sigma_I^2(\vec{\rho})
+= \sum_{n=1}^{N}
+\text{PSF}_n^2\,\sigma_n^2,
+\]
+\emph{sin términos cruzados}.  
+
+En cambio, $\langle I \rangle^2$ contiene la suma:
+\[
+\sum_{n \neq m}
+\text{PSF}_n \text{PSF}_m\,
+\langle f_n \rangle \langle f_m \rangle,
+\]
+que representa contribuciones mezcladas entre moléculas distintas, produciendo una imagen más borrosa.
+
+Por lo tanto:
+\[
+\sigma_I^2(\vec{\rho}) \neq \langle I(\vec{\rho}) \rangle^2
+\]
+
+y la ausencia de términos cruzados en $\sigma_I^2$ es precisamente lo que permite que $\text{PSF}^2$ produzca una imagen más angosta, fundamento de la técnica SOFI de superresolución.
 
 \end{document}
