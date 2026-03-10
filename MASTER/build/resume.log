@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.11.30)  10 MAR 2026 09:28
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.11.30)  10 MAR 2026 15:54
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -601,7 +601,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 {c:/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc} <./logo.pdf>]
-runsystem(latexminted cleantemp  --timestamp 20260310092840 69F2AFC2390CEC954F7C208B07212D39)...executed safely (allowed).
+runsystem(latexminted cleantemp  --timestamp 20260310155422 69F2AFC2390CEC954F7C208B07212D39)...executed safely (allowed).
 
  (build/resume.aux
 LaTeX Info: Redefining \. on input line 12.
@@ -617,13 +617,13 @@ Package rerunfilecheck Info: File `resume.out' has not changed.
 Here is how much of TeX's memory you used:
  18603 strings out of 467538
  350560 string characters out of 5423718
- 890498 words of memory out of 5000000
+ 891498 words of memory out of 5000000
  47273 multiletter control sequences out of 15000+600000
  636221 words of font info for 63 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,6n,81p,519b,509s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb>
-Output written on build/resume.pdf (1 page, 141508 bytes).
+Output written on build/resume.pdf (1 page, 142793 bytes).
 PDF statistics:
  47 PDF objects out of 1000 (max. 8388607)
  35 compressed objects within 1 object stream
