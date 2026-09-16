@@ -1,0 +1,111 @@
+% =====================================================================
+%  RESUMEN EJECUTIVO EN INGLÉS  ---  1 PÁGINA / 200 A 400 PALABRAS
+% =====================================================================
+%  La rúbrica (categoría A, 2 puntos) exige CINCO criterios. Si falta uno solo,
+%  bajas a "competente"; si faltan tres, quedas "con necesidad de mejora".
+%
+%  LOS CINCO CRITERIOS, EN ORDEN, Y CÓMO CUBRIRLOS:
+%
+%  [1] CONTEXTUALIZA EL LUGAR DE PRÁCTICA -> empresa, área y puesto de trabajo.
+%      Los tres, explícitos. No basta con nombrar la empresa.
+%        DTS SpA · R&D department (I+D+i) · Electrical Engineering intern.
+%
+%  [2] DESCRIBE EL OBJETIVO O INTERÉS DE LA EMPRESA a lograr al finalizar la
+%      práctica. OJO: es el objetivo DE LA EMPRESA, no el del proyecto.
+%        -> take the company's first formal step into space capabilities and
+%           bring the payload design up to PDR maturity before committing
+%           resources to detailed design.
+%      Conviene declarar TAMBIÉN el objetivo del proyecto, en una oración
+%      separada, para que ambos queden explícitos.
+%
+%  [3] INFORMACIÓN MÁS RELEVANTE DEL DOCUMENTO:
+%        actividades principales -> CONOPS, requirements engineering and
+%          traceability matrix, MBSE migration, orbital and link-budget simulator;
+%        metodologías -> sequential systems-engineering life cycle with formal
+%          design reviews (SRR, PDR) and the ARCADIA method on Eclipse Capella;
+%        principales resultados -> 13 user requirements and 23 system
+%          requirements traced, 8 high-risk items mitigated, 19 verification
+%          tests specified, link closure on 4-5 daily passes with ~10 min
+%          windows above a 14 dB Eb/N0 threshold, ROM estimate of USD 133,000;
+%        conclusiones -> the architecture is feasible; SRR and PDR closed on time.
+%
+%  [4] CORRECTO USO DEL INGLÉS. Voz activa, tiempo pasado, sin traducción
+%      literal del español. Revisa concordancia y ortografía.
+%
+%  [5] SÍNTESIS CLARA de contexto, objetivos, metodologías, resultados y
+%      conclusiones. El corrector debe entender el informe completo leyendo
+%      solo esta plana.
+%
+%  ESTRUCTURA SUGERIDA -- 5 párrafos, ~65 palabras cada uno (total ~330):
+%    P1  Where and as what: company, area, role, dates. One sentence on what DTS
+%        does and why the space line was new.
+%    P2  The company's objective for the internship + the project's objective.
+%    P3  Methodology: life-cycle reviews (IEEE Std 15288.2), ARCADIA/Capella,
+%        and the custom Python link-budget simulator.
+%    P4  Results, with numbers. This is the paragraph the corrector scans.
+%    P5  Conclusion: feasibility demonstrated, PDR closed, what remains for CDR.
+%
+%  EJEMPLO DE ARRANQUE DE P1 (adáptalo, no lo copies literal):
+%    "This report describes the professional internship carried out between
+%     January 2 and February 28, 2026, at Desarrollo de Tecnologías y Sistemas
+%     SpA (DTS), a Chilean electronics company serving the defense, security and
+%     aerospace markets. The work took place in the R&D department as an
+%     Electrical Engineering intern, within a space development line that the
+%     company had not previously pursued."
+%
+%  EJEMPLO DE ARRANQUE DE P4:
+%    "The internship produced a closed requirements baseline of 13 user
+%     requirements and 23 system requirements, fully traced in both directions,
+%     together with mitigation measures for the 8 items rated as high risk and a
+%     preliminary verification matrix of 19 tests. The link-budget simulation
+%     confirmed that the communication link closes on four to five daily passes
+%     over Chilean territory, with contact windows of approximately ten minutes."
+%
+%  RECORDATORIO: escribe el abstract AL FINAL, cuando el cuerpo esté cerrado.
+% =====================================================================
+
+\selectlanguage{British}
+
+\noindent{\Large\textbf{Abstract}\par\vspace{1ex}}
+
+% >>> REDACTADO (389 palabras, dentro del rango 200-400 de la rúbrica).
+%     Revisa el inglés y ajusta lo que no suene a como escribes tú.
+
+This report describes the professional internship carried out between 2 January
+and 28 February 2026 at Desarrollo de Tecnologías y Sistemas SpA (DTS), a
+Chilean electronics company serving the defence, security and aerospace markets.
+The work took place in its Research and Development department as an Electrical
+Engineering intern, on a space development line defined in the company's
+strategic plan but never executed.
+
+DTS pursued two objectives during the period: to take the first formal step
+towards developing space capabilities, and to make use of the technology
+transfer agreement signed with INVAP. The constraint was not technical but one
+of capacity: with no staff available to open a new line of work, the company
+started it with one staff engineer and one intern. Both objectives converged on a single
+deliverable: bringing the payload design up to Preliminary Design Review
+maturity before committing resources to detailed design and manufacturing.
+
+The project, named BIFROST, designs a Store \& Forward communications payload
+for a 12U CubeSat that receives autonomous messages from remote ground stations
+in UHF, stores them on board and downloads them over Chilean territory. The work followed a sequential systems engineering life cycle
+structured around formal design reviews, with IEEE Std 15288.2-2014 defining the
+deliverables and exit criteria of each gate. The system was modelled
+with the ARCADIA method on Eclipse Capella, and a custom orbital and link budget
+simulator was developed in Python.
+
+The internship closed a baseline of 13 user and 21 system requirements linked by
+35 traceability relations with full bidirectional coverage. Twelve were rated
+high risk and mitigated, and 19 verification tests were specified. The link budget simulation confirmed
+that the link closes above the 14 dB Eb/N0 threshold on four to five daily
+passes, with contact windows of about ten minutes. It also revealed a zenith
+null in the ground antenna pattern that constrains download planning, which a
+constant-gain calculation would have missed.
+
+Both the System Requirements Review and the Preliminary Design Review were
+closed within the period, confirming the architecture as technically feasible. DTS retained a reusable system
+model, a simulation tool and a documented methodology, began training its engineers in space
+projects, and continues developing BIFROST towards the Critical Design Review.
+
+\selectlanguage{Spanish}
+\newpage

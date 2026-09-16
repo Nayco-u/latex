@@ -1,0 +1,82 @@
+% =====================================================================
+\section{Evaluación y Conclusiones}
+% =====================================================================
+
+% ---------------------------------------------------------------------
+\subsection{Resultados obtenidos}
+% ---------------------------------------------------------------------
+
+El período cerró con una línea base de requerimientos completa y trazada. Los 13 requerimientos de usuario y los 21 de sistema quedaron enlazados por 35 relaciones de trazabilidad, con cobertura completa en ambos sentidos: ningún requerimiento de usuario quedó sin traducción técnica y ninguno de sistema quedó sin justificación. Doce de ellos, clasificados con riesgo alto, cuentan con una mitigación definida, y la verificación futura quedó especificada en 19 ensayos.
+
+La simulación confirmó que el enlace cierra. Con 1 W de potencia de transmisión y las antenas supuestas, la relación Eb/N0 supera el umbral de 14 dB en 4 a 5 pasadas diarias sobre territorio nacional, con ventanas útiles del orden de 10 minutos y una distancia media de enlace cercana a 1.500 km. Los máximos alcanzan valores en torno a 30 dB. La Figura \ref{img:downlinksim} muestra el comportamiento del enlace de bajada a lo largo de dos días de propagación orbital: cada pico corresponde a una pasada sobre la estación terrena y la línea segmentada indica el umbral.
+
+La simulación reveló además un comportamiento que un cálculo con ganancia constante no habría detectado. En las pasadas de alta elevación, la relación Eb/N0 cae por debajo del umbral en el instante de máxima aproximación: 12,9 dB a 82,7$^{\circ}$ de elevación y 655 km de distancia, pese a que ese es el punto de menor pérdida de espacio libre. La causa es el nulo cenital del patrón de radiación del monopolo terrestre, visible en la Figura \ref{img:ventana}. La consecuencia operativa es concreta: la ventana de contacto no es continua, y la planificación de la descarga debe evitar el paso por el cénit.
+
+Según lo planificado, el proyecto cerró con el cronograma que se presentó en la Figura \ref{img:gantt} y con una estimación de costos de orden de magnitud de 133.000 USD para entregar un modelo de vuelo integrado, desglosada en la Tabla \ref{tab:rom}.
+
+\fig[downlinksim]{Presupuesto de enlace de bajada para dos días de propagación orbital. Elaboración propia.}{width=\textwidth}{crop_downlink.png}
+
+\fig[ventana]{Detalle de una ventana de contacto individual. Elaboración propia.}{width=\textwidth}{crop_zoom_uplink.png}
+
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Estimación ROM para un modelo de vuelo integrado. Elaboración propia.\vspace{1ex}}
+\label{tab:rom}
+\small
+\begin{tabularx}{\textwidth}{|@{\hspace{4pt}}l X r@{\hspace{4pt}}|}
+\toprule
+\textbf{Ítem} & \textbf{Descripción} & \textbf{Costo estimado (USD)} \\
+\midrule
+Recursos humanos          & Dos ingenieros durante 12 meses                & 48.000 \\
+Componentes y materiales  & Electrónica, mecánica y materiales             & 50.000 \\
+AIT                       & Integración, pruebas funcionales y ambientales & 15.000 \\
+Logística                 & Transporte, envíos, importaciones y soporte    & 20.000 \\
+\midrule
+\textbf{Total}            &                                                & \textbf{133.000} \\
+\bottomrule
+\end{tabularx}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Nota. La estimación asume el uso de componentes y materiales comerciales
+disponibles en el mercado y la ejecución de las actividades de integración,
+ensamblado y pruebas en instalaciones nacionales.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+% ---------------------------------------------------------------------
+\subsection{Análisis, limitaciones e implicancias futuras}
+% ---------------------------------------------------------------------
+
+Los resultados permiten afirmar que la arquitectura propuesta es viable a nivel preliminar. El enlace cierra con margen, y la restricción real de la misión no es la potencia sino el tiempo acumulado de contacto: entre 40 y 50 minutos diarios sobre territorio nacional. La arquitectura basada en radio definida por \textit{software} resuelve al mismo tiempo la tolerancia a la radiación, la modularidad y la actualización en vuelo, tres requerimientos que en una implementación con \textit{hardware} dedicado habrían competido entre sí.
+
+El alcance de esas afirmaciones tiene límites explícitos. El modelo de enlace no incorpora pérdidas atmosféricas ni interferencia co-canal, y supone una sola estación remota transmitiendo, de modo que no representa las colisiones del escenario real. La preselección de componentes es preliminar y no verifica la dosis de radiación acumulada ni el presupuesto de potencia por modo operativo. Los 19 ensayos están especificados pero ninguno ejecutado: valores como la sensibilidad de $-115$ dBm son estimaciones de diseño. Y la estimación de costos, por definición, es de orden de magnitud.
+
+Las decisiones tomadas proyectan además consecuencias sobre las fases siguientes. Adoptar un modelo MBSE obliga a mantenerlo actualizado. Elegir una plataforma SDR comercial crea dependencia de un proveedor único y de su cadena de suministro internacional. Los pasos a seguir están definidos: cerrar el presupuesto de potencia por modo y el análisis térmico, confirmar la selección de componentes, y ejecutar la campaña de ensayos en las instalaciones del Centro Espacial Nacional antes de la Revisión Crítica de Diseño.
+
+
+% ---------------------------------------------------------------------
+\subsection{Cumplimiento del objetivo de la empresa}
+% ---------------------------------------------------------------------
+
+Los dos objetivos que DTS definió para el período se cumplieron, aunque en distinto grado.
+
+El primero, dar el primer paso formal en el desarrollo de capacidades espaciales, se cumplió y tuvo continuidad. La empresa cerró el período con un proyecto espacial formalizado y documentado bajo su propio sistema. Dos hechos posteriores lo confirman: DTS inició la capacitación del Departamento de I+D+i en desarrollo de proyectos espaciales, y BIFROST continúa en desarrollo tras el término de la práctica. El objetivo no quedó como un ejercicio aislado, sino que abrió efectivamente la línea de trabajo.
+
+El segundo, aprovechar la ventana de transferencia tecnológica con INVAP, se cumplió de forma parcial. La contraparte participó en cuatro instancias formales de revisión y su retroalimentación quedó incorporada en los requerimientos y en la caracterización del canal. La transferencia en materia de integración, ensamblado y ensayos, en cambio, queda pendiente para las fases siguientes.
+
+El entregable en que ambos objetivos convergían también se alcanzó: la Revisión de Diseño Preliminar se cerró el 27 de febrero de 2026, dentro del plazo de la práctica.
+
+
+% ---------------------------------------------------------------------
+\subsection{Impacto y relevancia de los resultados}
+% ---------------------------------------------------------------------
+
+El desarrollo de BIFROST permite responder la pregunta planteada al inicio de este informe. DTS pudo iniciar su línea espacial con un ingeniero de planta y un practicante porque separó la definición del marco de trabajo, aportada por la experiencia del supervisor, de su ejecución, apoyada en un estándar de revisiones y en una metodología de modelado que imponen estructura por construcción. Ninguna de las dos partes habría bastado por sí sola.
+
+En lo técnico, la arquitectura propuesta es viable. El enlace cierra con margen sobre el umbral en 4 a 5 pasadas diarias, y la solución basada en radio definida por \textit{software} satisface los requerimientos críticos de tolerancia a la radiación, modularidad y actualización en vuelo.
+
+El diseño, sin embargo, no está cerrado. Ningún ensayo se ha ejecutado, el escenario con múltiples estaciones remotas no está modelado y la selección de componentes espera confirmación. La Revisión Crítica de Diseño es el siguiente umbral.
+
+Para la empresa, el resultado es que la línea espacial dejó de ser una declaración del plan estratégico y pasó a ser un proyecto en curso, con metodología propia, herramientas propias y un equipo en formación.

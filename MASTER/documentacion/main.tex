@@ -1,0 +1,50 @@
+\documentclass[11pt,a4paper]{article}
+
+% --- Page geometry ---
+\usepackage[a4paper,left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
+
+% --- Project style (packages + custom commands) ---
+\usepackage{style}
+
+% --- Bibliography database ---
+\addbibresource{references.bib}
+
+% ============================================================
+%  DOCUMENT DATA
+% ============================================================
+\title{\textbf{Additive Manufacturing and Metallization of Feeds \\
+for Radio Astronomy Antennas}}
+
+\author[1]{Nicolás Seguel}
+\affil[1]{Pontificia Universidad Catolica de Chile}
+
+\date{\today}
+
+% ============================================================
+%  START OF DOCUMENT
+% ============================================================
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  \input{sections/abstract.tex}
+\end{abstract}
+
+\keywords{additive manufacturing, metallization, electroplating, antennas, radio astronomy}
+
+\tableofcontents
+\newpage
+
+\input{sections/intro.tex}
+\input{sections/additive_manufacturing.tex}
+\input{sections/metallization.tex}
+\input{sections/electroplating.tex}
+\input{sections/slm_metal.tex}
+\input{sections/characterization.tex}
+\input{sections/results.tex}
+\input{sections/conclusions.tex}
+
+\printbibliography
+
+\end{document}

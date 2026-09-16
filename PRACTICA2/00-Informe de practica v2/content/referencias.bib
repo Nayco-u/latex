@@ -1,0 +1,106 @@
+% =====================================================================
+%  BIBLIOGRAFÍA DEL INFORME  ---  formato BibTeX, estilo APA 7
+% =====================================================================
+%  Se compila con biblatex + biber (ver style.cls y main.tex).
+%
+%  CÓMO CITAR EN EL TEXTO
+%    \parencite{clave}          -> (Roques, 2018)
+%    \textcite{clave}           -> Roques (2018)
+%    \parencite[p.~45]{clave}   -> (Roques, 2018, p. 45)
+%    \parencites{a}{b}          -> (Alén Space, s.f.; Roques, 2018)
+%
+%  Solo aparecen en la bibliografía las entradas efectivamente citadas.
+%  Si necesitas forzar una que no citaste, usa \nocite{clave}.
+%
+%  DÓNDE VA CADA UNA
+%    dts, redconecta, minecon  -> 1.1 contextualización de la empresa
+%    nasaseh                   -> 1.2 fases del ciclo de vida
+%    ieee15288-2               -> 2.1 marco metodológico (SRR, PDR, CDR)
+%    clsargos                  -> 2.2 CONOPS (estándar Argos)
+%    roques                    -> 2.4 metodología ARCADIA / Capella
+%    alenspace                 -> 2.4.3 arquitectura física (SDR TOTEM)
+%    subtel                    -> 2.2 o 2.5 bandas habilitadas en Chile
+% =====================================================================
+
+@manual{ieee15288-2,
+  author       = {{Institute of Electrical and Electronics Engineers}},
+  shortauthor  = {{IEEE}},
+  title        = {{IEEE} Std 15288.2-2014: {IEEE} standard for technical reviews
+                  and audits on defense programs},
+  organization = {IEEE},
+  year         = {2015},
+  url          = {https://standards.ieee.org/ieee/15288.2/5705/},
+  langid       = {english}
+}
+
+@report{nasaseh,
+  author      = {{National Aeronautics and Space Administration}},
+  shortauthor = {{NASA}},
+  title       = {{NASA} systems engineering handbook},
+  type        = {NASA/SP-2016-6105 Rev. 2},
+  institution = {NASA},
+  year        = {2016},
+  url         = {https://www.nasa.gov/reference/systems-engineering-handbook/},
+  langid      = {english}
+}
+
+@book{roques,
+  author    = {Roques, Pascal},
+  title     = {Systems architecture modeling with the {Arcadia} method:
+               A practical guide to {Capella}},
+  publisher = {ISTE Press; Elsevier},
+  year      = {2018},
+  langid    = {english}
+}
+
+@manual{clsargos,
+  author       = {{CLS}},
+  title        = {{Argos} user's manual},
+  organization = {Collecte Localisation Satellites},
+  year         = {2016},
+  url          = {https://www.argos-system.org/},
+  langid       = {english}
+}
+
+@online{alenspace,
+  author  = {{Alén Space}},
+  title   = {TOTEM: Software defined radio},
+  year    = {{\bibstring{nodate}}},
+  url     = {https://alen.space/products/totem-sdr/},
+  urldate = {2026-08-22},
+  langid  = {english}
+}
+
+@online{dts,
+  author  = {{Desarrollo de Tecnologías y Sistemas SpA}},
+  title   = {Nuestra empresa},
+  url     = {https://www.dts.cl/our-company/},
+  urldate = {2026-08-22},
+  langid  = {spanish}
+}
+
+@online{redconecta,
+  author  = {{Red Conecta}},
+  title   = {Desarrollo de Tecnologías y Sistemas SpA},
+  url     = {https://red-conecta.com/empresa/2901/desarrollo-de-tecnologias-y-sistemas-spa},
+  urldate = {2026-08-22},
+  langid  = {spanish}
+}
+
+@report{minecon,
+  author      = {{Ministerio de Economía, Fomento y Turismo}},
+  title       = {Boletín de revisión: Clasificación estatuto Pyme},
+  institution = {Gobierno de Chile},
+  year        = {2014},
+  url         = {https://www.economia.gob.cl/wp-content/uploads/2014/04/Boletin-Revision-Clasificacion-Estatuto-Pyme.pdf},
+  langid      = {spanish}
+}
+
+@online{subtel,
+  author  = {{Subsecretaría de Telecomunicaciones}},
+  shortauthor = {{Subtel}},
+  title   = {Cuadro nacional de atribución de frecuencias},
+  url     = {https://www.subtel.gob.cl/},
+  urldate = {2026-08-22},
+  langid  = {spanish}
+}

@@ -1,0 +1,531 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nyt/apasortcite//global/global/global}
+    \entry{alenspace}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=5623e4c3820eb054855a5aed853509a1}{%
+           family={{Alén Space}},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{5623e4c3820eb054855a5aed853509a1}
+      \strng{fullhash}{5623e4c3820eb054855a5aed853509a1}
+      \strng{fullhashraw}{5623e4c3820eb054855a5aed853509a1}
+      \strng{bibnamehash}{5623e4c3820eb054855a5aed853509a1}
+      \strng{authorbibnamehash}{5623e4c3820eb054855a5aed853509a1}
+      \strng{authornamehash}{5623e4c3820eb054855a5aed853509a1}
+      \strng{authorfullhash}{5623e4c3820eb054855a5aed853509a1}
+      \strng{authorfullhashraw}{5623e4c3820eb054855a5aed853509a1}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{TOTEM: Software defined radio}
+      \field{urlday}{22}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{year}{{\bibstring{nodate}}}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://alen.space/products/totem-sdr/
+      \endverb
+      \verb{url}
+      \verb https://alen.space/products/totem-sdr/
+      \endverb
+    \endentry
+    \entry{dts}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=138d8b47e2993c7f7490bc1468f540c5}{%
+           family={{Desarrollo de Tecnologías y Sistemas SpA}},
+           familyi={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{138d8b47e2993c7f7490bc1468f540c5}
+      \strng{fullhash}{138d8b47e2993c7f7490bc1468f540c5}
+      \strng{fullhashraw}{138d8b47e2993c7f7490bc1468f540c5}
+      \strng{bibnamehash}{138d8b47e2993c7f7490bc1468f540c5}
+      \strng{authorbibnamehash}{138d8b47e2993c7f7490bc1468f540c5}
+      \strng{authornamehash}{138d8b47e2993c7f7490bc1468f540c5}
+      \strng{authorfullhash}{138d8b47e2993c7f7490bc1468f540c5}
+      \strng{authorfullhashraw}{138d8b47e2993c7f7490bc1468f540c5}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labeldatesource}{nodate}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{spanish}
+      \field{title}{Nuestra empresa}
+      \field{urlday}{22}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.dts.cl/our-company/
+      \endverb
+      \verb{url}
+      \verb https://www.dts.cl/our-company/
+      \endverb
+    \endentry
+    \entry{ieee15288-2}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=e2dd85d5ed4ff94326a8b5cb5fb21ab4}{%
+           family={{Institute of Electrical and Electronics Engineers}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \name{shortauthor}{1}{}{%
+        {{hash=472abfae8142fdb6f39d081303e8af85}{%
+           family={{IEEE}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{472abfae8142fdb6f39d081303e8af85}
+      \strng{fullhash}{e2dd85d5ed4ff94326a8b5cb5fb21ab4}
+      \strng{fullhashraw}{e2dd85d5ed4ff94326a8b5cb5fb21ab4}
+      \strng{bibnamehash}{472abfae8142fdb6f39d081303e8af85}
+      \strng{authorbibnamehash}{e2dd85d5ed4ff94326a8b5cb5fb21ab4}
+      \strng{authornamehash}{e2dd85d5ed4ff94326a8b5cb5fb21ab4}
+      \strng{authorfullhash}{e2dd85d5ed4ff94326a8b5cb5fb21ab4}
+      \strng{authorfullhashraw}{e2dd85d5ed4ff94326a8b5cb5fb21ab4}
+      \strng{shortauthorbibnamehash}{472abfae8142fdb6f39d081303e8af85}
+      \strng{shortauthornamehash}{472abfae8142fdb6f39d081303e8af85}
+      \strng{shortauthorfullhash}{472abfae8142fdb6f39d081303e8af85}
+      \strng{shortauthorfullhashraw}{472abfae8142fdb6f39d081303e8af85}
+      \field{sortinit}{I}
+      \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{shortauthor}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{{IEEE} Std 15288.2-2014: {IEEE} standard for technical reviews and audits on defense programs}
+      \field{year}{2015}
+      \verb{urlraw}
+      \verb https://standards.ieee.org/ieee/15288.2/5705/
+      \endverb
+      \verb{url}
+      \verb https://standards.ieee.org/ieee/15288.2/5705/
+      \endverb
+    \endentry
+    \entry{minecon}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=cccb1343c0a5d78f9ce66e7fb0cae397}{%
+           family={{Ministerio de Economía, Fomento y Turismo}},
+           familyi={M\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Gobierno de Chile}%
+      }
+      \strng{namehash}{cccb1343c0a5d78f9ce66e7fb0cae397}
+      \strng{fullhash}{cccb1343c0a5d78f9ce66e7fb0cae397}
+      \strng{fullhashraw}{cccb1343c0a5d78f9ce66e7fb0cae397}
+      \strng{bibnamehash}{cccb1343c0a5d78f9ce66e7fb0cae397}
+      \strng{authorbibnamehash}{cccb1343c0a5d78f9ce66e7fb0cae397}
+      \strng{authornamehash}{cccb1343c0a5d78f9ce66e7fb0cae397}
+      \strng{authorfullhash}{cccb1343c0a5d78f9ce66e7fb0cae397}
+      \strng{authorfullhashraw}{cccb1343c0a5d78f9ce66e7fb0cae397}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{spanish}
+      \field{title}{Boletín de revisión: Clasificación estatuto Pyme}
+      \field{year}{2014}
+      \verb{urlraw}
+      \verb https://www.economia.gob.cl/wp-content/uploads/2014/04/Boletin-Revision-Clasificacion-Estatuto-Pyme.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.economia.gob.cl/wp-content/uploads/2014/04/Boletin-Revision-Clasificacion-Estatuto-Pyme.pdf
+      \endverb
+    \endentry
+    \entry{nasaseh}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=72f826272be1a819ed284b8ed8310d76}{%
+           family={{National Aeronautics and Space Administration}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \name{shortauthor}{1}{}{%
+        {{hash=1f99771bc3e23e6097509a331544ab65}{%
+           family={{NASA}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {NASA}%
+      }
+      \strng{namehash}{1f99771bc3e23e6097509a331544ab65}
+      \strng{fullhash}{72f826272be1a819ed284b8ed8310d76}
+      \strng{fullhashraw}{72f826272be1a819ed284b8ed8310d76}
+      \strng{bibnamehash}{1f99771bc3e23e6097509a331544ab65}
+      \strng{authorbibnamehash}{72f826272be1a819ed284b8ed8310d76}
+      \strng{authornamehash}{72f826272be1a819ed284b8ed8310d76}
+      \strng{authorfullhash}{72f826272be1a819ed284b8ed8310d76}
+      \strng{authorfullhashraw}{72f826272be1a819ed284b8ed8310d76}
+      \strng{shortauthorbibnamehash}{1f99771bc3e23e6097509a331544ab65}
+      \strng{shortauthornamehash}{1f99771bc3e23e6097509a331544ab65}
+      \strng{shortauthorfullhash}{1f99771bc3e23e6097509a331544ab65}
+      \strng{shortauthorfullhashraw}{1f99771bc3e23e6097509a331544ab65}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{shortauthor}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{{NASA} systems engineering handbook}
+      \field{type}{NASA/SP-2016-6105 Rev. 2}
+      \field{year}{2016}
+      \verb{urlraw}
+      \verb https://www.nasa.gov/reference/systems-engineering-handbook/
+      \endverb
+      \verb{url}
+      \verb https://www.nasa.gov/reference/systems-engineering-handbook/
+      \endverb
+    \endentry
+    \entry{redconecta}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=0786123b2c75acb754c6ad95ae3012d6}{%
+           family={{Red Conecta}},
+           familyi={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{0786123b2c75acb754c6ad95ae3012d6}
+      \strng{fullhash}{0786123b2c75acb754c6ad95ae3012d6}
+      \strng{fullhashraw}{0786123b2c75acb754c6ad95ae3012d6}
+      \strng{bibnamehash}{0786123b2c75acb754c6ad95ae3012d6}
+      \strng{authorbibnamehash}{0786123b2c75acb754c6ad95ae3012d6}
+      \strng{authornamehash}{0786123b2c75acb754c6ad95ae3012d6}
+      \strng{authorfullhash}{0786123b2c75acb754c6ad95ae3012d6}
+      \strng{authorfullhashraw}{0786123b2c75acb754c6ad95ae3012d6}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{labeldatesource}{nodate}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{spanish}
+      \field{title}{Desarrollo de Tecnologías y Sistemas SpA}
+      \field{urlday}{22}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://red-conecta.com/empresa/2901/desarrollo-de-tecnologias-y-sistemas-spa
+      \endverb
+      \verb{url}
+      \verb https://red-conecta.com/empresa/2901/desarrollo-de-tecnologias-y-sistemas-spa
+      \endverb
+    \endentry
+    \entry{roques}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=fae245a77b8e6c85225b8109734a8375}{%
+           family={Roques},
+           familyi={R\bibinitperiod},
+           given={Pascal},
+           giveni={P\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ISTE Press; Elsevier}%
+      }
+      \strng{namehash}{fae245a77b8e6c85225b8109734a8375}
+      \strng{fullhash}{fae245a77b8e6c85225b8109734a8375}
+      \strng{fullhashraw}{fae245a77b8e6c85225b8109734a8375}
+      \strng{bibnamehash}{fae245a77b8e6c85225b8109734a8375}
+      \strng{authorbibnamehash}{fae245a77b8e6c85225b8109734a8375}
+      \strng{authornamehash}{fae245a77b8e6c85225b8109734a8375}
+      \strng{authorfullhash}{fae245a77b8e6c85225b8109734a8375}
+      \strng{authorfullhashraw}{fae245a77b8e6c85225b8109734a8375}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{Systems architecture modeling with the {Arcadia} method: A practical guide to {Capella}}
+      \field{year}{2018}
+    \endentry
+  \enddatalist
+  \datalist[entry]{nyt/global//global/global/global}
+    \entry{alenspace}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=5623e4c3820eb054855a5aed853509a1}{%
+           family={{Alén Space}},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{5623e4c3820eb054855a5aed853509a1}
+      \strng{fullhash}{5623e4c3820eb054855a5aed853509a1}
+      \strng{fullhashraw}{5623e4c3820eb054855a5aed853509a1}
+      \strng{bibnamehash}{5623e4c3820eb054855a5aed853509a1}
+      \strng{authorbibnamehash}{5623e4c3820eb054855a5aed853509a1}
+      \strng{authornamehash}{5623e4c3820eb054855a5aed853509a1}
+      \strng{authorfullhash}{5623e4c3820eb054855a5aed853509a1}
+      \strng{authorfullhashraw}{5623e4c3820eb054855a5aed853509a1}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{TOTEM: Software defined radio}
+      \field{urlday}{22}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{year}{{\bibstring{nodate}}}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://alen.space/products/totem-sdr/
+      \endverb
+      \verb{url}
+      \verb https://alen.space/products/totem-sdr/
+      \endverb
+    \endentry
+    \entry{dts}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=138d8b47e2993c7f7490bc1468f540c5}{%
+           family={{Desarrollo de Tecnologías y Sistemas SpA}},
+           familyi={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{138d8b47e2993c7f7490bc1468f540c5}
+      \strng{fullhash}{138d8b47e2993c7f7490bc1468f540c5}
+      \strng{fullhashraw}{138d8b47e2993c7f7490bc1468f540c5}
+      \strng{bibnamehash}{138d8b47e2993c7f7490bc1468f540c5}
+      \strng{authorbibnamehash}{138d8b47e2993c7f7490bc1468f540c5}
+      \strng{authornamehash}{138d8b47e2993c7f7490bc1468f540c5}
+      \strng{authorfullhash}{138d8b47e2993c7f7490bc1468f540c5}
+      \strng{authorfullhashraw}{138d8b47e2993c7f7490bc1468f540c5}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labeldatesource}{nodate}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{spanish}
+      \field{title}{Nuestra empresa}
+      \field{urlday}{22}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.dts.cl/our-company/
+      \endverb
+      \verb{url}
+      \verb https://www.dts.cl/our-company/
+      \endverb
+    \endentry
+    \entry{ieee15288-2}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=e2dd85d5ed4ff94326a8b5cb5fb21ab4}{%
+           family={{Institute of Electrical and Electronics Engineers}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \name{shortauthor}{1}{}{%
+        {{hash=472abfae8142fdb6f39d081303e8af85}{%
+           family={{IEEE}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{472abfae8142fdb6f39d081303e8af85}
+      \strng{fullhash}{e2dd85d5ed4ff94326a8b5cb5fb21ab4}
+      \strng{fullhashraw}{e2dd85d5ed4ff94326a8b5cb5fb21ab4}
+      \strng{bibnamehash}{472abfae8142fdb6f39d081303e8af85}
+      \strng{authorbibnamehash}{e2dd85d5ed4ff94326a8b5cb5fb21ab4}
+      \strng{authornamehash}{e2dd85d5ed4ff94326a8b5cb5fb21ab4}
+      \strng{authorfullhash}{e2dd85d5ed4ff94326a8b5cb5fb21ab4}
+      \strng{authorfullhashraw}{e2dd85d5ed4ff94326a8b5cb5fb21ab4}
+      \strng{shortauthorbibnamehash}{472abfae8142fdb6f39d081303e8af85}
+      \strng{shortauthornamehash}{472abfae8142fdb6f39d081303e8af85}
+      \strng{shortauthorfullhash}{472abfae8142fdb6f39d081303e8af85}
+      \strng{shortauthorfullhashraw}{472abfae8142fdb6f39d081303e8af85}
+      \field{sortinit}{I}
+      \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{shortauthor}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{{IEEE} Std 15288.2-2014: {IEEE} standard for technical reviews and audits on defense programs}
+      \field{year}{2015}
+      \verb{urlraw}
+      \verb https://standards.ieee.org/ieee/15288.2/5705/
+      \endverb
+      \verb{url}
+      \verb https://standards.ieee.org/ieee/15288.2/5705/
+      \endverb
+    \endentry
+    \entry{minecon}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=cccb1343c0a5d78f9ce66e7fb0cae397}{%
+           family={{Ministerio de Economía, Fomento y Turismo}},
+           familyi={M\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Gobierno de Chile}%
+      }
+      \strng{namehash}{cccb1343c0a5d78f9ce66e7fb0cae397}
+      \strng{fullhash}{cccb1343c0a5d78f9ce66e7fb0cae397}
+      \strng{fullhashraw}{cccb1343c0a5d78f9ce66e7fb0cae397}
+      \strng{bibnamehash}{cccb1343c0a5d78f9ce66e7fb0cae397}
+      \strng{authorbibnamehash}{cccb1343c0a5d78f9ce66e7fb0cae397}
+      \strng{authornamehash}{cccb1343c0a5d78f9ce66e7fb0cae397}
+      \strng{authorfullhash}{cccb1343c0a5d78f9ce66e7fb0cae397}
+      \strng{authorfullhashraw}{cccb1343c0a5d78f9ce66e7fb0cae397}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{spanish}
+      \field{title}{Boletín de revisión: Clasificación estatuto Pyme}
+      \field{year}{2014}
+      \verb{urlraw}
+      \verb https://www.economia.gob.cl/wp-content/uploads/2014/04/Boletin-Revision-Clasificacion-Estatuto-Pyme.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.economia.gob.cl/wp-content/uploads/2014/04/Boletin-Revision-Clasificacion-Estatuto-Pyme.pdf
+      \endverb
+    \endentry
+    \entry{nasaseh}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=72f826272be1a819ed284b8ed8310d76}{%
+           family={{National Aeronautics and Space Administration}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \name{shortauthor}{1}{}{%
+        {{hash=1f99771bc3e23e6097509a331544ab65}{%
+           family={{NASA}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {NASA}%
+      }
+      \strng{namehash}{1f99771bc3e23e6097509a331544ab65}
+      \strng{fullhash}{72f826272be1a819ed284b8ed8310d76}
+      \strng{fullhashraw}{72f826272be1a819ed284b8ed8310d76}
+      \strng{bibnamehash}{1f99771bc3e23e6097509a331544ab65}
+      \strng{authorbibnamehash}{72f826272be1a819ed284b8ed8310d76}
+      \strng{authornamehash}{72f826272be1a819ed284b8ed8310d76}
+      \strng{authorfullhash}{72f826272be1a819ed284b8ed8310d76}
+      \strng{authorfullhashraw}{72f826272be1a819ed284b8ed8310d76}
+      \strng{shortauthorbibnamehash}{1f99771bc3e23e6097509a331544ab65}
+      \strng{shortauthornamehash}{1f99771bc3e23e6097509a331544ab65}
+      \strng{shortauthorfullhash}{1f99771bc3e23e6097509a331544ab65}
+      \strng{shortauthorfullhashraw}{1f99771bc3e23e6097509a331544ab65}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{shortauthor}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{{NASA} systems engineering handbook}
+      \field{type}{NASA/SP-2016-6105 Rev. 2}
+      \field{year}{2016}
+      \verb{urlraw}
+      \verb https://www.nasa.gov/reference/systems-engineering-handbook/
+      \endverb
+      \verb{url}
+      \verb https://www.nasa.gov/reference/systems-engineering-handbook/
+      \endverb
+    \endentry
+    \entry{redconecta}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=0786123b2c75acb754c6ad95ae3012d6}{%
+           family={{Red Conecta}},
+           familyi={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{0786123b2c75acb754c6ad95ae3012d6}
+      \strng{fullhash}{0786123b2c75acb754c6ad95ae3012d6}
+      \strng{fullhashraw}{0786123b2c75acb754c6ad95ae3012d6}
+      \strng{bibnamehash}{0786123b2c75acb754c6ad95ae3012d6}
+      \strng{authorbibnamehash}{0786123b2c75acb754c6ad95ae3012d6}
+      \strng{authornamehash}{0786123b2c75acb754c6ad95ae3012d6}
+      \strng{authorfullhash}{0786123b2c75acb754c6ad95ae3012d6}
+      \strng{authorfullhashraw}{0786123b2c75acb754c6ad95ae3012d6}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{labeldatesource}{nodate}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{spanish}
+      \field{title}{Desarrollo de Tecnologías y Sistemas SpA}
+      \field{urlday}{22}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://red-conecta.com/empresa/2901/desarrollo-de-tecnologias-y-sistemas-spa
+      \endverb
+      \verb{url}
+      \verb https://red-conecta.com/empresa/2901/desarrollo-de-tecnologias-y-sistemas-spa
+      \endverb
+    \endentry
+    \entry{roques}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=fae245a77b8e6c85225b8109734a8375}{%
+           family={Roques},
+           familyi={R\bibinitperiod},
+           given={Pascal},
+           giveni={P\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ISTE Press; Elsevier}%
+      }
+      \strng{namehash}{fae245a77b8e6c85225b8109734a8375}
+      \strng{fullhash}{fae245a77b8e6c85225b8109734a8375}
+      \strng{fullhashraw}{fae245a77b8e6c85225b8109734a8375}
+      \strng{bibnamehash}{fae245a77b8e6c85225b8109734a8375}
+      \strng{authorbibnamehash}{fae245a77b8e6c85225b8109734a8375}
+      \strng{authornamehash}{fae245a77b8e6c85225b8109734a8375}
+      \strng{authorfullhash}{fae245a77b8e6c85225b8109734a8375}
+      \strng{authorfullhashraw}{fae245a77b8e6c85225b8109734a8375}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{Systems architecture modeling with the {Arcadia} method: A practical guide to {Capella}}
+      \field{year}{2018}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

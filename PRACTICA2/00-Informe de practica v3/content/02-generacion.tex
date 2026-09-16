@@ -1,0 +1,172 @@
+% =====================================================================
+\section{Generación y Justificación}
+% =====================================================================
+
+% ---------------------------------------------------------------------
+\subsection{Marco metodológico: ciclo de vida y revisiones de diseño}
+% ---------------------------------------------------------------------
+
+El proyecto adoptó un modelo de desarrollo secuencial, organizado en fases que terminan con una revisión formal de diseño. Esta elección responde a la naturaleza del producto, ya que una carga útil satelital no permite iterar a bajo costo. El costo de corregir un error crece con la fase en la que se detecta y, una vez que el satélite está en órbita, la corrección deja de ser posible. Por esta razón, un modelo iterativo, que supone ciclos cortos de construcción y prueba sobre el producto real, no resulta aplicable en este contexto.
+
+Cada revisión funciona como una puerta de decisión que determina si el producto está listo para pasar a la fase siguiente, y no como una simple presentación de avance. El estándar IEEE Std 15288.2-2014 define para cada una de ellas los criterios de entrada, los criterios de salida y los entregables que el equipo debe presentar \parencite{ieee15288-2}. La Revisión de Requerimientos del Sistema (SRR) exige una línea base de requerimientos completa, no ambigua y verificable. La Revisión de Diseño Preliminar (PDR) exige demostrar que la arquitectura propuesta satisface esos requerimientos y autoriza el paso al diseño detallado. La Revisión Crítica de Diseño (CDR) exige un diseño listo para fabricación, pero quedó fuera del alcance de la práctica.
+
+El trabajo del practicante consistió en traducir esos criterios a entregables concretos para BIFROST. Para cada revisión identificó qué documentos exigía el estándar, qué información debía contener cada uno de ellos y qué evidencia permitía declarar cumplido el criterio de salida. La Figura \ref{img:gantt} muestra cómo esa secuencia se ordenó en el cronograma, donde la Pre-Phase A terminó con el \textit{kick-off}, la Phase A con la SRR y la Phase B con la PDR.
+
+
+% ---------------------------------------------------------------------
+\subsection{Concepto de Operación}
+% ---------------------------------------------------------------------
+
+El Concepto de Operación (CONOPS) fue el primer entregable del proyecto. Este documento describe el sistema desde la perspectiva del usuario y fija la línea base operativa de la que se derivan todos los requerimientos. Su importancia radica en que, mientras no exista un acuerdo sobre qué hace el sistema, para quién y bajo qué condiciones, cualquier requerimiento que el equipo escriba resulta arbitrario. En el caso de BIFROST, el CONOPS responde seis preguntas.
+
+\begin{itemize}[leftmargin=1.27cm, itemsep=2pt, topsep=4pt, parsep=0pt]
+  \item \textbf{¿Qué es?} Una carga útil de comunicaciones tipo \textit{Store \& Forward} integrada en una plataforma CubeSat 12U, que opera como repetidor no instantáneo de mensajes digitales.
+  \item \textbf{¿Por qué se desarrolla?} Para dar conectividad en zonas sin infraestructura terrestre, aportar un canal redundante en emergencias y validar un concepto con proyección a IoT satelital.
+  \item \textbf{¿Quiénes participan?} DTS como desarrollador integral e INVAP como contraparte técnica. Los usuarios previstos son universidades, centros de monitoreo meteorológico, sismológico y vulcanológico, organismos de gestión de emergencias y empresas de IoT satelital.
+  \item \textbf{¿Dónde opera?} En tres segmentos: espacial, en órbita LEO sol-síncrona a 650 km de altitud y 96$^{\circ}$ de inclinación; terrestre, cubriendo Chile continental, zonas extremas, territorio insular y antártico; y espectral, con enlace de subida en 401--403 MHz y de bajada en 466 MHz.
+  \item \textbf{¿Cuándo opera?} Durante los cinco años de vida útil del satélite, con 4 a 5 pasadas diarias sobre territorio nacional y ventanas de contacto del orden de 10 minutos.
+  \item \textbf{¿Cómo opera?} Las estaciones remotas transmiten de forma autónoma; la carga útil escucha dentro de las ventanas de misión, compensa el efecto Doppler, demodula y valida cada mensaje; los mensajes correctos se temporalizan y se guardan en memoria no volátil; la descarga ocurre bajo comando del OBC.
+\end{itemize}
+
+
+% ---------------------------------------------------------------------
+\subsection{Definición y trazabilidad de requerimientos}
+% ---------------------------------------------------------------------
+
+A partir del CONOPS el proyecto derivó 13 requerimientos de usuario (UR) y, desde estos, 21 requerimientos de sistema (SR). Un requerimiento de usuario expresa una necesidad en el lenguaje del usuario, mientras que un requerimiento de sistema la traduce a una especificación medible y asociada a un método de verificación. Por ejemplo, UR-01 exige un servicio \textit{Store \& Forward} con almacenamiento durante la órbita, y derivó en SR-04 y SR-06, que piden retener al menos 1.000.000 de mensajes durante hasta 15 órbitas y descargar al menos 10.000 mensajes por ventana de contacto. En el mismo sentido, UR-04 exige compatibilidad con el estándar internacional de recolección de datos ambientales por satélite, por lo que el practicante revisó la especificación del sistema Argos \parencite{clsargos} para derivar los requerimientos de estructura de mensaje, canalización y modulación.
+
+El practicante construyó la matriz de trazabilidad de forma bidireccional y registró 35 relaciones entre ambos niveles, de modo que ningún requerimiento de usuario quedó sin al menos un requerimiento de sistema asociado y ningún requerimiento de sistema quedó huérfano. Esta propiedad tiene dos utilidades prácticas. Por una parte, permite detectar necesidades sin cobertura antes de empezar a diseñar. Por otra parte, permite estimar el impacto de un cambio antes de ejecutarlo. Por ejemplo, modificar SR-17, que fija la modularidad y la actualización de \textit{firmware} en vuelo, obliga a revisar los cuatro requerimientos de usuario que dependen de él. Cada requerimiento lleva además prioridad, nivel de riesgo, dificultad, tipo y estado. Las listas completas están en los Anexos A y B, y la trazabilidad, en el Anexo C.
+
+Cada requerimiento recibió también una evaluación de riesgo, que el practicante calculó como el producto entre el impacto y la probabilidad de ocurrencia, ambos en una escala de tres niveles. Doce requerimientos quedaron clasificados en el nivel alto, de los cuales cuatro son de usuario y ocho de sistema. La Tabla \ref{tab:riesgoalto} presenta los cuatro requerimientos de usuario de riesgo alto junto con la mitigación que el proyecto definió para cada uno.
+
+Por último, el diseño quedó acotado por un conjunto de restricciones que impusieron la plataforma, el lanzador y el entorno orbital. Todas ellas estaban fijadas antes de que el proyecto propusiera una arquitectura, y la Tabla \ref{tab:restricciones} las resume.
+
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Requerimientos de usuario con riesgo alto y sus mitigaciones. Elaboración propia.\vspace{1ex}}
+\label{tab:riesgoalto}
+\small
+\begin{tabularx}{\textwidth}{|@{\hspace{4pt}}l X c X@{\hspace{4pt}}|}
+\toprule
+\textbf{ID} & \textbf{Requerimiento de usuario} & \textbf{Riesgo} & \textbf{Mitigación definida} \\
+\midrule
+UR-01 & Proveer un servicio \textit{Store \& Forward} satelital, almacenando datos durante la órbita para descargarlos en una estación terrestre & Alto & Diseño de memoria no volátil con margen $\geq$ 50\,\%, simulación de carga orbital y pruebas de estrés en tierra \\
+
+UR-06 & Ser compatible con una plataforma CubeSat 12U en órbita LEO sol-síncrona a 650 km de altitud y 96$^{\circ}$ de inclinación & Alto & Análisis de interfaces mecánicas y eléctricas, y revisión conjunta con el proveedor de la plataforma \\
+
+UR-08 & Permitir el uso de componentes COTS con funcionamiento en órbita probado, tolerancia a la radiación verificada o mitigaciones de diseño & Alto & Selección de componentes con validación espacial previa y mitigación por redundancia y \textit{watchdogs} \\
+
+UR-11 & Garantizar una vida útil operativa mínima de 5 años en el entorno de radiación LEO definido & Alto & Pruebas de estrés, análisis térmico y pruebas de vida aceleradas \\
+\bottomrule
+\end{tabularx}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Nota. La lista completa de los 13 requerimientos de usuario se presenta en el Anexo A y la de los 21 requerimientos de sistema en el Anexo B.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Restricciones de la plataforma, el lanzador y el entorno orbital. Elaboración propia.\vspace{1ex}}
+\label{tab:restricciones}
+\small
+\begin{tabularx}{\textwidth}{|@{\hspace{4pt}}l l X@{\hspace{4pt}}|}
+\toprule
+\textbf{Parámetro} & \textbf{Límite} & \textbf{Origen de la restricción} \\
+\midrule
+Potencia            & 10 W en operación nominal & Sistema de potencia de la plataforma \\
+Masa                & 3,0 kg (máximo)           & Presupuesto de masa del CubeSat 12U \\
+Centro de gravedad  & $\pm$2 mm respecto del centro geométrico & Estabilidad del control de actitud \\
+Volumen             & 20 $\times$ 20 $\times$ 10 cm & Envolvente asignada a la carga útil \\
+Dosis acumulada     & 10 a 20 krad en 5 años    & Ambiente radiativo en órbita LEO \\
+Desgasificación     & TML $<$ 1,0\,\% y CVCM $<$ 0,1\,\% & Protección de sensores ópticos y paneles solares \\
+Rango térmico       & $-20$ a $+60\ ^{\circ}$C en operación & Ciclado térmico orbital \\
+Efecto Doppler      & $\pm$10 kHz                & Velocidad relativa del satélite ($\sim$7,5 km/s) \\
+\bottomrule
+\end{tabularx}
+\end{threeparttable}
+\end{table}
+
+
+% ---------------------------------------------------------------------
+\subsection{Modelamiento MBSE con ARCADIA y Eclipse Capella}
+% ---------------------------------------------------------------------
+
+Hacia la mitad del período el proyecto acumulaba un CONOPS, dos matrices de requerimientos y varios diagramas de bloques independientes entre sí. Cada vez que cambiaba un requerimiento, el practicante debía revisar los demás documentos a mano, lo que constituye un procedimiento que no escala en un sistema con cuatro interfaces externas. Por esta razón, el practicante propuso migrar el proyecto a ingeniería de sistemas basada en modelos (MBSE), aplicando el método ARCADIA sobre la herramienta Eclipse Capella \parencite{roques}.
+
+Este cambio es más profundo que un simple reemplazo de herramienta, ya que en un modelo MBSE los diagramas dejan de ilustrar al documento y pasan a constituir el documento mismo. ARCADIA organiza el diseño en cuatro capas sucesivas, que corresponden al análisis operacional, el análisis del sistema, la arquitectura lógica y la arquitectura física. La herramienta mantiene la trazabilidad entre esas capas dentro del propio modelo, de manera que una función definida en una capa queda ligada al componente que la implementa en la capa siguiente.
+
+\subsubsection{Análisis operacional y análisis del sistema}
+
+El análisis operacional describe qué necesitan lograr los actores externos, sin nombrar todavía al sistema. El análisis del sistema da el paso siguiente y trata a BIFROST como una caja negra, para lo cual define sus funciones generales y los datos que intercambia con cada actor. La Figura \ref{img:sab} presenta ese nivel, donde el color separa las cuatro cadenas funcionales que el sistema debe soportar, que son la recolección de datos ARGOS-2, la recolección de datos ARGOS-3, la transmisión de datos hacia tierra y la actualización de \textit{firmware} desde el MCC. Este mismo diagrama fija las frecuencias de trabajo, que son 401,65 MHz para el enlace de subida y 466 MHz para el de bajada.
+
+\fig[sab]{Sistema BIFROST como caja negra. Elaboración propia.}{width=0.82\textwidth}{sab_sistema_bifrost.jpg}
+
+\subsubsection{Arquitectura lógica}
+
+La arquitectura lógica agrupa las funciones en componentes, sin comprometerse todavía con la tecnología que los implementa. La Figura \ref{img:lcbd} muestra los seis componentes definidos, que son \textit{RF Frontend}, encargado de adaptar la señal de radiofrecuencia; \textit{Digital Processing}, que demodula y modula; \textit{Data Handling}, que valida y encapsula los mensajes; \textit{Data Storage}, que los retiene en memoria; \textit{Power Management}, que distribuye y protege la alimentación; e \textit{Interface Handling}, que comunica con el OBC. Este desacople entre la función y la tecnología tiene una consecuencia práctica, ya que permite cerrar la arquitectura funcional antes de elegir un proveedor y, además, evita que un cambio de componente comercial obligue a rehacer el diseño.
+
+\fig[lcbd]{Componentes lógicos del sistema. Elaboración propia.}{width=0.8\textwidth}{lcbd_arquitectura_logica.jpg}
+
+\subsubsection{Arquitectura física}
+
+La arquitectura física asigna cada función lógica a un \textit{hardware} concreto. El componente central preseleccionado es la plataforma SDR TOTEM de Alén Space \parencite{alenspace}, que integra el transceptor AD9364 y el SoC Zynq-7020. La Figura \ref{img:pab} detalla el reparto de funciones, donde el AD9364 filtra y convierte entre analógico y digital, la FPGA del Zynq-7020 ejecuta el análisis en frecuencia, el seguimiento Doppler, el filtrado adaptativo y la demodulación, y el procesador Cortex-A9 verifica la integridad de los datos, identifica los metadatos de la DCP, gestiona la memoria y opera la interfaz CAN. Fuera del TOTEM, DTS desarrolla a medida el \textit{frontend} RF, que incluye el conmutador T/R, el amplificador de potencia y el LNA, además del subsistema de antenas y la red de distribución de potencia, que incorpora detección de \textit{latch-up}, monitoreo de consumo y reinicio de la carga útil.
+
+Esta decisión responde a dos requerimientos que se encuentran en tensión. Por una parte, UR-08 admite componentes COTS solo si acreditan funcionamiento en órbita, tolerancia a la radiación verificada o mitigaciones de diseño equivalentes. Por otra parte, UR-10 exige una arquitectura modular y escalable. Un receptor implementado en lógica programable satisface ambos requerimientos, ya que hereda la calificación del módulo comercial y permite modificar el esquema de demodulación por \textit{software}, sin rediseñar el \textit{hardware} ni repetir los ensayos ambientales.
+
+\fig[pab]{Arquitectura física de la carga útil. Elaboración propia.}{width=\textwidth}{pab_arquitectura_fisica.jpg}
+
+
+% ---------------------------------------------------------------------
+\subsection{Herramienta de simulación orbital y presupuesto de enlace}
+% ---------------------------------------------------------------------
+
+Para cerrar la PDR el proyecto debía demostrar que el enlace hacia tierra era viable y establecer cuál era el alcance de la comunicación. Esta verificación no se resuelve con un cálculo estático, porque la distancia y el ángulo de elevación cambian a lo largo de cada pasada, y la ganancia que aporta cada antena depende justamente de esa dirección. Además, el departamento no disponía de una herramienta que acoplara ambos cálculos.
+
+Por esta razón, el practicante desarrolló un entorno de simulación propio en Python, organizado en cuatro módulos. El módulo de mecánica orbital propaga la órbita y entrega la distancia y la elevación en cada instante. El módulo de presupuesto de enlace calcula las pérdidas y la relación Eb/N0 resultante. Los módulos de patrones de radiación modelan un monopolo con efecto de plano de tierra en la estación terrestre y una antena \textit{turnstile} en el satélite. Por último, el cuarto módulo entrega la visualización interactiva en tres dimensiones.
+
+Modelar el patrón de radiación completo, en lugar de asumir una ganancia constante, es lo que da valor al resultado, ya que un cálculo con ganancia fija sobrestima el margen en los extremos del patrón y no revela los nulos. La Tabla \ref{tab:linkbudget} lista los parámetros de la simulación y la Figura \ref{img:uplinksim} muestra la herramienta en operación. En ella, cada pico del gráfico corresponde a una pasada sobre la estación remota, la línea segmentada marca el umbral de cierre de enlace y la barra inferior reporta los valores instantáneos de Eb/N0, distancia y ángulo de elevación en el punto seleccionado. La sección 3 analiza los resultados que entregó esta herramienta.
+
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Parámetros de la simulación del presupuesto de enlace. Elaboración propia.\vspace{1ex}}
+\label{tab:linkbudget}
+\small
+\begin{tabularx}{\textwidth}{|@{\hspace{4pt}}X l@{\hspace{4pt}}|}
+\toprule
+\textbf{Parámetro} & \textbf{Valor} \\
+\midrule
+Altitud orbital nominal                       & 650 km \\
+Tipo de órbita e inclinación                  & Sol-sincrónica (SSO), 96$^{\circ}$ \\
+Frecuencia de enlace de subida                & 401--403 MHz \\
+Frecuencia de enlace de bajada                & $\sim$466 MHz \\
+Potencia de transmisión                       & 1 W (0 dBW) \\
+Antena de la estación terrestre               & Monopolo con efecto de plano de tierra \\
+Antena del satélite                           & \textit{Turnstile} \\
+Pérdidas por desacople de polarización        & 3 dB \\
+Pérdidas por desadaptación de impedancia      & 2 dB \\
+Umbral de Eb/N0 para cierre de enlace         & 14 dB \\
+Tasa de datos                                 & 400 bps \\
+\bottomrule
+\end{tabularx}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Nota. Las ganancias de antena corresponden a los valores típicos de cada configuración y el modelo las obtiene a partir del patrón de radiación completo, en lugar de suponer una ganancia constante.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\fig[uplinksim]{Simulación del presupuesto de enlace de subida. Elaboración propia.}{width=\textwidth}{crop_uplink.png}
+
+
+% ---------------------------------------------------------------------
+\subsection{Justificación de las decisiones metodológicas y de recursos}
+% ---------------------------------------------------------------------
+
+Las cuatro decisiones más importantes del proyecto responden tanto al problema planteado como a las condiciones particulares de DTS. En primer lugar, el modelo de desarrollo secuencial con revisiones formales se ajusta a un producto de \textit{hardware} espacial y, además, encaja con una empresa que ya opera bajo estándares de calidad y certificaciones aeronáuticas, donde la cultura de revisión documentada existía antes del proyecto. En segundo lugar, la migración a MBSE resolvió el problema de consistencia entre documentos, y el proyecto se apoyó en Eclipse Capella por tratarse de una herramienta de código abierto, condición que resultó determinante en un desarrollo exploratorio.
+
+En tercer lugar, la preselección de componentes COTS sobre una plataforma SDR con herencia de vuelo acota el riesgo de radiación y concentra el desarrollo propio en el \textit{frontend} RF y en la gestión de potencia, que es donde DTS tiene experiencia acumulada. Por último, el practicante construyó la herramienta de simulación en Python, de manera que la empresa quedó con un activo interno reutilizable en proyectos posteriores.
+
+Estas decisiones también fijan los límites del trabajo realizado. El modelo de enlace no incorpora pérdidas atmosféricas ni interferencia co-canal con otros usuarios de la banda. La preselección de componentes es preliminar y queda sujeta a confirmación en la CDR. Además, el proyecto no ejecutó ningún ensayo durante el período, por lo que los 19 ensayos definidos en el Anexo D corresponden a especificaciones de verificación y no a mediciones.

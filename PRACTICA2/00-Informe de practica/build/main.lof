@@ -1,0 +1,12 @@
+\babel@toc {spanish}{}\relax 
+\babel@toc {spanish}{}\relax 
+\babel@toc {british}{}\relax 
+\babel@toc {spanish}{}\relax 
+\contentsline {figure}{\numberline {1-1}{\ignorespaces Carta Gantt maestra del proyecto BIFROST. El área sombreada corresponde al período de práctica profesional (2 de enero al 28 de febrero de 2026) y los rombos indican los hitos de revisión formal. Elaboración propia.\vspace {2ex}}}{7}{figure.caption.2}%
+\contentsline {figure}{\numberline {2-1}{\ignorespaces Entidades operacionales del sistema BIFROST y sus relaciones, modeladas en Eclipse Capella durante la fase de análisis operacional. Elaboración propia.\vspace {2ex}}}{8}{figure.caption.6}%
+\contentsline {figure}{\numberline {2-2}{\ignorespaces Arquitectura del sistema BIFROST tratado como caja negra, con sus funciones de frontera e intercambios de datos con los actores externos. Elaboración propia.\vspace {2ex}}}{11}{figure.caption.12}%
+\contentsline {figure}{\numberline {2-3}{\ignorespaces Descomposición lógica del sistema en sus seis componentes principales, independiente de la implementación tecnológica. Elaboración propia.\vspace {2ex}}}{11}{figure.caption.14}%
+\contentsline {figure}{\numberline {2-4}{\ignorespaces Arquitectura física de la carga útil BIFROST. La cadena de recolección de datos se destaca en rojo y la cadena de transmisión en azul. Elaboración propia.\vspace {2ex}}}{12}{figure.caption.16}%
+\contentsline {figure}{\numberline {2-5}{\ignorespaces Interfaz de la herramienta de simulación desarrollada en Python. El panel superior presenta la relación Eb/N0 del enlace de subida a lo largo de dos días de propagación orbital, con el umbral de cierre de enlace indicado en línea segmentada. Elaboración propia.\vspace {2ex}}}{14}{figure.caption.20}%
+\contentsline {figure}{\numberline {3-1}{\ignorespaces Relación Eb/N0 del enlace de bajada a lo largo de dos días de propagación orbital. Cada pico corresponde a una pasada sobre la estación terrena y la línea segmentada indica el umbral de cierre de enlace. Elaboración propia.\vspace {2ex}}}{16}{figure.caption.24}%
+\contentsline {figure}{\numberline {3-2}{\ignorespaces Detalle de una ventana de contacto individual. La caída abrupta en el centro de la ventana corresponde al nulo cenital del patrón de radiación de la antena terrestre. Elaboración propia.\vspace {2ex}}}{16}{figure.caption.26}%

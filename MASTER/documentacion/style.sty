@@ -1,0 +1,149 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{style}[2026/07/07 Estilo para documentacion de investigacion]
+
+% ============================================================
+%  PAQUETES ESENCIALES
+% ============================================================
+
+% --- Idioma y codificacion ---
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
+\RequirePackage[english]{babel}
+\RequirePackage{csquotes} % required by biblatex when used with babel
+
+% --- Matematicas ---
+\RequirePackage{amsmath, amssymb, amsfonts}
+
+% --- Tipografia ---
+\RequirePackage{mathptmx} % Times New Roman (texto y matematicas)
+
+% --- Figuras, tablas y colores ---
+\RequirePackage{graphicx}
+\RequirePackage{caption}
+\RequirePackage{subcaption}
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{float}
+\RequirePackage{xcolor}
+
+% --- Encabezados/pies de pagina ---
+\RequirePackage{fancyhdr}
+
+% --- Formato de secciones ---
+\RequirePackage{titlesec}
+\RequirePackage{titling}
+\RequirePackage[affil-sl]{authblk}
+
+% --- Espaciado de parrafos (estilo mas limpio, sin sangria) ---
+\RequirePackage{parskip}
+
+% --- Hipervinculos y referencias cruzadas ---
+\RequirePackage[hidelinks]{hyperref} % hidelinks = sin cajas de color en links
+\RequirePackage[nameinlink,capitalize]{cleveref} % \cref{} y \Cref{} automaticos
+
+% --- Citas y bibliografia (papers, libros, articulos) ---
+% style=ieee es el mas comun en literatura de antenas/RF.
+% Cambia a "apa" o "numeric" segun lo que pida el journal objetivo.
+\RequirePackage[backend=biber, style=ieee, sorting=none]{biblatex}
+
+% --- Notas de trabajo mientras se redacta (opcional, no aparecen en la version final) ---
+\setlength{\marginparwidth}{2cm}
+\RequirePackage[colorinlistoftodos,textsize=footnotesize]{todonotes}
+
+% --- Codigo / listados (por si necesitas incluir scripts o configuraciones) ---
+\RequirePackage{listings}
+
+
+% ============================================================
+%  CONFIGURACION GENERAL
+% ============================================================
+
+% --- Encabezado y pie de pagina ---
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\small\leftmark}
+\fancyhead[R]{\small\thepage}
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+  \fancyfoot[C]{\small\thepage}
+}
+
+% --- Figure/table/reference names (English defaults, kept explicit for clarity) ---
+\renewcommand{\figurename}{Fig.}
+\renewcommand{\tablename}{Table}
+\addto\captionsenglish{\renewcommand{\refname}{References}}
+\addto\captionsenglish{\renewcommand{\abstractname}{Abstract}}
+
+% --- Formato de secciones y subsecciones ---
+\titleformat{\section}
+  {\normalfont\Large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries}{\thesubsubsection}{0.6em}{}
+
+% --- Caption compacto para tablas y figuras ---
+\captionsetup{font=small, labelfont=bf, justification=justified}
+\captionsetup[table]{position=above}
+\captionsetup[figure]{position=below}
+
+
+% ============================================================
+%  COMANDOS DE USO FRECUENTE
+% ============================================================
+
+% --- Keywords (below abstract) ---
+\providecommand{\keywords}[1]{\vspace{0.3cm}\noindent\small\textbf{\textit{Keywords:}} #1}
+
+% --- Insertar una figura simple con ancho relativo al texto ---
+% Uso: \figura{archivo}{ancho (0-1)}{caption}{label}
+\newcommand{\figura}[4]{%
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=#2\linewidth]{figs/#1}
+    \caption{#3}
+    \label{fig:#4}
+  \end{figure}
+}
+
+% --- Insertar dos figuras lado a lado (subfiguras) ---
+% Uso: \figuradoble{archivo1}{caption1}{label1}{archivo2}{caption2}{label2}{caption general}{label general}
+\newcommand{\figuradoble}[8]{%
+  \begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{figs/#1}
+      \caption{#2}
+      \label{fig:#3}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{figs/#4}
+      \caption{#5}
+      \label{fig:#6}
+    \end{subfigure}
+    \caption{#7}
+    \label{fig:#8}
+  \end{figure}
+}
+
+% --- Plantilla base de tabla (booktabs) ---
+% Copiar y ajustar segun numero de columnas.
+% \begin{table}[H]
+%   \centering
+%   \caption{Descripcion de la tabla}
+%   \label{tab:nombre}
+%   \begin{tabular}{lcc}
+%     \toprule
+%     Encabezado 1 & Encabezado 2 & Encabezado 3 \\
+%     \midrule
+%     Dato 1 & Dato 2 & Dato 3 \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+
+\endinput

@@ -1,0 +1,1057 @@
+% =====================================================================
+%  CUERPO DEL INFORME TÉCNICO  ---  MÁXIMO 20 PÁGINAS
+% =====================================================================
+%  CÓMO USAR ESTE ARCHIVO
+%  Cada subsección trae un bloque de comentarios con:
+%     [CONTENIDO]  -> los puntos que el párrafo DEBE cubrir (mapeados a la rúbrica)
+%     [ESTRUCTURA] -> cómo encadenar los párrafos
+%     [EXTENSIÓN]  -> presupuesto de palabras para no pasar las 20 páginas
+%  Escribe tu texto donde dice ESCRIBIR AQUÍ y borra el comentario cuando termines.
+%
+%  PRESUPUESTO DE PÁGINAS (medido con esta plantilla: ~360 palabras por plana)
+%     Figuras, tablas y títulos ya insertados .. ~9 planas (verificado al compilar)
+%     Texto disponible ......................... ~11 planas = ~4.000 palabras
+%     TOTAL objetivo ........................... 20 planas (límite duro de la rúbrica)
+%  Los [EXTENSIÓN] de cada subsección suman aproximadamente ese total. Compila
+%  cada cierto tiempo y revisa dónde cae el título "4. Referencias bibliográficas":
+%  debe quedar en la plana 25 del PDF o antes (portada + abstract + 3 índices = 5
+%  planas previas al cuerpo). Si te pasas, el orden de recorte es:
+%     1) fusionar 2.4.1 y 2.4.2 en un solo párrafo;
+%     2) eliminar la Figura 3-2;
+%     3) achicar la Figura 2-2 a width=0.75\textwidth.
+%
+%  REGLAS DE REDACCIÓN (rúbrica E)
+%   - Tercera persona con sujeto explícito: "el practicante desarrolló",
+%     "el proyecto contempló", "DTS definió". NO uses voz pasiva ni "se hizo".
+%   - Un punto aparte por idea central. Nada de párrafos de una sola oración.
+%   - Cursiva SOLO para palabras en otro idioma: \textit{Store \& Forward},
+%     \textit{link budget}, \textit{payload}, \textit{watchdog}.
+%   - Toda figura y tabla debe estar mencionada en el texto antes de aparecer.
+% =====================================================================
+
+
+% =====================================================================
+\section{Identificación y Contextualización}
+% =====================================================================
+% [EXTENSIÓN TOTAL DE LA SECCIÓN] ~4,5 planas (1.020 palabras + Figura 1-1 + Tabla 1-1).
+
+% ---------------------------------------------------------------------
+\subsection{Contextualización de la empresa}
+% ---------------------------------------------------------------------
+% [!! LÍMITE DURO: UNA PLANA. La rúbrica lo dice explícitamente. Apunta a 300 palabras.]
+%
+% [CONTENIDO]  (rúbrica B / Identificación, criterio 1)
+%   - Identidad legal: DTS SpA, constituida el 11 de enero de 1991, transformada
+%     a sociedad por acciones en noviembre de 2020, empresa relacionada de ENAER.
+%   - Giro y rubro: industria electrónica; defensa, seguridad y aeroespacial.
+%   - TAMAÑO EN RELACIÓN AL RUBRO (la rúbrica lo pide explícitamente):
+%     dotación en el rango 50-250 trabajadores, clasificada como gran empresa
+%     según el criterio de ventas anuales del Estatuto Pyme (Ley 20.416).
+%     >>> Este es el criterio que hay que citar: la clasificación chilena es por
+%         ventas en UF, no por dotación. Cítalo con (Ministerio de Economía,
+%         Fomento y Turismo, 2014) -- es la misma fuente que usaste en Práctica I.
+%   - Áreas de negocio: nómbralas en una sola oración, sin viñetas, para ahorrar
+%     espacio. No copies el folleto completo.
+%   - Certificaciones que dan contexto de rigor técnico: ISO 9001:2015,
+%     FAA N1DSY390C (FAR 145), DGAC N268 (DAN 145), laboratorio de calibraciones
+%     acreditado NCh-ISO/IEC 17025:2017.
+%   - Ubicación: casa matriz en Macul, oficinas técnicas en Iquique, Antofagasta,
+%     Talcahuano y Punta Arenas, oficina comercial en Viña del Mar.
+%   - CIERRE OBLIGATORIO: el área I+D+i y el hecho de que el desarrollo espacial
+%     era una línea SIN trayectoria previa. Este cierre es el que conecta con 1.3
+%     y con el problema; no lo dejes fuera.
+%
+% [ESTRUCTURA] 3 párrafos:
+%   P1  Quién es DTS: identidad, giro, trayectoria, relación con ENAER, tamaño
+%       y su clasificación en el rubro (con cita).
+%   P2  Qué hace: áreas de negocio, certificaciones y cobertura geográfica.
+%   P3  Dónde se insertó el practicante: departamento I+D+i, su rol dentro de la
+%       empresa y la ausencia de desarrollo espacial previo.
+%
+% [EJEMPLO DE ARRANQUE DE P1]
+%   "Desarrollo de Tecnologías y Sistemas SpA (DTS) es una empresa chilena
+%    constituida en 1991 y relacionada a la Empresa Nacional de Aeronáutica de
+%    Chile (ENAER), cuyo giro principal corresponde a la industria electrónica
+%    aplicada a los mercados de defensa, seguridad y aeroespacial. Con una
+%    dotación cercana a los [N] trabajadores, la empresa se clasifica como gran
+%    empresa según el criterio de ventas anuales establecido en el Estatuto Pyme
+%    (Ministerio de Economía, Fomento y Turismo, 2014), condición poco frecuente
+%    en un rubro nacional dominado por proveedores de menor escala."
+
+% ESCRIBIR AQUÍ (máx. 1 plana)
+
+
+
+
+% ---------------------------------------------------------------------
+\subsection{Descripción del proyecto y rol del practicante}
+% ---------------------------------------------------------------------
+% [EXTENSIÓN] ~300 palabras + Figura 1-1 + Tabla 1-1.
+%
+% [CONTENIDO]  (rúbrica B / Identificación, criterio 2: objetivo general, plazos,
+%               alcance, descripción técnica, procesos y agentes involucrados)
+%   - Nombre del proyecto: BIFROST (propuesto por el propio practicante -- vale
+%     la pena decirlo, aporta a "aplicación creativa" de la evaluación global).
+%   - OBJETIVO GENERAL DEL PROYECTO (declararlo de forma explícita y en una sola
+%     oración, porque la rúbrica lo busca literalmente):
+%       "diseñar y validar, a nivel de arquitectura, una carga útil de
+%        comunicaciones tipo Store & Forward para un satélite CubeSat 12U, capaz
+%        de recibir mensajes autónomos desde estaciones remotas terrestres en
+%        banda UHF, almacenarlos a bordo y descargarlos a estaciones terrenas."
+%   - Descripción técnica de alto nivel: receptor UHF 401-403 MHz, memoria no
+%     volátil a bordo, downlink UHF ~466 MHz por antena propia de la carga útil,
+%     bus CAN hacia el OBC, órbita SSO 650 km / 96 grados de inclinación.
+%   - PLAZOS: práctica del 2 de enero al 28 de febrero de 2026, jornada completa.
+%     Fases cubiertas: Pre-Phase A, Phase A (cierre en SRR, 30-01-2026) y
+%     Phase B (cierre en PDR, 27-02-2026).
+%   - ALCANCE Y NO-ALCANCE (decirlo explícito suma): queda FUERA el diseño
+%     detallado (CDR), la fabricación, la integración y los ensayos, planificados
+%     para 2026-2027.
+%   - AGENTES: rol del practicante (Ingeniero Civil Eléctrico en práctica
+%     profesional, elaborador de la documentación SRR y PDR); Juan Carlos
+%     Sepúlveda (Ingeniero de Desarrollo Espacial, supervisor directo);
+%     Álvaro Valenzuela (PhD en Sistemas Espaciales, supervisión técnica);
+%     Lino Acuña (Jefe del Departamento I+D+i, aprobador). Contraparte externa:
+%     INVAP (Argentina) como asesor técnico bajo el acuerdo ENAER-DTS-INVAP de
+%     marzo de 2025. Equipo I+D+i de 6 personas trabajando en paralelo con el
+%     área de diseño mecánico.
+%
+% [ESTRUCTURA] 4 párrafos:
+%   P1  Qué es BIFROST y cuál es su objetivo general (la oración textual de arriba).
+%   P2  Cómo funciona técnicamente, en 4-5 oraciones, a nivel de concepto y sin
+%       números de diseño (esos van en la sección 2).
+%   P3  Plazos, fases cubiertas y alcance/no-alcance. Referencia la Figura 1-1 y
+%       la Tabla 1-1.
+%   P4  Agentes involucrados y rol concreto del practicante dentro de ellos.
+%
+% [EJEMPLO DE ARRANQUE DE P3]
+%   "El trabajo se desarrolló entre el 2 de enero y el 28 de febrero de 2026 en
+%    jornada completa, y cubrió las dos primeras fases del ciclo de vida del
+%    proyecto. La Figura 1-1 presenta la carta Gantt maestra elaborada durante la
+%    práctica, en la que el área sombreada delimita el período efectivamente
+%    ejecutado por el practicante y el resto corresponde a la planificación
+%    heredada por el equipo para 2026 y 2027."
+
+% ESCRIBIR AQUÍ
+
+\fig[gantt]{Carta Gantt maestra del proyecto BIFROST. El área
+sombreada corresponde al período de práctica profesional (2 de enero al 28 de
+febrero de 2026) y los rombos indican los hitos de revisión formal. Elaboración
+propia.}{width=\textwidth}{gantt.png}
+
+% [Tabla 1-1] Resume plazos, hitos y entregables. Cubre de una sola vez los
+% criterios "plazos" y "alcance" de la rúbrica. Menciónala en el texto de P3.
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Hitos de revisión y entregables generados durante la práctica.
+Elaboración propia.\vspace{1ex}}
+\small
+\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\toprule
+\textbf{Fase} & \textbf{Hito y fecha} & \textbf{Entregables generados} \\
+\midrule
+Pre-Phase A & \textit{Kick-off} & Concepto de Operación (CONOPS) preliminar y
+diagrama de bloques inicial del sistema \\
+\addlinespace
+Phase A & SRR & CONOPS consolidado, 13 requerimientos de usuario, 21
+requerimientos de sistema, matriz de trazabilidad, matriz de riesgos y carta
+Gantt maestra \\
+\addlinespace
+Phase B & PDR & Modelo MBSE en Capella con las cuatro capas ARCADIA, herramienta
+de simulación de enlace, matriz de ensayos y estimación ROM de costos \\
+\bottomrule
+\end{tabularx}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Nota. El \textit{kick-off} se realizó el 16 de enero de 2026, la SRR el 30
+de enero de 2026 y la PDR el 27 de febrero de 2026. Las fases posteriores
+(Phase C, con cierre en CDR, y Phase D, con cierre en ORR) quedaron fuera del
+alcance de la práctica.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+% ---------------------------------------------------------------------
+\subsection{Objetivo de la empresa y problema a resolver}
+% ---------------------------------------------------------------------
+% [EXTENSIÓN] ~200 palabras.
+%
+% [CONTENIDO]  (rúbrica B / Identificación, criterio 3)
+%   OJO: aquí hay que distinguir DOS objetivos y dejarlos separados en el texto,
+%   porque el corrector busca el de la EMPRESA:
+%     (a) Objetivo del PROYECTO -> ya lo declaraste en 1.2.
+%     (b) Objetivo/interés de la EMPRESA a lograr al finalizar la práctica:
+%         - Dar el primer paso formal en el desarrollo de capacidades espaciales
+%           dentro de DTS, en el marco del Plan Estratégico 2025-2029, que
+%           contempla formar capital humano y adquirir nuevas capacidades.
+%         - Llevar BIFROST hasta un nivel de madurez de diseño PDR que demostrara
+%           su viabilidad técnica y arquitectónica ANTES de comprometer recursos
+%           en diseño detallado y fabricación.
+%         - Habilitar la transferencia tecnológica con INVAP en el marco del
+%           acuerdo de cooperación, aprovechando la ventana de colaboración.
+%   - PROBLEMA / PREGUNTA (formúlalo como pregunta; la rúbrica pide "plantea un
+%     problema o pregunta a ser resuelto"):
+%       "¿Cómo estructurar y ejecutar, sin un proceso de ingeniería de sistemas
+%        preexistente en la empresa, el desarrollo de una carga útil satelital
+%        que alcance la madurez de diseño exigida en las revisiones SRR y PDR?"
+%
+% [ESTRUCTURA] 3 párrafos:
+%   P1  El objetivo del proyecto (una línea de recordatorio) y, separado, el
+%       objetivo específico de la empresa, con sus tres componentes.
+%   P2  Por qué ese objetivo genera un problema de ingeniería y no solo una tarea
+%       administrativa: no existía proceso, ni plantillas, ni herencia técnica.
+%   P3  Enunciado formal de la pregunta a resolver y anticipo de cómo se aborda.
+%
+% [EJEMPLO DE ARRANQUE DE P1]
+%   "El objetivo específico que DTS definió para el período de práctica no
+%    coincide con el objetivo técnico del proyecto. Mientras BIFROST persigue el
+%    diseño de una carga útil, el interés de la empresa consistió en materializar
+%    su primera incursión formal en el ámbito espacial y en alcanzar, dentro de
+%    los dos meses disponibles, un nivel de madurez de diseño suficiente para
+%    justificar la continuidad del proyecto ante su jefatura y ante INVAP."
+
+% ESCRIBIR AQUÍ
+
+
+% ---------------------------------------------------------------------
+\subsection{Antecedentes, causas e importancia de su resolución}
+% ---------------------------------------------------------------------
+% [EXTENSIÓN] ~220 palabras.
+%
+% [CONTENIDO]  (rúbrica B / Identificación, criterio 4)
+%   ANTECEDENTES Y CAUSAS (dos, bien separadas):
+%     1. Baja madurez del desarrollo espacial en DTS y en Chile. Consecuencia
+%        directa: el proceso de ingeniería, la documentación y las herramientas
+%        de soporte debieron generarse sin precedentes internos de referencia.
+%        Esta es la causa raíz del problema.
+%     2. El acuerdo de cooperación ENAER-DTS-INVAP de marzo de 2025, que habilitó
+%        la transferencia de tecnología espacial y de radares y fijó el contexto
+%        y el plazo de esta primera incursión.
+%   IMPORTANCIA DE RESOLVERLO (tres niveles, de menor a mayor alcance):
+%     - Para DTS: consolida experiencia técnica y deja una metodología replicable
+%       para futuros proyectos espaciales; evita comprometer capital en un diseño
+%       cuya viabilidad no estaba demostrada.
+%     - Para el país: se alinea con los objetivos del Centro Espacial Nacional
+%       (CEN) y con el impulso de la FACh hacia capacidades espaciales nacionales.
+%     - Para el usuario final: Chile tiene geografía extensa y compleja, con zonas
+%       aisladas y baja infraestructura terrestre, y alta exposición a sismos y
+%       eventos meteorológicos severos; un canal de comunicaciones redundante e
+%       independiente de la infraestructura terrestre tiene valor operacional real.
+%
+% [ESTRUCTURA] 3 párrafos:
+%   P1  Antecedente 1 (madurez) + su consecuencia sobre el trabajo.
+%   P2  Antecedente 2 (acuerdo INVAP) + la restricción temporal que impone.
+%   P3  Importancia en los tres niveles.
+%
+% [EJEMPLO DE ARRANQUE DE P1]
+%   "El problema planteado surge de la confluencia de dos antecedentes. El primero
+%    corresponde a la baja madurez del desarrollo espacial, tanto en DTS como en
+%    la industria nacional. La empresa no contaba con proyectos espaciales previos,
+%    plantillas de documentación ni criterios internos de revisión de diseño, de
+%    modo que el practicante debió generar el proceso de ingeniería junto con el
+%    producto de ingeniería."
+
+% ESCRIBIR AQUÍ
+
+
+% =====================================================================
+\section{Generación y Justificación}
+% =====================================================================
+% [EXTENSIÓN TOTAL DE LA SECCIÓN] ~10 planas (1.900 palabras + 5 figuras + 2 tablas).
+% Es el corazón del informe:
+% vale 4 de los 12 puntos del informe técnico y alimenta la evaluación global.
+
+% ---------------------------------------------------------------------
+\subsection{Marco metodológico: ciclo de vida y revisiones de diseño}
+% ---------------------------------------------------------------------
+% [EXTENSIÓN] ~250 palabras.
+%
+% [CONTENIDO]  (rúbrica B / Generación, criterio 1: propone una metodología)
+%   - El proyecto adoptó un proceso de ingeniería de sistemas secuencial, tipo
+%     cascada, estructurado en revisiones formales de madurez del diseño.
+%   - Definir qué es una revisión técnica y por qué existe: cada una es una
+%     compuerta que exige un conjunto de entregables y criterios de salida antes
+%     de autorizar el paso a la fase siguiente.
+%     >>> CITA OBLIGATORIA AQUÍ: (Institute of Electrical and Electronics
+%         Engineers [IEEE], 2015) -- IEEE Std 15288.2-2014, que define SRR, PDR y
+%         CDR con sus criterios de entrada y salida y los entregables exigidos.
+%   - Explicar las tres compuertas relevantes:
+%       SRR -> la línea base de requerimientos está completa y es verificable.
+%       PDR -> la arquitectura propuesta es técnicamente viable y cumple los
+%              requerimientos; se autoriza el diseño detallado.
+%       CDR -> el diseño está listo para fabricación (fuera del alcance).
+%   - Justificar la elección de cascada frente a un enfoque iterativo: el hardware
+%     espacial no admite iteración barata después de la fabricación, el costo del
+%     cambio crece con la fase, y el proyecto tenía una contraparte externa que
+%     revisaba en hitos discretos.
+%
+% [ESTRUCTURA] 3 párrafos:
+%   P1  Qué metodología se adoptó y por qué el ciclo de vida secuencial es el
+%       adecuado para hardware espacial (justificación, no solo descripción).
+%   P2  Qué es una revisión de madurez y qué exige cada una (con la cita IEEE).
+%   P3  Qué fases cubrió la práctica y hasta dónde llegó (enlazar con Figura 1-1).
+%
+% [EJEMPLO DE ARRANQUE DE P2]
+%   "Cada revisión funciona como una compuerta de madurez y no como una simple
+%    presentación de avance. El estándar IEEE Std 15288.2-2014 establece, para
+%    cada una de ellas, los criterios de entrada, los criterios de salida y el
+%    conjunto de entregables que el equipo debe presentar (IEEE, 2015). Bajo ese
+%    marco, la Revisión de Requerimientos del Sistema exige una línea base de
+%    requerimientos completa, no ambigua y verificable, mientras que la Revisión
+%    de Diseño Preliminar exige demostrar que la arquitectura propuesta satisface
+%    esos requerimientos antes de comprometer recursos en el diseño detallado."
+
+% ESCRIBIR AQUÍ
+
+
+% ---------------------------------------------------------------------
+\subsection{Concepto de Operación}
+% ---------------------------------------------------------------------
+% [EXTENSIÓN] ~300 palabras + Figura 2-1.
+%
+% [CONTENIDO]
+%   - Qué es un CONOPS y por qué fue el PRIMER entregable: describe el sistema
+%     desde la perspectiva del usuario y fija la línea base operativa de la que
+%     se derivan todos los requerimientos.
+%   - Desarrolla las seis preguntas del CONOPS, pero EN PROSA, no como lista:
+%       QUÉ:     carga útil Store & Forward en plataforma CubeSat 12U, repetidor
+%                no instantáneo de mensajes digitales provenientes de estaciones
+%                remotas autónomas (DCP).
+%       POR QUÉ: conectividad en zonas de geografía compleja, resiliencia ante
+%                emergencias, plataforma experimental con proyección a IoT satelital.
+%       QUIÉNES: DTS (desarrollador integral), INVAP (contraparte técnica);
+%                usuarios potenciales: universidades y centros de investigación,
+%                centros de monitoreo meteorológico, sismológico y vulcanológico,
+%                organismos de gestión de emergencias, empresas de IoT satelital.
+%       DÓNDE:   tres segmentos -- espacial (LEO SSO, 650 km, 96 grados),
+%                terrestre (Chile continental, zonas extremas, insular y
+%                antártico) y espectral (uplink UHF 401-403 MHz, downlink UHF
+%                ~466 MHz).
+%       CUÁNDO:  vida útil de 5 años, 4 a 5 pasadas diarias sobre territorio
+%                nacional, ventanas de contacto del orden de 10 minutos.
+%       CÓMO:    las DCP transmiten de forma autónoma; la carga útil escucha
+%                dentro de las ventanas de misión, compensa Doppler, demodula y
+%                valida; los mensajes válidos se temporalizan y almacenan en
+%                memoria no volátil; la descarga ocurre bajo comando del OBC.
+%   - Menciona el estándar de referencia para la interoperabilidad de las
+%     estaciones remotas: el sistema Argos de recolección de datos ambientales
+%     por satélite.  >>> CITA: (CLS, 2016).
+%
+% [ESTRUCTURA] 4 párrafos:
+%   P1  Qué es un CONOPS, por qué fue el primer entregable y qué rol cumple como
+%       línea base (esto justifica la decisión metodológica).
+%   P2  Qué es el sistema y por qué se desarrolla.
+%   P3  Dónde y cuándo opera: los tres segmentos y el marco orbital.
+%   P4  Cómo opera: la cadena de operación en cinco pasos, redactada en prosa.
+%       Referencia la Figura 2-1.
+%
+% [EJEMPLO DE ARRANQUE DE P4]
+%   "La operación nominal del sistema encadena cinco etapas. Las estaciones
+%    remotas transmiten sus mensajes de forma autónoma en la banda de 401 a 403
+%    MHz, sin coordinación previa con el satélite. La carga útil escucha
+%    activamente dentro de las ventanas definidas por la misión y compensa el
+%    corrimiento en frecuencia inducido por el efecto Doppler, que alcanza
+%    $\pm$10 kHz debido a la velocidad relativa del satélite, cercana a 7,5 km/s."
+
+% ESCRIBIR AQUÍ
+
+\fig[entidades]{Entidades operacionales del sistema BIFROST y sus
+relaciones, modeladas en Eclipse Capella durante la fase de análisis operacional.
+Elaboración propia.}{width=0.95\textwidth}{oeb_entidades_operacionales.jpg}
+
+% [FIGURA OPCIONAL, si te sobra espacio] Escenario operacional de recolección:
+% \fig[escenario]{Escenario operacional de recolección de datos desde
+% estaciones remotas hacia la carga útil. Elaboración propia.}%
+% {width=0.95\textwidth}{oab_recoleccion_datos.jpg}
+
+
+% ---------------------------------------------------------------------
+\subsection{Definición y trazabilidad de requerimientos}
+% ---------------------------------------------------------------------
+% [EXTENSIÓN] ~350 palabras + Tabla 2-1 + Tabla 2-2.
+%
+% [CONTENIDO]  (rúbrica B / Generación, criterios 1 y 4)
+%   - Proceso: del CONOPS se derivaron 13 requerimientos de usuario (UR) y de
+%     estos, 21 requerimientos de sistema (SR), numerados hasta SR-23 por
+%     depuraciones sucesivas de la lista. Explica la lógica de la derivación:
+%     el UR expresa una necesidad, el SR la traduce a una especificación técnica
+%     verificable.
+%   - Matriz de trazabilidad bidireccional: cada UR tiene al menos un SR asociado
+%     y cada SR responde a al menos un UR. Explica para qué sirve: permite
+%     detectar requerimientos huérfanos y evaluar el impacto de un cambio.
+%   - Atributos asignados a cada requerimiento: prioridad, riesgo, dificultad,
+%     tipo (funcional / no funcional / interfaz / proceso) y estado.
+%   - Restricciones que acotaron el diseño (Tabla 2-2): potencia, masa, centro de
+%     gravedad, volumen, radiación acumulada, desgasificación y rango térmico.
+%     Explica de dónde vienen: la plataforma CubeSat 12U, el lanzador y el entorno
+%     orbital, no una decisión del equipo.
+%   - Evaluación de riesgo por requerimiento: impacto y probabilidad en escala de
+%     tres niveles, producto de ambos como valor de riesgo. Menciona el resultado
+%     agregado y remite al Anexo C.
+%
+% [ESTRUCTURA] 4 párrafos:
+%   P1  Cómo se derivaron los UR desde el CONOPS y qué caracteriza a un buen
+%       requerimiento (verificable, no ambiguo, único). Referencia la Tabla 2-1.
+%   P2  Cómo se derivaron los SR y qué asegura la matriz de trazabilidad.
+%   P3  Las restricciones de plataforma y entorno. Referencia la Tabla 2-2 y
+%       explica su efecto: acotaron el espacio de soluciones antes de diseñar.
+%   P4  La evaluación de riesgo, el criterio usado y qué se hizo con los riesgos
+%       altos (mitigaciones tempranas). Remite al Anexo C.
+%
+% [EJEMPLO DE ARRANQUE DE P2]
+%   "Cada requerimiento de usuario se tradujo luego a uno o más requerimientos de
+%    sistema, redactados en términos medibles y asociados a un método de
+%    verificación. El requerimiento UR-01, que exige un servicio Store & Forward
+%    con almacenamiento durante la órbita, derivó en los requerimientos SR-04 y
+%    SR-06, que fijan una capacidad mínima de 1.000.000 de mensajes retenidos
+%    durante hasta 15 órbitas y una descarga de al menos 10.000 mensajes por
+%    ventana de contacto. Esta traducción es la que hace verificable una
+%    necesidad que, en su forma original, no lo era."
+
+% ESCRIBIR AQUÍ
+
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Requerimientos de usuario clasificados con nivel de riesgo
+alto y sus medidas de mitigación tempranas. Elaboración propia a partir de la
+matriz de trazabilidad del proyecto.\vspace{1ex}}
+\small
+\begin{tabularx}{\textwidth}{@{}l X c X@{}}
+\toprule
+\textbf{ID} & \textbf{Requerimiento de usuario} & \textbf{Riesgo} & \textbf{Mitigación definida} \\
+\midrule
+UR-01 & Proveer un servicio \textit{Store \& Forward} satelital, almacenando datos
+durante la órbita para descargarlos en una estación terrestre & Alto &
+Diseño de memoria no volátil con margen $\geq$ 50\,\%, simulación de carga orbital
+y pruebas de estrés en tierra \\
+\addlinespace
+UR-06 & Ser compatible con una plataforma CubeSat 12U en órbita LEO sol-síncrona
+a 650 km de altitud y 96$^{\circ}$ de inclinación & Alto &
+Análisis de interfaces mecánicas y eléctricas, y revisión conjunta con el
+proveedor de la plataforma \\
+\addlinespace
+UR-08 & Permitir el uso de componentes COTS con funcionamiento en órbita probado,
+tolerancia a la radiación verificada o mitigaciones de diseño & Alto &
+Selección de componentes con validación espacial previa y mitigación por
+redundancia y \textit{watchdogs} \\
+\addlinespace
+UR-11 & Garantizar una vida útil operativa mínima de 5 años en el entorno de
+radiación LEO definido & Alto &
+Pruebas de estrés, análisis térmico y pruebas de vida aceleradas \\
+\bottomrule
+\end{tabularx}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Nota. La lista completa de los 13 requerimientos de usuario se presenta en
+el Anexo A y la de los 21 requerimientos de sistema en el Anexo B.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Restricciones impuestas por la plataforma CubeSat 12U y por el
+entorno orbital sobre el diseño de la carga útil. Elaboración propia a partir de
+la documentación del proyecto.\vspace{1ex}}
+\small
+\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\toprule
+\textbf{Parámetro} & \textbf{Límite} & \textbf{Origen de la restricción} \\
+\midrule
+Potencia            & 10 W en operación nominal & Sistema de potencia de la plataforma \\
+Masa                & 3,0 kg (máximo)           & Presupuesto de masa del CubeSat 12U \\
+Centro de gravedad  & $\pm$2 mm respecto del centro geométrico & Estabilidad del control de actitud \\
+Volumen             & 20 $\times$ 20 $\times$ 10 cm & Envolvente asignada a la carga útil \\
+Dosis acumulada     & 10 a 20 krad en 5 años    & Ambiente radiativo en órbita LEO \\
+Desgasificación     & TML $<$ 1,0\,\% y CVCM $<$ 0,1\,\% & Protección de sensores ópticos y paneles solares \\
+Rango térmico       & $-20$ a $+60\ ^{\circ}$C en operación & Ciclado térmico orbital \\
+Efecto Doppler      & $\pm$10 kHz                & Velocidad relativa del satélite ($\sim$7,5 km/s) \\
+\bottomrule
+\end{tabularx}
+\end{threeparttable}
+\end{table}
+
+
+% ---------------------------------------------------------------------
+\subsection{Modelamiento MBSE con ARCADIA y Eclipse Capella}
+% ---------------------------------------------------------------------
+% [EXTENSIÓN] ~450 palabras en total (intro 130, 2.4.1 100, 2.4.2 90, 2.4.3 130),
+% más tres figuras.
+%
+% [CONTENIDO GENERAL]  (rúbrica B / Generación, criterios 2 y 3: describe los
+%  softwares necesarios y justifica su elección)
+%   - Punto de partida: el proyecto arrancó con documentación y diagramas de
+%     bloques sueltos. Al crecer el número de interfaces (plataforma, estaciones
+%     remotas, estaciones terrenas, centro de control de misión), mantener la
+%     consistencia entre documentos se volvió inviable.
+%   - DECISIÓN: migrar el proyecto completo a MBSE (Model-Based Systems
+%     Engineering) con la metodología ARCADIA, modelada en Eclipse Capella.
+%     >>> Esta migración es TUYA y ocurrió a mitad de la práctica (semana 6 de la
+%         bitácora). Dilo explícitamente: es el mejor argumento para el criterio
+%         de "aplicación creativa y/o novedosa dentro de la empresa" (rúbrica F).
+%   - JUSTIFICACIÓN de la decisión (no basta con describirla):
+%       * el modelo pasa a ser la única fuente de verdad, en vez de N documentos;
+%       * la trazabilidad entre función, componente lógico y componente físico es
+%         automática, no manual;
+%       * Capella es de código abierto, sin costo de licencia, lo que importaba
+%         en un proyecto exploratorio sin presupuesto asignado;
+%       * ARCADIA está ampliamente adoptada en desarrollo de sistemas complejos
+%         y aeroespaciales.  >>> CITA: (Roques, 2018).
+%   - Las cuatro fases de ARCADIA: análisis operacional (OA), análisis del sistema
+%     (SA), arquitectura lógica (LA) y arquitectura física (PA).
+%
+% [ESTRUCTURA DE LA INTRODUCCIÓN] 2 párrafos antes del primer \subsubsection:
+%   P1  El problema de consistencia que apareció y por qué la documentación
+%       tradicional no lo resolvía.
+%   P2  Qué es MBSE/ARCADIA, por qué se eligió Capella y cuáles son sus cuatro
+%       fases (con la cita).
+%
+% [EJEMPLO DE ARRANQUE DE P1]
+%   "Hacia la mitad del período de práctica, el proyecto acumulaba un CONOPS, dos
+%    matrices de requerimientos y varios diagramas de bloques independientes entre
+%    sí. Cada modificación de un requerimiento obligaba a revisar manualmente los
+%    demás documentos para mantener la coherencia, un procedimiento que no escala
+%    en un sistema con cuatro interfaces externas. Frente a esa limitación, el
+%    practicante propuso migrar el proyecto completo a un enfoque de ingeniería de
+%    sistemas basada en modelos."
+
+% ESCRIBIR AQUÍ (introducción de la subsección)
+
+\subsubsection{Análisis operacional y análisis del sistema}
+% [EXTENSIÓN] ~100 palabras + Figura 2-2.
+%
+% [CONTENIDO]
+%   - OA: define qué deben lograr los usuarios y el entorno de la misión, sin
+%     hablar todavía del sistema. Entidades operacionales: estaciones remotas,
+%     centro de control de misión, estaciones terrenas, plataforma satelital.
+%   - SA: trata a BIFROST como una caja negra. Define sus funciones de frontera y
+%     los intercambios de datos con los actores externos. Aquí aparecen las
+%     capacidades del sistema y los escenarios (recolección de datos Argos-2 y
+%     Argos-3, actualización de firmware).
+%   - Explica la diferencia entre ambos niveles en una oración: el OA describe el
+%     problema; el SA describe qué debe hacer el sistema, todavía sin decir cómo.
+%
+% [ESTRUCTURA] 2 párrafos, uno por nivel. Referencia la Figura 2-2 en el segundo.
+
+% ESCRIBIR AQUÍ
+
+\fig[sab]{Arquitectura del sistema BIFROST tratado como caja negra,
+con sus funciones de frontera e intercambios de datos con los actores externos.
+Elaboración propia.}{width=0.95\textwidth}{sab_sistema_bifrost.jpg}
+
+\subsubsection{Arquitectura lógica}
+% [EXTENSIÓN] ~90 palabras + Figura 2-3.
+%
+% [CONTENIDO]
+%   - La LA abre la caja negra y agrupa las funciones en componentes lógicos,
+%     independientes de la tecnología con que se implementen.
+%   - Los seis componentes lógicos definidos: RF Frontend, Digital Processing,
+%     Data Handling, Power Management, Interface Handling y Data Storage.
+%   - Explica qué hace cada uno en media línea y cómo se encadenan en la cadena
+%     funcional de recolección de datos (RF Frontend -> Digital Processing ->
+%     Data Handling -> Data Storage) y en la de transmisión (sentido inverso).
+%   - Por qué importa este nivel intermedio: permite decidir la arquitectura
+%     funcional antes de comprometerse con componentes concretos, y hace que un
+%     cambio de proveedor no obligue a rehacer el diseño funcional.
+%
+% [ESTRUCTURA] 2 párrafos:
+%   P1  Qué es la arquitectura lógica y cuáles son los seis componentes.
+%   P2  Cómo se encadenan en las dos cadenas funcionales y qué ventaja aporta el
+%       desacople respecto de la tecnología. Referencia la Figura 2-3.
+
+% ESCRIBIR AQUÍ
+
+\fig[lcbd]{Descomposición lógica del sistema en sus seis componentes
+principales, independiente de la implementación tecnológica. Elaboración propia.}%
+{width=0.9\textwidth}{lcbd_arquitectura_logica.jpg}
+
+\subsubsection{Arquitectura física}
+% [EXTENSIÓN] ~130 palabras + Figura 2-4.
+%
+% [CONTENIDO]  (este es el resultado técnico más fuerte de la práctica)
+%   - La PA asigna las funciones y los componentes lógicos a hardware y software
+%     concretos.
+%   - COMPONENTE CLAVE PRESELECCIONADO: la plataforma SDR TOTEM de Alén Space,
+%     que integra el transceptor AD9364 y un SoC Zynq-7020 (FPGA + procesador
+%     Cortex-A9).  >>> CITA: (Alén Space, s.f.)
+%     Reparto de funciones:
+%       * AD9364      -> filtrado de LO/banda base y conversión ADC/DAC;
+%       * FPGA        -> análisis de frecuencia, seguimiento Doppler, filtrado
+%                        adaptativo, demodulación y modulación;
+%       * Cortex-A9   -> verificación de integridad, identificación de metadatos
+%                        de la DCP, gestión de memoria e interfaz de bus CAN.
+%   - Bloques desarrollados a medida por DTS: el frontend RF (switch T/R,
+%     amplificador de potencia y LNA), el subsistema de antenas y la red de
+%     distribución de potencia con detección de latch-up, monitoreo de consumo y
+%     reinicio por watchdog.
+%   - JUSTIFICA la decisión COTS + SDR:
+%       * un SDR con herencia de vuelo reduce el riesgo asociado a UR-08;
+%       * la demodulación en FPGA permite adaptar el esquema de modulación por
+%         software sin rediseñar hardware, lo que responde al requerimiento de
+%         escalabilidad (UR-10) y a la actualización en vuelo (SR-17);
+%       * concentrar el desarrollo propio en el frontend RF y la gestión de
+%         potencia acota el esfuerzo de ingeniería al tiempo disponible.
+%   - Mitigaciones de radiación en la arquitectura: redundancia de procesador y
+%     bancos de memoria, algoritmos CRC/EDAC y watchdog timers externos.
+%
+% [ESTRUCTURA] 3 párrafos:
+%   P1  Qué asigna la arquitectura física y cuál es el componente central elegido.
+%   P2  Reparto de funciones entre AD9364, FPGA y Cortex-A9, y qué desarrolla DTS
+%       a medida. Referencia la Figura 2-4.
+%   P3  Justificación de la decisión y mitigaciones de radiación incorporadas.
+%
+% [EJEMPLO DE ARRANQUE DE P3]
+%   "La selección de una plataforma SDR comercial con herencia de vuelo responde
+%    directamente a dos requerimientos en tensión. Por una parte, UR-08 admite
+%    componentes COTS solo si acreditan funcionamiento en órbita, tolerancia a la
+%    radiación verificada o mitigaciones de diseño equivalentes. Por otra, UR-10
+%    exige una arquitectura modular y escalable. Un receptor implementado en
+%    lógica programable satisface ambas condiciones: hereda la calificación del
+%    módulo comercial y permite modificar el esquema de demodulación por software,
+%    sin rediseñar el hardware ni repetir la campaña de ensayos ambientales."
+
+% ESCRIBIR AQUÍ
+
+\fig[pab]{Arquitectura física de la carga útil BIFROST. La cadena de
+recolección de datos se destaca en rojo y la cadena de transmisión en azul.
+Elaboración propia.}{width=\textwidth}{pab_arquitectura_fisica.jpg}
+
+% [ALTERNATIVA] Si el diagrama queda ilegible en vertical, usa una página
+% apaisada. El paquete lscape ya está cargado en style.cls. Comenta el \fig de
+% arriba y descomenta este bloque:
+% \begin{landscape}
+% \fig[pab]{Arquitectura física de la carga útil BIFROST. La cadena de
+% recolección de datos se destaca en rojo y la cadena de transmisión en azul.
+% Elaboración propia.}{width=\linewidth}{pab_arquitectura_fisica.jpg}
+% \end{landscape}
+
+
+% ---------------------------------------------------------------------
+\subsection{Herramienta de simulación orbital y presupuesto de enlace}
+% ---------------------------------------------------------------------
+% [EXTENSIÓN] ~280 palabras + Tabla 2-3 + Figura 2-5.
+%
+% [CONTENIDO]  (rúbrica B / Generación, criterio 2: describe los análisis,
+%               mediciones y softwares necesarios para resolver el problema)
+%   - PROBLEMA A RESPONDER: ninguna herramienta disponible en el departamento
+%     permitía evaluar simultáneamente la geometría orbital y el presupuesto de
+%     enlace considerando los patrones de radiación reales de ambas antenas.
+%   - SOLUCIÓN: el practicante desarrolló una herramienta propia en Python que
+%     propaga una órbita sol-síncrona en tres dimensiones y calcula el presupuesto
+%     de enlace en cada instante.
+%     >>> SEGUNDO ARGUMENTO FUERTE PARA "aplicación creativa" (rúbrica F).
+%   - Arquitectura del código (la rúbrica pide "los softwares"):
+%       * módulo de mecánica orbital: propagación de la órbita y geometría
+%         satélite-estación (distancia de enlace y ángulo de elevación);
+%       * módulo de presupuesto de enlace: pérdidas de espacio libre, pérdidas
+%         adicionales y relación Eb/N0 resultante;
+%       * módulos de patrón de radiación: monopolo con efecto de tierra para la
+%         estación terrestre y turnstile para el satélite;
+%       * archivo central de configuración y script de visualización interactiva.
+%   - PARÁMETROS DE SIMULACIÓN -> van en la Tabla 2-3, no en el texto.
+%   - Explica por qué modelar el patrón de radiación cambia el resultado: un
+%     cálculo de enlace que asume ganancia constante sobrevalora el margen en los
+%     extremos del patrón y no revela los nulos.
+%   - Justifica la elección de Python y del desarrollo propio frente a software
+%     comercial: costo nulo, control total sobre el modelo de antena, código
+%     reutilizable por la empresa en proyectos posteriores.
+%
+% [ESTRUCTURA] 4 párrafos:
+%   P1  Qué análisis había que hacer y por qué las herramientas disponibles no
+%       bastaban.
+%   P2  Qué se construyó y cómo está organizado el código.
+%   P3  Qué parámetros y modelos de antena se usaron. Referencia la Tabla 2-3.
+%   P4  Justificación de la decisión y anticipo de que los resultados se analizan
+%       en la sección 3.
+%
+% [EJEMPLO DE ARRANQUE DE P1]
+%   "La viabilidad de BIFROST depende de una condición que ninguna decisión de
+%    arquitectura puede compensar: que el enlace cierre. Verificarlo exigía
+%    evaluar de forma conjunta la geometría orbital, que determina la distancia y
+%    el ángulo de elevación en cada instante, y el balance de potencias, que
+%    depende de la ganancia que cada antena presenta precisamente en esa
+%    dirección. El departamento no disponía de una herramienta que acoplara ambos
+%    cálculos, por lo que el practicante desarrolló un entorno de simulación
+%    propio en Python."
+
+% ESCRIBIR AQUÍ
+
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Parámetros empleados en la simulación del presupuesto de
+enlace. Elaboración propia.\vspace{1ex}}
+\small
+\begin{tabularx}{\textwidth}{@{}X l@{}}
+\toprule
+\textbf{Parámetro} & \textbf{Valor} \\
+\midrule
+Altitud orbital nominal                       & 650 km \\
+Tipo de órbita e inclinación                  & Sol-sincrónica (SSO), 96$^{\circ}$ \\
+Frecuencia de enlace de subida                & 401--403 MHz \\
+Frecuencia de enlace de bajada                & $\sim$466 MHz \\
+Potencia de transmisión                       & 1 W (0 dBW) \\
+Antena de la estación terrestre               & Monopolo con efecto de plano de tierra \\
+Antena del satélite                           & \textit{Turnstile} \\
+Pérdidas por desacople de polarización        & 3 dB \\
+Pérdidas por desadaptación de impedancia      & 2 dB \\
+Umbral de Eb/N0 para cierre de enlace         & 14 dB \\
+Tasa de datos                                 & 400 bps \\
+\bottomrule
+\end{tabularx}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Nota. Las ganancias de antena corresponden a los valores típicos de cada
+configuración, modeladas a partir de su patrón de radiación completo y no como
+una ganancia constante.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\fig[uplinksim]{Interfaz de la herramienta de simulación desarrollada
+en Python. El panel superior presenta la relación Eb/N0 del enlace de subida a lo
+largo de dos días de propagación orbital, con el umbral de cierre de enlace
+indicado en línea segmentada. Elaboración propia.}{width=\textwidth}{uplink.png}
+
+
+% ---------------------------------------------------------------------
+\subsection{Justificación de las decisiones metodológicas y de recursos}
+% ---------------------------------------------------------------------
+% [EXTENSIÓN] ~280 palabras.
+%
+% [CONTENIDO]  (rúbrica B / Generación, criterio 3. Es un criterio propio: no
+%  basta con haber justificado cosas sueltas antes, conviene un cierre explícito.)
+%   Recoge las cuatro decisiones mayores y justifica cada una contra DOS ejes:
+%   (a) las características del problema y (b) las características de DTS.
+%
+%   D1. Ciclo de vida secuencial con revisiones formales
+%       Problema: hardware espacial, costo del cambio creciente, no hay iteración
+%                 barata después del lanzamiento.
+%       Empresa:  DTS ya opera bajo ISO 9001:2015 y certificaciones aeronáuticas,
+%                 de modo que la cultura de revisiones documentadas ya existía.
+%
+%   D2. MBSE con ARCADIA sobre Eclipse Capella
+%       Problema: múltiples interfaces externas, consistencia inmanejable a mano.
+%       Empresa:  herramienta de código abierto, sin costo de licencia en un
+%                 proyecto exploratorio; deja un modelo reutilizable y un método
+%                 replicable para los siguientes proyectos espaciales de DTS.
+%
+%   D3. Componentes COTS con herencia de vuelo sobre una plataforma SDR
+%       Problema: dosis de radiación, plazos y presupuesto acotado.
+%       Empresa:  DTS no cuenta con capacidad de fabricación de electrónica de
+%                 grado espacial; concentrar el desarrollo propio en el frontend
+%                 RF aprovecha su experiencia real en electrónica y aviónica.
+%
+%   D4. Herramienta de simulación propia en Python
+%       Problema: necesidad de acoplar geometría orbital y patrón de antena.
+%       Empresa:  sin licencias comerciales disponibles; el código queda como
+%                 activo interno reutilizable.
+%
+%   - CIERRA con las limitaciones metodológicas asumidas conscientemente: el
+%     modelo de enlace no incorpora pérdidas atmosféricas ni interferencia
+%     co-canal, y la selección de componentes es preliminar y sujeta a
+%     confirmación en CDR.
+%
+% [ESTRUCTURA] 5 párrafos: uno por decisión (D1 a D4) y uno de cierre sobre
+% limitaciones asumidas. Cada párrafo con el mismo patrón: decisión -> por qué
+% el problema la exige -> por qué el contexto de DTS la hace la opción correcta.
+%
+% [EJEMPLO DE ARRANQUE DE D2]
+%   "La migración a un enfoque basado en modelos respondió tanto a la naturaleza
+%    del sistema como a las condiciones de la empresa. Un sistema con cuatro
+%    interfaces externas y dos cadenas funcionales acopladas exige un mecanismo
+%    de trazabilidad que la documentación en texto no ofrece. Al mismo tiempo,
+%    Eclipse Capella es una herramienta de código abierto, lo que resultaba
+%    determinante en un proyecto exploratorio sin presupuesto de licencias
+%    asignado, y deja instalada en DTS una metodología reutilizable en los
+%    proyectos espaciales posteriores."
+
+% ESCRIBIR AQUÍ
+
+
+% =====================================================================
+\section{Evaluación y Conclusiones}
+% =====================================================================
+% [EXTENSIÓN TOTAL DE LA SECCIÓN] ~5,5 planas (1.300 palabras + 2 figuras + 2 tablas).
+% ATENCIÓN: esta sección vale otros 4 puntos y es donde más informes pierden
+% puntaje, porque describen actividades en vez de resultados medibles.
+
+% ---------------------------------------------------------------------
+\subsection{Resultados obtenidos}
+% ---------------------------------------------------------------------
+% [EXTENSIÓN] ~350 palabras + Tabla 3-1 + Figuras 3-1 y 3-2 + Tabla 3-2.
+%
+% [CONTENIDO]  (rúbrica B / Evaluación, criterio 1: "resultados apoyados en
+%               indicadores concretos o mediciones reales o estimadas")
+%   >>> REGLA: cada afirmación de esta subsección debe llevar un número.
+%
+%   R1. Resultado de gestión de la ingeniería (Tabla 3-1):
+%       - 13 requerimientos de usuario y 21 de sistema definidos y trazados;
+%       - 35 relaciones de trazabilidad; cobertura del 100 % en AMBOS sentidos
+%         (ningún UR sin SR asociado y ningún SR huérfano);
+%       - 12 requerimientos clasificados en nivel de riesgo alto (4 UR y 8 SR),
+%         todos con mitigación definida;
+%       - 19 ensayos de verificación especificados (7 funcionales, 3 térmicos,
+%         5 mecánicos y 4 de compatibilidad electromagnética);
+%       - modelo MBSE con las cuatro capas ARCADIA completas.
+%
+%   R2. Resultado de viabilidad del enlace (Figuras 2-5, 3-1 y 3-2):
+%       - el enlace cierra en 4 a 5 pasadas diarias sobre el territorio nacional;
+%       - ventanas de contacto útiles del orden de 10 minutos por pasada;
+%       - distancia media de enlace en condición de contacto: ~1.500 km;
+%       - Eb/N0 por sobre el umbral de 14 dB durante toda la ventana, con
+%         máximos en torno a 30-35 dB;
+%       - HALLAZGO NO TRIVIAL, DESTÁCALO: la simulación revela un nulo profundo
+%         en el cénit, cuando la elevación se acerca a 90 grados y la distancia
+%         es mínima (655 km). Es consecuencia directa del patrón del monopolo y
+%         no aparecería en un cálculo con ganancia constante. Es exactamente el
+%         tipo de hallazgo que justifica haber construido la herramienta.
+%
+%   R3. Resultado programático (Tabla 3-2):
+%       - estimación ROM de 133.000 USD para entregar un modelo de vuelo integrado;
+%       - cronograma con las fases hasta la revisión AIT (Figura 1-1).
+%
+% [ESTRUCTURA] 4 párrafos:
+%   P1  Resultados de la ingeniería de requerimientos, con los números. Referencia
+%       la Tabla 3-1.
+%   P2  Resultados del presupuesto de enlace: cuántas pasadas, qué duración, qué
+%       márgenes. Referencia la Figura 3-1.
+%   P3  El hallazgo del nulo cenital y qué implica para la operación (la ventana
+%       útil no es continua; conviene planificar la descarga fuera del cénit).
+%       Referencia la Figura 3-2.
+%   P4  Resultado programático: cronograma y estimación de costos. Referencia la
+%       Tabla 3-2.
+%
+% [EJEMPLO DE ARRANQUE DE P3]
+%   "La simulación reveló además un comportamiento que un cálculo de enlace con
+%    ganancia constante no habría detectado. En las pasadas de alta elevación, la
+%    relación Eb/N0 cae abruptamente por debajo del umbral en el instante de
+%    máxima aproximación, pese a que en ese punto la distancia de enlace alcanza
+%    su valor mínimo de 655 km. La causa es el nulo cenital del patrón de
+%    radiación del monopolo de la estación terrestre, que anula la ganancia
+%    justamente en la dirección de menor pérdida de espacio libre."
+
+% ESCRIBIR AQUÍ
+
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Indicadores de los entregables generados durante el período de
+práctica. Elaboración propia.\vspace{1ex}}
+\small
+\begin{tabularx}{\textwidth}{@{}X l l@{}}
+\toprule
+\textbf{Indicador} & \textbf{Resultado} & \textbf{Estado} \\
+\midrule
+Requerimientos de usuario definidos                       & 13    & Línea base cerrada en SRR \\
+Requerimientos de sistema derivados                       & 21    & Línea base cerrada en SRR \\
+Relaciones de trazabilidad UR $\leftrightarrow$ SR        & 35    & Matriz bidireccional \\
+Cobertura de trazabilidad en ambos sentidos               & 100\,\% & Verificada \\
+Requerimientos evaluados con riesgo alto                  & 12    & Mitigaciones propuestas \\
+Ensayos de verificación especificados                     & 19    & Matriz preliminar \\
+Capas del modelo ARCADIA completadas                      & 4 de 4 & Modelo entregado \\
+Revisiones formales cerradas                              & 2 (SRR y PDR) & Aprobadas con INVAP \\
+\bottomrule
+\end{tabularx}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Nota. Los 19 ensayos se distribuyen en 7 funcionales, 3 térmicos, 5
+mecánicos y 4 de compatibilidad electromagnética. El detalle se presenta en el
+Anexo D.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\fig[downlinksim]{Relación Eb/N0 del enlace de bajada a lo largo de
+dos días de propagación orbital. Cada pico corresponde a una pasada sobre la
+estación terrena y la línea segmentada indica el umbral de cierre de enlace.
+Elaboración propia.}{width=\textwidth}{downlink.png}
+
+\fig[ventana]{Detalle de una ventana de contacto individual. La caída
+abrupta en el centro de la ventana corresponde al nulo cenital del patrón de
+radiación de la antena terrestre. Elaboración propia.}%
+{width=\textwidth}{zoom_uplink.png}
+
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Estimación de costos de orden de magnitud (ROM) para la
+entrega de un modelo de vuelo integrado a la plataforma satelital. Elaboración
+propia.\vspace{1ex}}
+\small
+\begin{tabularx}{\textwidth}{@{}l X r@{}}
+\toprule
+\textbf{Ítem} & \textbf{Descripción} & \textbf{Costo estimado (USD)} \\
+\midrule
+Recursos humanos          & Dos ingenieros durante 12 meses                & 48.000 \\
+Componentes y materiales  & Electrónica, mecánica y materiales             & 50.000 \\
+AIT                       & Integración, pruebas funcionales y ambientales & 15.000 \\
+Logística                 & Transporte, envíos, importaciones y soporte    & 20.000 \\
+\midrule
+\textbf{Total}            &                                                & \textbf{133.000} \\
+\bottomrule
+\end{tabularx}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Nota. La estimación asume el uso de componentes y materiales comerciales
+disponibles en el mercado y la ejecución de las actividades de integración,
+ensamblado y pruebas en instalaciones nacionales.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+% ---------------------------------------------------------------------
+\subsection{Análisis, limitaciones e implicancias futuras}
+% ---------------------------------------------------------------------
+% [EXTENSIÓN] ~300 palabras.
+%
+% [CONTENIDO]  (rúbrica B / Evaluación, criterio 2: limitaciones y relevancia de
+%  los análisis, implicancias futuras de las decisiones y pasos a seguir)
+%   ANÁLISIS -- qué significan los resultados:
+%     - El cierre de enlace con margen sobre el umbral en 4 a 5 pasadas diarias
+%       confirma que el concepto operativo es viable con la potencia y las antenas
+%       supuestas, y que la restricción real no es el enlace sino el tiempo
+%       acumulado de contacto.
+%     - La arquitectura basada en SDR resuelve simultáneamente los requerimientos
+%       de tolerancia a radiación, modularidad y actualización en vuelo.
+%
+%   LIMITACIONES -- sé explícito, la rúbrica lo pide y reconocerlas suma:
+%     - El modelo de enlace no incorpora pérdidas atmosféricas, ruido ambiental ni
+%       interferencia co-canal con otros usuarios de la banda Argos.
+%     - Se asume una única estación terrestre y una única DCP; el escenario real
+%       con múltiples estaciones transmitiendo simultáneamente introduce colisiones
+%       que el modelo actual no representa.
+%     - La preselección de componentes es preliminar: no se verificó la dosis
+%       acumulada real ni el presupuesto de potencia detallado por modo operativo.
+%     - Los 19 ensayos están especificados pero ninguno ejecutado; los valores de
+%       sensibilidad (-115 dBm) y consumo son estimaciones de diseño.
+%     - La estimación de costos es de orden de magnitud, con incertidumbre alta.
+%
+%   IMPLICANCIAS FUTURAS DE LAS DECISIONES TOMADAS:
+%     - Adoptar Capella obliga a mantener el modelo actualizado; si el equipo
+%       vuelve a documentar en texto, se pierde la trazabilidad ganada.
+%     - Elegir una plataforma SDR comercial crea dependencia de un proveedor
+%       único y de su cadena de suministro internacional.
+%     - El nulo cenital detectado condiciona la planificación de misión y obliga
+%       a revisar el patrón de la antena terrestre en la fase siguiente.
+%
+%   PASOS A SEGUIR (concretos, no genéricos):
+%     - Incorporar pérdidas atmosféricas y un escenario multi-DCP al simulador;
+%     - cerrar el presupuesto de potencia por modo operativo y el análisis térmico;
+%     - confirmar la selección de componentes y levantar la BOM definitiva;
+%     - ejecutar la campaña de ensayos funcionales y ambientales en el CEN;
+%     - avanzar a la Revisión Crítica de Diseño (CDR) prevista para abril de 2026.
+%
+% [ESTRUCTURA] 4 párrafos: análisis, limitaciones, implicancias, pasos a seguir.
+% Un párrafo por bloque, sin viñetas.
+
+% ESCRIBIR AQUÍ
+
+
+% ---------------------------------------------------------------------
+\subsection{Cumplimiento del objetivo de la empresa}
+% ---------------------------------------------------------------------
+% [EXTENSIÓN] ~220 palabras.
+%
+% [CONTENIDO]  (rúbrica B / Evaluación, criterio 3: "concluye acerca del
+%  cumplimiento/incumplimiento de los objetivos o intereses de la empresa")
+%   >>> Vuelve a los TRES componentes del objetivo que declaraste en 1.3 y
+%       pronúnciate sobre cada uno, uno por uno. El corrector va a buscar
+%       exactamente esa correspondencia.
+%
+%   O1. Primer paso formal en capacidades espaciales -> CUMPLIDO.
+%       Evidencia: existe un proyecto espacial formalizado, con documentación
+%       normalizada bajo el sistema de identificación de documentos de DTS, y un
+%       modelo de ingeniería que la empresa no poseía en enero de 2026.
+%
+%   O2. Alcanzar madurez de diseño PDR -> CUMPLIDO.
+%       Evidencia: la PDR se cerró el 27 de febrero de 2026 con INVAP, dentro del
+%       plazo de la práctica, con los entregables exigidos por la revisión.
+%
+%   O3. Aprovechar la transferencia tecnológica con INVAP -> CUMPLIDO PARCIALMENTE.
+%       Evidencia: cuatro instancias formales de revisión con la contraparte, con
+%       retroalimentación incorporada a los requerimientos y a la caracterización
+%       del canal. Sin embargo, la transferencia en materia de fabricación,
+%       integración y ensayos queda pendiente para las fases siguientes.
+%       >>> Reconocer un cumplimiento parcial es más creíble que declarar éxito
+%           total en todo, y la rúbrica admite "cumplimiento/INCUMPLIMIENTO".
+%
+% [ESTRUCTURA] 4 párrafos: uno introductorio que recuerda el objetivo y tres de
+% pronunciamiento, uno por componente, cada uno con su evidencia.
+%
+% [EJEMPLO DE ARRANQUE]
+%   "El objetivo que DTS definió para el período de práctica se cumplió en sus dos
+%    primeros componentes y de forma parcial en el tercero. Respecto del primero,
+%    la empresa cerró el período con un proyecto espacial formalizado..."
+
+% ESCRIBIR AQUÍ
+
+
+% ---------------------------------------------------------------------
+\subsection{Impacto y relevancia de los resultados}
+% ---------------------------------------------------------------------
+% [EXTENSIÓN] ~200 palabras.
+%
+% [CONTENIDO]  (rúbrica B / Evaluación, criterio 4: justifica el impacto o la
+%  relevancia -- eficiencia, productividad, clima laboral, etc.)
+%   >>> Aquí hay que hablar de IMPACTO SOBRE LA EMPRESA, no de bondades del
+%       satélite. Es el error más común en esta subsección.
+%
+%   Impacto en eficiencia y productividad de la ingeniería:
+%     - El modelo MBSE sustituye la actualización manual de varios documentos por
+%       una única fuente de verdad; el impacto se mide en horas de reconciliación
+%       documental evitadas ante cada cambio de requerimiento.
+%     - La matriz de trazabilidad permite estimar el impacto de un cambio antes
+%       de ejecutarlo, en vez de descubrirlo en integración.
+%
+%   Impacto en reducción de riesgo económico:
+%     - Cerrar la PDR antes de comprometer los 133.000 USD estimados evita
+%       invertir en un diseño cuya viabilidad no estaba demostrada. El costo de
+%       los dos meses de práctica es marginal frente a esa cifra.
+%
+%   Impacto en capacidad instalada:
+%     - La empresa queda con tres activos reutilizables: el modelo Capella, la
+%       herramienta de simulación de enlace en Python y una metodología de
+%       revisiones documentada y replicable.
+%     - Se formó capital humano en un área sin trayectoria previa, en línea con
+%       el Plan Estratégico 2025-2029 de DTS.
+%
+%   Relevancia externa (una sola oración de cierre, no más):
+%     - Aporte al ecosistema espacial nacional en línea con los objetivos del CEN.
+%
+% [ESTRUCTURA] 4 párrafos: eficiencia de la ingeniería, riesgo económico,
+% capacidad instalada, relevancia externa.
+
+% ESCRIBIR AQUÍ
+
+
+% ---------------------------------------------------------------------
+\subsection{Conclusiones}
+% ---------------------------------------------------------------------
+% [EXTENSIÓN] ~200 palabras. Máximo 4 párrafos.
+%
+% [CONTENIDO]
+%   >>> NO introduzcas información nueva. Cierra la pregunta de la sección 1.3.
+%   P1  Responde la pregunta planteada en 1.3: la ausencia de un proceso de
+%       ingeniería preexistente se resolvió adoptando un marco normalizado de
+%       revisiones (IEEE Std 15288.2) y una metodología de modelado (ARCADIA),
+%       que aportaron simultáneamente la estructura del proceso y la trazabilidad
+%       del producto.
+%   P2  Resultado técnico principal: la arquitectura propuesta es viable. El
+%       enlace cierra con margen en 4 a 5 pasadas diarias y la arquitectura basada
+%       en SDR satisface los requerimientos críticos de radiación, modularidad y
+%       actualización en vuelo.
+%   P3  Lo que queda abierto: ensayos no ejecutados, escenario multi-DCP no
+%       modelado, componentes por confirmar. La CDR es el siguiente umbral.
+%   P4  Conclusión sobre el valor para la empresa: DTS pasó de no tener línea de
+%       desarrollo espacial a contar con un proyecto formalizado, una metodología
+%       replicable y herramientas propias reutilizables.
+%
+% [EJEMPLO DE ARRANQUE DE P1]
+%   "El desarrollo de BIFROST permite responder la pregunta planteada al inicio de
+%    este informe. La ausencia de un proceso de ingeniería de sistemas
+%    preexistente en la empresa no se resolvió improvisando un método propio, sino
+%    adoptando un marco normalizado de revisiones de madurez y una metodología de
+%    modelado que impone trazabilidad por construcción."
+
+% ESCRIBIR AQUÍ

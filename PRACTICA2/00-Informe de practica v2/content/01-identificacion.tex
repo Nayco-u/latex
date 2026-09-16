@@ -1,0 +1,79 @@
+% =====================================================================
+\section{Identificación y Contextualización}
+% =====================================================================
+
+% ---------------------------------------------------------------------
+\subsection{Contextualización de la empresa}
+% ---------------------------------------------------------------------
+
+Desarrollo de Tecnologías y Sistemas SpA (DTS) es una empresa chilena constituida el 11 de enero de 1991 y transformada en sociedad por acciones en noviembre de 2020. Su giro principal corresponde a la industria electrónica aplicada a los mercados de defensa, seguridad y aeroespacial, con una cartera de clientes que incluye a las Fuerzas Armadas chilenas. La empresa registra ventas anuales en el rango de 100.000 a 350.000 unidades de fomento (UF) y una dotación de entre 50 y 250 trabajadores \parencite{redconecta}, cifras que la sitúan en el tramo de gran empresa según el criterio de ventas del Estatuto Pyme \parencite{minecon}.
+
+Las áreas de negocio de DTS abarcan el desarrollo y la modernización de sistemas, el mantenimiento de equipos electrónicos y electromecánicos, las calibraciones, el soporte de sistemas, la guerra electrónica, el mando y control, el control automático, los bancos de prueba, la fibra óptica militar y el entrenamiento y simulación. La empresa opera desde su casa matriz en Macul y mantiene oficinas técnicas en Iquique,Antofagasta, Talcahuano y Punta Arenas \parencite{dts}.
+
+El practicante se integró al Departamento de Investigación, Desarrollo e Innovación (I+D+i), un equipo de seis personas orientado al desarrollo de tecnologías militares. Dentro de esa estructura, el desarrollo de capacidades espaciales es una linea de trabajo incipiente, contemplada en el Plan Estratégico 2025--2029 pero sin ningún proyecto formal previo que sirviera de referencia. El proyecto BIFROST corresponde al primer desarrollo espacial de la empresa.
+
+
+% ---------------------------------------------------------------------
+\subsection{Descripción del proyecto y rol del practicante}
+% ---------------------------------------------------------------------
+
+El proyecto desarrollado por el practicante fue nombrado, por él mismo, BIFROST como analogía por conectar o comunicar dos puntos lejanos. Su objetivo general consiste en diseñar y validar, a nivel de arquitectura, una carga útil de comunicaciones del tipo \textit{Store \& Forward} para un satélite CubeSat 12U, capaz de recibir mensajes autónomos desde estaciones remotas terrestres en banda UHF, almacenarlos temporalmente a bordo y descargarlos con posterioridad a estaciones terrenas ubicadas en territorio nacional.
+
+La carga útil opera como un repetidor no instantáneo. Un receptor en la banda de 401 a 403 MHz escucha las transmisiones que las plataformas de recolección de datos (DCP) emiten de forma autónoma, sin coordinación previa con el satélite. El sistema compensa el corrimiento en frecuencia que introduce el efecto Doppler, demodula y valida cada mensaje, y guarda los mensajes correctos en memoria no volátil junto con su marca temporal. Cuando el satélite alcanza una ventana de visibilidad sobre una estación terrena, y bajo comando del computador de a bordo, la carga útil descarga la información almacenada mediante un enlace en banda UHF. El intercambio de telemetría, telecomandos y estado operativo con el resto del satélite ocurre a través del bus CAN de la plataforma.
+
+La práctica se desarrolló entre el 2 de enero y el 28 de febrero de 2026, en jornada completa, y cubrió las tres primeras etapas del ciclo de vida del proyecto \parencite{nasaseh}. La Figura \ref{img:gantt} presenta la carta Gantt elaborada durante ese período. El área sombreada corresponde al trabajo que el practicante realizó y el resto, a la planificación que el equipo heredó para 2026 y 2027; los rombos marcan los hitos de revisión formal. En este periodo se cerraron dos hitos de revisión formal: la Revisión de Requerimientos del Sistema (SRR) el 30 de enero de 2026 y la Revisión de Diseño Preliminar (PDR) el 27 de febrero de 2026. La Tabla \ref{tab:hitos} resume los hitos de revisión y los entregables que el practicante generó en cada uno de ellos.
+
+El practicante se desempeñó como Ingeniero Civil Eléctrico en práctica profesional y asumió la elaboración de la documentación técnica de ambas revisiones. Su supervisor directo fue Juan Carlos Sepúlveda, Ingeniero de Desarrollo Espacial, mientras que la supervisión técnica estuvo a cargo de Álvaro Valenzuela, doctor en sistemas espaciales; ambos reportan a Lino Acuña, jefe del Departamento I+D+i, quien aprobó los entregables. La única contraparte externa del proyecto fue INVAP, empresa argentina que participó como asesor técnico en el marco del acuerdo de cooperación ENAER--DTS--INVAP suscrito en marzo de 2025, y que revisó el avance del diseño en cuatro instancias formales a lo largo de la práctica.
+
+\fig[gantt]{Carta Gantt del proyecto BIFROST. Elaboración propia.}{width=0.8\textwidth}{gantt.png}
+
+% [Tabla 1-1] Resume plazos, hitos y entregables. Cubre de una sola vez los
+% criterios "plazos" y "alcance" de la rúbrica. Menciónala en el texto de P3.
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Hitos de revisión y entregables generados durante la práctica.
+Elaboración propia.\vspace{1ex}}
+\label{tab:hitos}
+\small
+\begin{tabularx}{\textwidth}{|@{\hspace{4pt}}l l X@{\hspace{4pt}}|}
+\toprule
+\textbf{Fase} & \textbf{Hito y fecha} & \textbf{Entregables generados} \\
+\midrule
+Pre-Phase A & \textit{Kick-off} & Concepto de Operación (CONOPS) preliminar y
+diagrama de bloques inicial del sistema \\
+
+Phase A & SRR & CONOPS consolidado, 13 requerimientos de usuario, 21 requerimientos de sistema, matriz de trazabilidad, matriz de riesgos y carta Gantt \\
+
+Phase B & PDR & Modelo MBSE en Capella con las cuatro capas ARCADIA, herramienta de simulación de enlace, matriz de ensayos y estimación ROM de costos \\
+\bottomrule
+\end{tabularx}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Nota. El \textit{kick-off} se realizó el 16 de enero de 2026, la SRR el 30 de enero de 2026 y la PDR el 27 de febrero de 2026.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+% ---------------------------------------------------------------------
+\subsection{Objetivo de la empresa y problema a resolver}
+% ---------------------------------------------------------------------
+
+El comienzo del proyecto BIFROST marca el primer esfuerzo de DTS por desarrollar capacidades espaciales, y responde a dos objetivos estratégicos de la empresa. El primero consistió en dar el primer paso formal en esa línea, contemplada en el Plan Estratégico 2025--2029 pero hasta entonces sin ejecución. El segundo consistió en aprovechar la ventana de transferencia tecnológica que abrió el acuerdo con INVAP, capitalizando la experiencia de la contraparte en sistemas satelitales de recolección de datos. Ambos objetivos buscan llevar el diseño de la carga útil hasta la madurez que exige la Revisión de Diseño Preliminar, de modo de demostrar su viabilidad técnica y arquitectónica antes de comprometer recursos en el diseño detallado y la fabricación.
+
+La restricción que impedía avanzar hacia esos objetivos no era metodológica sino de capacidad. El Departamento de I+D+i mantenía su dotación comprometida en proyectos de tecnología militar en curso, de modo que la empresa no contaba con personal disponible para levantar una línea de trabajo nueva sin desatender la carga existente. DTS resolvió entonces iniciar la línea espacial con el equipo mínimo que podía destinar: un ingeniero de planta con experiencia previa en desarrollo espacial y un practicante, cuya disponibilidad correspondía a los dos meses que dura la práctica profesional. El arranque de un objetivo estratégico a cinco años quedó así en manos de dos personas, una sola de ellas dedicada al proyecto a tiempo completo.
+
+DTS abordó esa restricción incorporando al practicante como recurso dedicado al proyecto, bajo la conducción técnica de un supervisor con experiencia previa en desarrollo espacial. El supervisor definió el marco de trabajo, esto es, un modelo de desarrollo secuencial y los hitos que el proyecto debía cumplir. El practicante asumió la ejecución: investigó en detalle los entregables y los criterios de salida que corresponden a cada revisión \parencite{ieee15288-2}, seleccionó y operó las herramientas de modelado y simulación, y elaboró la totalidad de la documentación técnica del proyecto siguiendo el método ARCADIA \parencite{roques}.
+
+El problema que aborda el presente informe se plantea, por lo tanto, desde la empresa: ¿cómo puede DTS dar inicio al desarrollo de su línea espacial, y llevarla hasta un nivel de madurez que justifique su continuidad, contando con un ingeniero de planta y un practicante disponible durante dos meses? Las secciones siguientes desarrollan la metodología que el proyecto adoptó y los resultados que logró.
+
+
+% ---------------------------------------------------------------------
+\subsection{Antecedentes, causas e importancia de su resolución}
+% ---------------------------------------------------------------------
+
+El problema planteado surge de dos antecedentes. El primero corresponde a la baja madurez del desarrollo espacial, tanto en DTS como en la industria nacional. La empresa concentra más de tres décadas de experiencia en electrónica, aviónica y mantenimiento de sistemas, pero no había aplicado ninguna de esas capacidades a un sistema destinado a operar en órbita. La consecuencia directa fue que la documentación y las herramientas de análisis debieron generarse sin precedentes internos que sirvieran de referencia, y que cada criterio de diseño tuvo que justificarse desde la norma o desde la literatura técnica, y no desde la experiencia acumulada en proyectos anteriores.
+
+El segundo antecedente corresponde al acuerdo de cooperación que ENAER, DTS e INVAP suscribieron en marzo de 2025, y que habilitó formalmente la transferencia de conocimientos y tecnología en materia espacial y de radares. Ese acuerdo aportó una contraparte con experiencia acreditada en sistemas de recolección de datos satelitales, que revisó el diseño en instancias formales y fijó el contexto dentro del cual DTS debía mostrar avances concretos.
+
+Resolver el problema tiene tres razones fundamentales que justifican su importancia. Para DTS, porque el resultado determina si la línea espacial continúa, y porque deja a la empresa una metodología y bases técnicas que antes no tenía. Para el país, porque el proyecto aporta al ecosistema espacial que impulsan el Centro Espacial Nacional y la Fuerza Aérea de Chile. Y para el usuario final, porque la geografía chilena deja zonas extensas sin cobertura terrestre confiable, donde un canal satelital de respaldo tiene valor operacional directo.

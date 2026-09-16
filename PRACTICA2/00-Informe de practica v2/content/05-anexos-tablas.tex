@@ -1,0 +1,132 @@
+% ARCHIVO GENERADO AUTOMÁTICAMENTE por content/gen_tablas.py
+% No editar a mano: vuelve a correr el script si cambia el Excel.
+
+\subsection{Anexo A: requerimientos de usuario}
+
+\begin{footnotesize}
+\begin{longtable}{|@{\hspace{4pt}}l >{\raggedright\arraybackslash}p{5.4cm} c c c >{\raggedright\arraybackslash}p{4.6cm}@{\hspace{4pt}}|}
+\caption{Requerimientos de usuario del proyecto BIFROST. Elaboración propia.\vspace{1ex}}\label{tab:anexoA}\\
+\toprule
+\textbf{ID} & \textbf{Requerimiento} & \textbf{Prior.} & \textbf{Riesgo} & \textbf{Tipo} & \textbf{Mitigación propuesta} \\
+\midrule\endfirsthead
+\multicolumn{6}{@{}l@{}}{\textit{(continuación)}}\\
+\toprule
+\textbf{ID} & \textbf{Requerimiento} & \textbf{Prior.} & \textbf{Riesgo} & \textbf{Tipo} & \textbf{Mitigación propuesta} \\
+\midrule\endhead
+\bottomrule\endfoot
+UR-01 & El sistema deberá proveer un servicio \textit{Store \& Forward} satelital, almacenando datos durante su orbita para ser descargados en una estación terrestre. & Alta & Alto & Funcional & Diseño de memoria no volátil con margen $\geq$50\%, simulación de carga orbital y pruebas de estrés en tierra \\
+UR-02 & El sistema deberá soportar un enlace \textit{downlink} desde el satélite hacia estaciones terrenas en territorio chileno. & Alta & Medio & Funcional &  \\
+UR-03 & El sistema deberá soportar un enlace \textit{uplink} desde estaciones remotas de monitoreo meteorológico, sismológico y/o vulcanológico hacia el satélite para la recolección de datos. & Alta & Medio & Funcional & Validación temprana con transmisores representativos y pruebas HIL \\
+UR-04 & El sistema deberá ser compatible con el estándar internacional para recolección de datos ambientales por satélite utilizado por estaciones remotas autónomas de meteorología, sismología, vulcanología, etc. & Alta & Medio & Proceso & Revisión de estándar ARGOS y asesoría INVAP \\
+UR-05 & El sistema deberá asegurar la integridad de los datos durante su recepción, almacenamiento y transmisión. & Media & Bajo & Funcional &  \\
+UR-06 & El sistema deberá ser compatible con plataforma CubeSat 12U en órbita terrestre baja (LEO) sol síncrona a una altitud nominal aproximada de 650 km con una inclinación de 96$^{\circ}$. & Alta & Alto & No funcional & Análisis de interfaces mecánicas/eléctricas y revisión PDR con proveedor de plataforma \\
+UR-07 & El sistema deberá cubrir el territorio chileno continental, zonas extremas, territorio insular y territorio antártico. & Media & Bajo & Funcional &  \\
+UR-08 & El sistema deberá permitir el uso de componentes COTS siempre que cumplan con: (a) funcionamiento en órbita probada, (b) tolerancia a la radiación verificada, o (c) mitigaciones de diseño que reduzcan el riesgo a un nivel aceptable para la misión. & Alta & Alto & No funcional & Selección COTS con validación espacial y mitigación por redundancia y watchdogs \\
+UR-09 & El sistema deberá ser de carácter experimental, con proyección a futuras aplicaciones comerciales. & Baja & Bajo & No funcional &  \\
+UR-10 & El sistema deberá presentar una arquitectura modular, reutilizable y escalable. & Baja & Bajo & No funcional &  \\
+UR-11 & El sistema debe garantizar una vida útil operativa mínima de 5 años en el entorno de radiación LEO definido. & Alta & Alto & No funcional & Pruebas de estrés, análisis térmico y pruebas de vida aceleradas \\
+UR-12 & El sistema debe ser validado mediante pruebas funcionales en tierra y demostración en órbita. & Baja & Bajo & Proceso &  \\
+UR-13 & El sistema deberá ser compatible con el sistema de separación del lanzador seleccionado EXOpod 12U, cumpliendo con las restricciones geométricas, mecánicas y de seguridad. &  &  & No funcional &  \\
+\end{longtable}
+\end{footnotesize}
+
+\subsection{Anexo B: requerimientos de sistema}
+
+\begin{footnotesize}
+\begin{longtable}{|@{\hspace{4pt}}l >{\raggedright\arraybackslash}p{5.4cm} c c c >{\raggedright\arraybackslash}p{4.6cm}@{\hspace{4pt}}|}
+\caption{Requerimientos de sistema del proyecto BIFROST. Elaboración propia.\vspace{1ex}}\label{tab:anexoB}\\
+\toprule
+\textbf{ID} & \textbf{Requerimiento} & \textbf{Prior.} & \textbf{Riesgo} & \textbf{Tipo} & \textbf{Mitigación propuesta} \\
+\midrule\endfirsthead
+\multicolumn{6}{@{}l@{}}{\textit{(continuación)}}\\
+\toprule
+\textbf{ID} & \textbf{Requerimiento} & \textbf{Prior.} & \textbf{Riesgo} & \textbf{Tipo} & \textbf{Mitigación propuesta} \\
+\midrule\endhead
+\bottomrule\endfoot
+SR-01 & El sistema deberá permitir la recepción de paquetes de datos con una tamaño desde 32 a 256 bits, con una tasa de datos de 400 bps. & Alta & Alto & Funcional & Prototipo temprano del receptor y pruebas BER en laboratorio \\
+SR-02 & El sistema deberá operar como receptor en el rango de frecuencias 401 - 403 MHz utilizado por estaciones remotas, con una polarización circular derecha y un ancho de haz de 130$^{\circ}$ HPBW. & Alta & Alto & No funcional & Verificación de front-end RF y filtros certificados \\
+SR-03 & El sistema deberá ser compatible con la estructura de datos enviado por las estaciones remotas , incluyendo modulación, canalización y protocolos, además de las variaciones en frecuencia por efecto Doppler. & Alta & Alto & Funcional & Simulación Doppler y pruebas con generador de señales \\
+SR-04 & El sistema deberá almacenar al menos 1.000.000 mensajes de durante un tiempo máximo de 15 órbitas y sin pérdidas hasta establecer contacto con una estación terrestre para la descarga. & Media & Medio & Funcional & Margen de memoria $\geq$50\% y control de overflow \\
+SR-05 & El sistema deberá mantener la asociación temporal de los datos almacenados. & Baja & Bajo & Funcional &  \\
+SR-06 & El sistema deberá permitir la descarga de al menos 10.000 mensajes almacenados hacia estaciones terrestres cuando exista conectividad disponible. & Media & Medio & Funcional & Ensayos de descarga en peor escenario \\
+SR-07 & El sistema deberá entregar los datos al subsistema de comunicaciones de la plataforma (Transponder Banda S) para el enlace \textit{downlink}. & Media & Medio & Proceso &  \\
+SR-08 & El sistema deberá comunicarse con el OBC del CubeSat 12U mediante el bus definido por la plataforma (CANBUS), gestionando una tasa de transferencia de datos compatible y reportando periódicamente su estado operativo. & Alta & Alto & No funcional &  \\
+SR-09 & El sistema deberá operar bajo el control del OBC, escuchando activamente en las zonas definidas por la misión y transmitiendo únicamente cuando sea ordenado. & Media & Bajo & Funcional &  \\
+SR-10 & El sistema deberá implementar mecanismos de integridad de datos en todas las etapas, con un error de bit menor a 0.01\% y control de acceso a la descarga de datos por estaciones terrestres. & Media & Medio & Interfaz & CRC, ACK/NACK y control de acceso \\
+SR-13 & El sistema deberá consumir un máximo de 10 W en operación nominal y ser alimentado por el sistema de potencia del satélite de forma continua. & Alta & Alto & No funcional & Pruebas de compatibilidad CAN con OBC real \\
+SR-14 & El sistema deberá tener dimensiones máximas 20 cm x 20 cm x 10 cm. & Alta & Alto & No funcional & Validación de lógica de estados y temporización \\
+SR-15 & El sistema deberá tener una masa máxima de 3.0 kg y mantener su Centro de Gravedad (CoG) a $\pm$2 mm del centro geométrico, el cual coincide con el eje logitudinal geométrico del satélite. & Alta & Alto & No funcional & Presupuesto de potencia con margen $\geq$25\% \\
+SR-16 & El sistema deberá cumplir con requisitos de EMI/EMC compatibles con operación satelital, evitando interferencias internas y externas durante todo el proceso de lanzamiento, despliege y operación. & Alta & Alto & No funcional & Revisión de \textit{layout} 3D y \textit{mockup} mecánico \\
+SR-17 & El sistema deberá diseñarse de forma modular y permitir la actualización de \textit{firmware} en vuelo (OTA). & Media & Bajo & No funcional & Simulaciones CAD para estimaciones de masas y revisión periodica de masa en el prototipo \\
+SR-18 & El sistema deberá certificarse mediante prueba térmo-vacio, mecánicas, EMI y eléctricas en las instalaciones de Centro Espacial Nacional y ser validado en órbita. & Media & Bajo & Proceso & Mediciones EMI/EMC y separación RF \\
+SR-19 & El sistema deberá ser respetar la envolvente interna permita, los volúmen prohibídos y las restricciones sobre protrusiones, mecanismos móviles y bordes activos, asegurando la integración con la plataforma. &  &  & No funcional &  \\
+SR-20 & El sistema deberá soportar los ambientes mecánicos de lanzamiento (cargas cuasiestáticas, vibración y shock) definidos por el lanzador y deployer seleccionados. &  &  & No funcional &  \\
+SR-21 & El sistema deberá implementar \textit{Watchdog Timers} externos e independientes para reinicio ante eventos SEU/\textit{Latch-up}. &  &  & Funcional &  \\
+SR-22 & Protección electrónica contra \textit{Single Event Latch-up} (SEL) mediante limitación de corriente activa. &  &  & No funcional &  \\
+SR-23 & Los componentes y materiales no metálicos que uitlice el sistema deberán cumplir con un TML $<$ 1.0\% y un CVCM $<$0.1\% &  &  & No funcional &  \\
+\end{longtable}
+\end{footnotesize}
+
+\subsection{Anexo C: matriz de trazabilidad de requerimientos}
+
+\begin{footnotesize}
+\begin{longtable}{|@{\hspace{4pt}}l >{\raggedright\arraybackslash}p{12.2cm}@{\hspace{4pt}}|}
+\caption{Matriz de trazabilidad entre requerimientos de usuario y de sistema. Elaboración propia.\vspace{1ex}}\label{tab:anexoC}\\
+\toprule
+\textbf{Req. de usuario} & \textbf{Requerimientos de sistema asociados} \\
+\midrule\endfirsthead
+\multicolumn{2}{@{}l@{}}{\textit{(continuación)}}\\
+\toprule
+\textbf{Req. de usuario} & \textbf{Requerimientos de sistema asociados} \\
+\midrule\endhead
+\bottomrule\endfoot
+UR-01 & SR-04, SR-06 \\
+UR-02 & SR-03, SR-07 \\
+UR-03 & SR-02, SR-03 \\
+UR-04 & SR-01, SR-02, SR-03 \\
+UR-05 & SR-04, SR-05, SR-08, SR-10 \\
+UR-06 & SR-13, SR-14, SR-15, SR-16, SR-19, SR-20 \\
+UR-07 & SR-09, SR-10 \\
+UR-08 & SR-16, SR-17, SR-18, SR-21, SR-23 \\
+UR-09 & SR-17 \\
+UR-10 & SR-17 \\
+UR-11 & SR-17, SR-18, SR-21, SR-23 \\
+UR-12 & SR-18 \\
+UR-13 & SR-19, SR-22 \\
+\end{longtable}
+\end{footnotesize}
+
+\subsection{Anexo D: matriz preliminar de ensayos de verificación}
+
+\begin{footnotesize}
+\begin{longtable}{|@{\hspace{4pt}}l >{\raggedright\arraybackslash}p{4.0cm} >{\raggedright\arraybackslash}p{8.6cm}@{\hspace{4pt}}|}
+\caption{Matriz preliminar de ensayos de verificación. Elaboración propia.\vspace{1ex}}\label{tab:anexoD}\\
+\toprule
+\textbf{ID} & \textbf{Nombre del ensayo} & \textbf{Descripción} \\
+\midrule\endfirsthead
+\multicolumn{3}{@{}l@{}}{\textit{(continuación)}}\\
+\toprule
+\textbf{ID} & \textbf{Nombre del ensayo} & \textbf{Descripción} \\
+\midrule\endhead
+\bottomrule\endfoot
+FUN-01 & Caracterización de Potencia & Medición de consumo de corriente en todos los modos (Sleep, RX, Processing, TX Interface). Verificación de picos de arranque (\textit{Inrush Current}). \\
+FUN-02 & Sensibilidad y Selectividad RF & Verificación del umbral de recepción (-115 dBm estimado) y ancho de banda en 401-403 MHz usando generador de señales. \\
+FUN-03 & Simulación de Efecto Doppler & Inyección de señales con desplazamiento de frecuencia variable ($\pm$10 kHz) para validar el algoritmo de corrección del receptor. \\
+FUN-04 & Integridad de Datos (BER) & Transmisión de 1 millón de paquetes y verificación de tasa de error de bit (BER) y corrección CRC tras almacenamiento. \\
+FUN-05 & Interfaz CAN Bus \& CSP & Validación de intercambio de comandos y telemetría con emulador de OBC (o OBC real). Verificación de manejo de errores de bus. \\
+FUN-06 & Prueba de \textit{Watchdog} y \textit{Failsafe} & Inyección de fallos de \textit{software} y \textit{hardware} (reset forzado) para medir tiempo de recuperación y estado seguro. \\
+FUN-07 & Actualización de Firmware OTA & Simulación de carga de nueva imagen de \textit{software} a través del bus de datos y verificación de \textit{checksum} e instalación. \\
+THR-01 & Ciclado Térmico (Presión Ambiente) & Ciclos de temperatura entre -30$^{\circ}$C y +70$^{\circ}$C en cámara climática para detectar fallas de soldadura o componentes infantiles (\textit{Stress screening}). \\
+THR-02 & Vacío Térmico (TVAC) - \textit{Bake-out} & Exposición a alto vacío ($<$10$^{-5}$ Torr) y temperatura elevada (+60$^{\circ}$C) para desgasificación (\textit{Outgassing}) y limpieza. \\
+THR-03 & Balance Térmico en Vacío & Validación del modelo térmico: verificación de temperaturas de operación en vacío (solo conducción) en casos fríos y calientes. \\
+MEC-01 & Propiedades de Masa & Medición precisa de masa total ($<$ 3kg) y determinación del Centro de Gravedad (CoG) y Momentos de Inercia (MoI). \\
+MEC-02 & Vibración Aleatoria (\textit{Random Vib}) & Ensayo en \textit{shaker} electrodinámico según perfiles de lanzamiento (ej. NASA GEVS o perfil Falcon 9). Verificación de integridad estructural. \\
+MEC-03 & Vibración Sinusoidal (\textit{Sine Sweep}) & Barrido de frecuencias para identificar resonancias naturales (\textit{Eigenfrequencies}) y asegurar que $>$ 100 Hz (típico CubeSat). \\
+MEC-04 & Ensayo de Choque (Shock) & Simulación de cargas de choque por separación (si aplica por requerimiento de lanzador) o despliegue de antenas. \\
+MEC-05 & Despliegue de Antenas & Verificación funcional del mecanismo de despliegue de antenas UHF (\textit{Burn-wire} / Resorte) en condiciones de gravedad compensada. \\
+EMC-01 & Emisiones Conducidas (CE) & Medición de ruido inyectado por la carga útil hacia las líneas de potencia del bus (\textit{Power Bus Noise}). \\
+EMC-02 & Susceptibilidad Radiada (RS) & Verificación de operación nominal ante campos externos (ej. Radares de lanzamiento o transmisor Banda S propio). \\
+EMC-03 & Emisiones Radiadas (RE) & Medición de ruido RF generado por la electrónica digital (relojes, CPU) para asegurar "silencio" en banda GPS y Banda S receptor. \\
+EMC-04 & Auto-Compatibilidad & Verificación de que la transmisión UHF propia no resetea la CPU ni afecta sensores cercanos. \\
+\end{longtable}
+\end{footnotesize}

@@ -1,0 +1,56 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% IMPORTANTE: Cambiar el compilador a XeLaTeX en las opciones %
+%     Si se quiere hacer "doble enter" usar: \vspace{2ex}     %
+%               Creditos Github: @diegocostares               %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% ESTRUCTURA MODULAR: cada sección del documento vive en su propio archivo
+% dentro de content/, numerado según su orden de aparición:
+%
+%   content/00-abstract.tex          Resumen ejecutivo en inglés
+%   content/01-identificacion.tex    1. Identificación y Contextualización
+%   content/02-generacion.tex        2. Generación y Justificación
+%   content/03-evaluacion.tex        3. Evaluación y Conclusiones
+%   content/04-referencias.tex       4. Referencias bibliográficas
+%   content/05-anexos.tex            5. Anexos (reflexión personal)
+%   content/05-anexos-tablas.tex     Anexos A-D (GENERADO, no editar a mano)
+%   content/referencias.bib          Base de datos bibliográfica (APA 7)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{style}
+
+% Base de datos bibliográfica (biblatex + biber, estilo APA 7)
+\addbibresource{content/referencias.bib}
+
+\begin{document}
+\graphicspath{ {./img/} }
+
+%%%%%%%%%%%%%%%%% PORTADA %%%%%%%%%%%%%%%%%
+\ThisCenterWallPaper{1}{content/portada.pdf}
+\portada{Nicolás Esteban Seguel Ardiles} % Insertar nombre acá
+        {neseguel@uc.cl} % Insertar correo acá
+        {Desarrollo de Tecnologías y Sistemas SpA.}
+        {Ingeniería civil Eléctrica} % Insertar empresa acá
+        {\today} % Insertar fecha
+
+%%%%%%%%%%%%%%%%% ABSTRACT %%%%%%%%%%%%%%%%%
+\input{content/00-abstract}
+
+%%%%%%%%%%%%%%%%% INDICES %%%%%%%%%%%%%%%%%
+\tableofcontents \newpage
+\listoftables \newpage
+\listoffigures \newpage
+
+%%%%%%%%%%%%%%%%% CUERPO DEL INFORME %%%%%%%%%%%%%%%%%
+\input{content/01-identificacion}
+\input{content/02-generacion}
+\input{content/03-evaluacion}
+
+%%%%%%%%%%%%%%%%% BIBLIOGRAFIA %%%%%%%%%%%%%%%%%
+\newpage
+\input{content/04-referencias}
+
+%%%%%%%%%%%%%%%%% ANEXOS %%%%%%%%%%%%%%%%%
+\input{content/05-anexos}
+
+\end{document}

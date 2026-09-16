@@ -1,0 +1,19 @@
+[0] Config.pm:329> INFO - This is Biber 2.22
+[0] Config.pm:332> INFO - Logfile is 'build/main.blg'
+[34] biber-darwin:342> INFO - === Sun Aug 23, 2026, 17:51:49
+[43] Biber.pm:421> INFO - Reading 'build/main.bcf'
+[93] Biber.pm:1002> INFO - Found 7 citekeys in bib section 0
+[104] Biber.pm:4487> INFO - Processing section 0
+[108] Biber.pm:4680> INFO - Looking for bibtex file 'content/referencias.bib' for section 0
+[109] bibtex.pm:1713> INFO - LaTeX decoding ...
+[114] bibtex.pm:1519> INFO - Found BibTeX data source 'content/referencias.bib'
+[149] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[149] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'variable = shifted' with 'variable = non-ignorable'
+[149] Biber.pm:4307> INFO - Sorting list 'nyt/apasortcite//global/global/global' of type 'entry' with template 'nyt' and locale 'es-ES'
+[158] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[158] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'variable = shifted' with 'variable = non-ignorable'
+[158] Biber.pm:4307> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'es-ES'
+[164] bbl.pm:676> INFO - Writing 'build/main.bbl' with encoding 'UTF-8'
+[166] bbl.pm:779> INFO - Output to build/main.bbl
+[166] Biber.pm:132> WARN - legacy year field '{\bibstring{nodate}}' in entry 'alenspace' is not an integer - this will probably not sort properly.
+[166] Biber.pm:134> INFO - WARNINGS: 1

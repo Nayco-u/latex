@@ -1,0 +1,119 @@
+% Se explicita la indentación de 0 in para que el anexo
+% no se vea perjudicado por el estilo de la bibliografía.
+\leftskip 0in
+\parindent 0.49cm % Sangría según el manual: la volvemos a establecer.
+\newpage
+\section{Anexos}
+
+% =====================================================================
+\subsection{Reflexión personal}
+% =====================================================================
+% [!! LÍMITE DURO: 2 PÁGINAS. En PRIMERA PERSONA. ~550-650 palabras.]
+%
+% [RÚBRICA C, 1 punto] Son solo TRES criterios y hay que cumplir los tres:
+%   1. Reflexión sobre el aporte de la práctica al DESARROLLO PROFESIONAL.
+%   2. Reflexión sobre la FORMACIÓN OTORGADA POR LA ESCUELA DE INGENIERÍA.
+%   3. Estar escrita en PRIMERA PERSONA.
+% El manual agrega un cuarto: destacar el grado de alcance de los objetivos de
+% la Práctica II.
+%
+% >>> CAMBIO DE VOZ: este es el único lugar del informe donde escribes "yo".
+%     Aprovéchalo. Después de 20 páginas en tercera persona, el contraste
+%     funciona bien si la reflexión es concreta y no genérica.
+%
+% >>> REGLA ANTI-CLICHÉ: cada afirmación debe estar anclada a un hecho de TU
+%     práctica. "Aprendí a trabajar en equipo" no vale nada. "Preparar las
+%     reuniones con INVAP me obligó a anticipar las objeciones técnicas antes de
+%     presentarlas" sí vale.
+% =====================================================================
+
+\subsubsection{Aporte al desarrollo profesional}
+% [EXTENSIÓN] ~300 palabras, 3 párrafos.
+%
+% [MATERIAL CONCRETO DE TU PRÁCTICA -- elige 3 y desarróllalos]
+%   - Fue mi primera experiencia asumiendo la responsabilidad completa de la
+%     documentación de un proyecto: el CONOPS, la matriz de requerimientos y el
+%     documento PDR llevan mi firma como elaborador.
+%   - Las cuatro reuniones con INVAP: preparar preguntas técnicas de
+%     caracterización de canal para una contraparte con décadas de experiencia
+%     espacial me exigió llegar con el problema estudiado, no con dudas abiertas.
+%   - La decisión de migrar el proyecto a ARCADIA/Capella la propuse yo, sin que
+%     nadie me la pidiera. Aprender la metodología y migrar el proyecto completo
+%     en una semana me mostró qué significa hacerse cargo de una decisión técnica.
+%   - Descubrir el nulo cenital en la simulación: un resultado que contradecía mi
+%     intuición inicial (más cerca no es mejor) y que me enseñó a desconfiar de
+%     los modelos simplificados.
+%   - Trabajar sin referencias internas: no había plantillas ni proyectos previos,
+%     y eso cambió mi relación con la incertidumbre técnica.
+%
+% [ESTRUCTURA]
+%   P1  Qué significó asumir la responsabilidad técnica y documental del proyecto
+%       siendo practicante, y qué me costó al principio.
+%   P2  Una situación concreta que me hizo crecer (elige UNA y cuéntala bien:
+%       las reuniones con INVAP, o la migración a Capella).
+%   P3  Qué me llevo para mi ejercicio profesional futuro.
+%
+% [EJEMPLO DE ARRANQUE DE P1]
+%   "Cuando entré a DTS esperaba apoyar a un ingeniero con experiencia en un
+%    proyecto ya definido. Lo que encontré fue un proyecto que no existía todavía
+%    y un área sin desarrollos espaciales previos, de modo que la documentación
+%    que produje no complementaba el trabajo de otro: era el trabajo. Firmar como
+%    elaborador el documento de Revisión de Diseño Preliminar me obligó a
+%    responder por cada decisión que había tomado en las ocho semanas anteriores."
+
+% ESCRIBIR AQUÍ (primera persona)
+
+\subsubsection{Formación otorgada por la Escuela de Ingeniería}
+% [EXTENSIÓN] ~300 palabras, 3 párrafos.
+%
+% [QUÉ SÍ ME DIO LA ESCUELA -- conecta con cursos o competencias reales]
+%   - Bases de comunicaciones y propagación: sin ellas no habría podido armar el
+%     presupuesto de enlace ni entender el efecto del patrón de radiación.
+%   - Procesamiento de señales y sistemas digitales: para entender la cadena
+%     SDR, la demodulación en FPGA y la compensación Doppler.
+%   - Programación y modelamiento en Python: la herramienta de simulación se
+%     apoya directamente en eso.
+%   - La costumbre de justificar cada decisión y de escribir informes técnicos.
+%
+% [QUÉ NO ME DIO Y TUVE QUE APRENDER SOLO -- esta parte es la que da valor a la
+%  reflexión; sé honesto pero constructivo, no reclames]
+%   - Ingeniería de sistemas como disciplina: requerimientos, trazabilidad,
+%     revisiones de madurez, gestión de riesgos. No aparece en el plan de estudios
+%     y fue el 80 % de mi práctica.
+%   - Normativa y estándares técnicos: aprender a leer y aplicar un estándar
+%     (IEEE, Argos, restricciones de plataforma) es una competencia distinta a
+%     resolver un problema con enunciado cerrado.
+%   - El entorno espacial: radiación, desgasificación, ciclado térmico.
+%
+% [OBLIGATORIO -- lo pide el manual] Cierra evaluando el grado de alcance de los
+% objetivos de la Práctica II: aplicar conocimientos a un problema real de
+% ingeniería, conocer la realidad laboral de la especialidad, comunicar de forma
+% efectiva con equipos y superiores, y proponer soluciones a partir de
+% herramientas modernas.
+%
+% [ESTRUCTURA]
+%   P1  Qué de la formación de la Escuela usé directamente y en qué momento.
+%   P2  Qué brecha encontré y cómo la cubrí durante la práctica.
+%   P3  Balance del cumplimiento de los objetivos de la Práctica II.
+%
+% [EJEMPLO DE ARRANQUE DE P2]
+%   "La brecha más grande que encontré no fue técnica sino metodológica. Durante
+%    la carrera resolví problemas cuyo enunciado ya estaba escrito; en DTS mi
+%    primera tarea fue escribir el enunciado. La ingeniería de sistemas
+%    (la elicitación de requerimientos, la trazabilidad, las revisiones de
+%    madurez) no forma parte del plan de estudios, y sin embargo ocupó la mayor
+%    parte de mi trabajo."
+
+% ESCRIBIR AQUÍ (primera persona)
+
+
+% =====================================================================
+%  ANEXOS TÉCNICOS
+% =====================================================================
+% Las tablas siguientes se generan automáticamente desde el Excel
+% 07-TraceabilityRequirimentsMatrix.xlsx ejecutando:
+%     python3 content/gen_tablas.py
+% No las edites a mano: vuelve a correr el script si cambias el Excel.
+% =====================================================================
+\newpage
+\input{content/tablas_anexos}

@@ -1,0 +1,19 @@
+% =====================================================================
+%  REFERENCIAS BIBLIOGRÁFICAS
+% =====================================================================
+%  La lista se arma sola desde content/referencias.bib con biblatex + biber,
+%  estilo APA 7. Solo aparecen las entradas efectivamente citadas en el texto.
+%
+%  PARA AGREGAR UNA REFERENCIA
+%    1. Añade la entrada en content/referencias.bib.
+%    2. Cítala en el texto con \parencite{clave} o \textcite{clave}.
+%  La rúbrica exige un mínimo de 5 referencias pertinentes. El informe cita 8.
+%
+%  COMPILACIÓN: se requieren dos pasadas con biber en medio.
+%    latexmk -xelatex -outdir=build main.tex     (lo hace solo)
+%  En Overleaf basta seleccionar XeLaTeX; biber se ejecuta automáticamente.
+% =====================================================================
+
+\section{Referencias bibliográficas}
+
+\printbibliography[heading=none]

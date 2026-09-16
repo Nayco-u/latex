@@ -1,0 +1,34 @@
+\babel@toc {spanish}{}\relax 
+\babel@toc {spanish}{}\relax 
+\babel@toc {british}{}\relax 
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Identificación y Contextualización}{7}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Contextualización de la empresa}{7}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Descripción del proyecto y rol del practicante}{7}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Objetivo de la empresa y problema a resolver}{8}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Antecedentes, causas e importancia de su resolución}{8}{subsection.1.4}%
+\contentsline {section}{\numberline {2}Generación y Justificación}{8}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Marco metodológico: ciclo de vida y revisiones de diseño}{8}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Concepto de Operación}{8}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Definición y trazabilidad de requerimientos}{9}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Modelamiento MBSE con ARCADIA y Eclipse Capella}{11}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Análisis operacional y análisis del sistema}{11}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}Arquitectura lógica}{11}{subsubsection.2.4.2}%
+\contentsline {subsubsection}{\numberline {2.4.3}Arquitectura física}{12}{subsubsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.5}Herramienta de simulación orbital y presupuesto de enlace}{13}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Justificación de las decisiones metodológicas y de recursos}{15}{subsection.2.6}%
+\contentsline {section}{\numberline {3}Evaluación y Conclusiones}{15}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Resultados obtenidos}{15}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Análisis, limitaciones e implicancias futuras}{17}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Cumplimiento del objetivo de la empresa}{17}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Impacto y relevancia de los resultados}{17}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Conclusiones}{17}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Referencias bibliográficas}{18}{section.4}%
+\contentsline {section}{\numberline {5}Anexos}{19}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Reflexión personal}{19}{subsection.5.1}%
+\contentsline {subsubsection}{\numberline {5.1.1}Aporte al desarrollo profesional}{19}{subsubsection.5.1.1}%
+\contentsline {subsubsection}{\numberline {5.1.2}Formación otorgada por la Escuela de Ingeniería}{19}{subsubsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.2}Anexo A: requerimientos de usuario}{20}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Anexo B: requerimientos de sistema}{21}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Anexo C: matriz de trazabilidad de requerimientos}{25}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Anexo D: matriz preliminar de ensayos de verificación}{25}{subsection.5.5}%
