@@ -1,0 +1,23 @@
+Curvature: sagitta 41.8 px, rms 0.92 px, tilt -2.16 deg
+Hartmann: [    246.92509251 -162303.55962062    1396.92492012]  rms=0.352 nm (N=7)
+  Kr [557.029] x=873.67 FWHM=3.12px lam=557.10 R=301 use=True
+  Kr [587.092] x=919.97 FWHM=2.91px lam=587.22 R=283 use=True
+  Ar [696.543] x=1035.67 FWHM=3.66px lam=696.20 R=153 use=True
+  Ar [706.722] x=1043.82 FWHM=2.84px lam=706.58 R=191 use=True
+  Kr [758.741, 760.155] x=1080.46 FWHM=3.30px lam=759.80 R=142 use=False
+  Ar [763.511, 772.376] x=1082.57 FWHM=3.20px lam=763.24 R=145 use=False
+  Ar [800.616, 801.479, 810.369, 811.531] x=1108.98 FWHM=2.61px lam=810.59 R=156 use=False
+  Kr [810.437, 811.29] x=1109.26 FWHM=4.36px lam=811.13 R=95 use=False
+  Kr [826.324, 829.811] x=1117.31 FWHM=5.09px lam=827.38 R=78 use=False
+  Ar [840.821, 842.465] x=1123.93 FWHM=3.26px lam=841.44 R=118 use=False
+  Kr [877.675] x=1139.75 FWHM=3.76px lam=878.03 R=95 use=True
+  Kr [892.869] x=1145.77 FWHM=3.24px lam=893.16 R=107 use=True
+  Ar [912.297, 922.45] x=1152.82 FWHM=4.80px lam=911.81 R=70 use=False
+  Ar [965.779] x=1171.03 FWHM=5.27px lam=965.42 R=58 use=True
+  Blue LED: lam=464.2±0.6 (nom 465.0) FWHM=19.4 nm
+  Green LED: lam=523.6±0.4 (nom 525.0) FWHM=27.4 nm
+  Red LED: lam=629.2±0.2 (nom 625.0) FWHM=21.1 nm
+Range flash 424.3-725.8; det from 363.1; theory 416-1000
+P_meas/P_design median 1.465 (spread 3.5%), f_eff 27.30
+Off-min-dev: theta1=74.5 dev=63.9 anam=0.44 ratio=1.212
+Logs: {'Blue LED': ('10', '354'), 'Green LED': ('150', '392'), 'Red LED': ('1', '354'), 'Kr': ('50', '392'), 'Ar': ('50', '392'), 'Flash': ('10', '354')}

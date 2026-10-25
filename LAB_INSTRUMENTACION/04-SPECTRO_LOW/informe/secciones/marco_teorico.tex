@@ -1,0 +1,47 @@
+\section{Theoretical Framework}
+\label{sec:theory}
+
+\subsection{Prism equation}
+A ray entering a prism of apex angle $A$ and index $n(\lambda)$ at incidence $\theta_1$ is refracted at both faces ($\sin\theta_1=n\sin r_1$, $r_1+r_2=A$, $\sin\theta_2=n\sin r_2$)
+\begin{equation}
+\delta(\lambda)=\theta_1-A+\arcsin\!\Big[n\sin\!\Big(A-\arcsin\frac{\sin\theta_1}{n}\Big)\Big].
+\label{eq:prism}
+\end{equation}
+The prism is mounted near minimum deviation, where the beam crosses it symmetrically ($\theta_1=\theta_2$) and $n=\sin[(A+\delta_{\min})/2]/\sin(A/2)$. The index follows the Sellmeier law $n^2=1+\sum_i B_i\lambda^2/(\lambda^2-C_i)$.
+
+\subsection{Dispersion}
+Differentiating \eqref{eq:prism} at fixed $\theta_1$,
+\begin{equation}
+\frac{\dd\delta}{\dd\lambda}=\frac{\sin A}{\cos r_1\cos\theta_2}\frac{\dd n}{\dd\lambda}
+\;\overset{\delta_{\min}}{=}\;
+\frac{2\sin(A/2)}{\sqrt{1-n^2\sin^2(A/2)}}\frac{\dd n}{\dd\lambda}.
+\label{eq:angdisp}
+\end{equation}
+The camera of focal length $f_{cam}$ turns angles into positions, so the reciprocal dispersion on a detector of pixel size $p$ is
+\begin{equation}
+P\equiv\left|\frac{\dd\lambda}{\dd x}\right|=\frac{p}{f_{cam}\,|\dd\delta/\dd\lambda|}\quad[\mathrm{nm/px}].
+\label{eq:recip}
+\end{equation}
+Experimentally, $\lambda(x)$ of a prism is well described by the Hartmann formula~\cite{hartmann},
+\begin{equation}
+\lambda(x)=\lambda_0+\frac{C}{x-x_0}\;\Rightarrow\;P(x)=\frac{|C|}{(x-x_0)^2},
+\label{eq:hartmann}
+\end{equation}
+with $\lambda_0$, $C$ and $x_0$ fitted to lines of known wavelength.
+
+\subsection{Resolution}
+A slit of width $w$ is imaged on the detector with width $w'=w\,(f_{cam}/f_{col})\,r$, where $r=\cos\theta_1\cos r_2/(\cos r_1\cos\theta_2)$ is the anamorphic magnification of the prism ($r=1$ at minimum deviation). The resolution element and the resolving power are
+\begin{equation}
+\Delta\lambda=\max(w',2p)\,\frac{P}{p},\qquad
+R=\frac{\lambda}{\Delta\lambda}\overset{w'>2p}{=}\frac{\lambda f_{col}}{w\,r}\left|\frac{\dd\delta}{\dd\lambda}\right|,
+\label{eq:res}
+\end{equation}
+so a slit-limited $R$ does not depend on $f_{cam}$. In the measurement, $\Delta\lambda=\mathrm{FWHM}_{px}\,P(\lambda)$ for a narrow line. The diffraction limit of the prism is $R_{dif}=b\,|\dd n/\dd\lambda|$, with $b$ the illuminated base.
+
+\subsection{Spectral range}
+With $\lambda_c$ at the centre of a detector of width $L=N_xp$, the covered range is set by
+\begin{equation}
+\big|f_{cam}\tan[\delta(\lambda)-\delta(\lambda_c)]\big|\le L/2,
+\label{eq:range}
+\end{equation}
+and is further limited by the transmission of the optics, the quantum efficiency of the detector and the spectrum of the source.

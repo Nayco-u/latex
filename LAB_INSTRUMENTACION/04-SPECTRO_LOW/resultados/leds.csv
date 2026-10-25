@@ -1,0 +1,4 @@
+led,lambda_nom_nm,x_px,lambda_meas_nm,fwhm_px,fwhm_nm
+Blue LED,465.0,649.78,464.16,66.67,19.39
+Green LED,525.0,810.29,523.59,58.20,27.45
+Red LED,625.0,972.31,629.16,23.46,21.12

@@ -1,0 +1,65 @@
+AstroDMx Capture Log
+IMPORTANT: This file should be viewed using a fixed width font or the formatting will be lost
+
+Connection Monitor resets: 0 events
+
+
+Application Information
+-------------------------------------------------------------------
+Application               = AstroDMx Capture
+Version                   = 2.17.2
+Platform                  = Windows
+Mode                      = Software Acceleration
+
+Observing Site
+-------------------------------------------------------------------
+Site Name                 = Not Defined
+
+Observing Session
+-------------------------------------------------------------------
+Object                    = Not Defined
+Object RA                 = Not Defined
+Object DEC                = Not Defined
+Lunar Phase               = 15.2% ( Waning )
+Lunar Position (Start)    = Geographical coordinates not set
+Lunar Position (End)      = Geographical coordinates not set
+Sun Position (Start)      = Geographical coordinates not set
+Sun Position (End)        = Geographical coordinates not set
+
+Telescope Information
+-------------------------------------------------------------------
+Equipment                 = Not Defined
+
+Camera Information
+-------------------------------------------------------------------
+Camera Name               = DMx 41AU02.AS
+Pixel Size                = No Data
+Pixel Format              = MONO8 (1280x960)
+Resolution                = 1280 x 960
+Camera Type               = Mono Camera
+Colour Mode               = Greyscale
+Bit Depth                 = 8-Bit
+
+Capture Settings
+-------------------------------------------------------------------
+Object Name               = green
+Output Format             = FITS (8-Bit)
+Capture Mode              = Frame Limit (Frames Requested 20)
+Flip Position             = NOT ACTIVE
+Average Frame Rate        = 3.79939
+Capture Started           = 2026/10/06 at 20:34:21
+Capture Ended             = 2026/10/06 at 20:34:26
+Capture Duration          = 5 s
+Frames Captured           = 20
+
+Camera Settings
+-------------------------------------------------------------------
+Exposure                  = 200 Milliseconds
+Gain                      = 392
+Gamma                     = 104
+Brightness                = 63
+
+Frame Calibration Settings
+-------------------------------------------------------------------
+Realtime Calibration      = NOT ACTIVE
+

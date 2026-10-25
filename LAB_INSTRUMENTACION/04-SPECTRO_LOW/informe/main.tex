@@ -1,0 +1,54 @@
+\documentclass[conference]{IEEEtran}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+\sisetup{separate-uncertainty=true,detect-all=true}
+\graphicspath{{../figuras/}{../figuras/fotos/}}
+
+% Numerical values written by scripts/run_all.py
+\input{generado/valores.tex}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\todo}[1]{\par\noindent\fbox{\parbox{0.96\linewidth}{\small\textbf{Pending:} #1}}\par}
+
+\begin{document}
+
+\title{Assembly and Characterization of a Low-Resolution\\
+Prism Spectrograph (BESOS): Range, Dispersion and Resolution}
+
+\author{\IEEEauthorblockN{Nicol\'as Seguel}
+\IEEEauthorblockA{Laboratorio de Instrumentación Astronómica -- IEE3873\\ Pontificia Universidad Cat\'olica de Chile\\ \texttt{neseguel@uc.cl}}}
+
+\maketitle
+
+\input{secciones/introduccion}
+\input{secciones/marco_teorico}
+\input{secciones/materiales}
+\input{secciones/resultados}
+\input{secciones/discusion}
+\input{secciones/conclusiones}
+
+\begin{thebibliography}{9}
+\bibitem{guide}
+L. Vanzi, \emph{Astronomical Instrumentation Lab IEE3873 -- Construction of a small low resolution spectrometer for the visible}, course guidelines and \emph{Introduction to Low Resolution Spectrograph}, AIUC, Pontificia Universidad Cat\'olica de Chile.
+
+\bibitem{besos}
+CAOS -- Club of Amateurs in Optical Spectroscopy, \emph{BESOS: a prism spectrograph}. \url{https://spectroscopy.wordpress.com/2011/04/10/besos-a-prism-spectrograph/}
+
+\bibitem{hartmann}
+J. Hartmann, ``A simple interpolation formula for the prismatic spectrum,'' \emph{Astrophys. J.}, vol.~8, p.~218, 1898.
+
+\bibitem{schott}
+SCHOTT AG, optical glass data sheet, SF18 ($n_d=1.72151$, $V_d=29.25$).
+
+\end{thebibliography}
+
+\end{document}
