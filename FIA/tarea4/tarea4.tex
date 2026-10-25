@@ -1,0 +1,79 @@
+\documentclass[11pt]{article}
+
+% ==== Paquetes ====
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{minted}
+\usepackage{mdframed}
+\geometry{margin=2.3cm}
+
+\usemintedstyle{friendly}
+\setminted{fontsize=\scriptsize, breaklines=true}
+
+% ==== Datos de la tarea ====
+\title{IEE3864 – Fundamentos de instrumentación astronómica \\ \large Tarea 4}
+\author{Nicolás Seguel}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{enumerate}
+    \item \textbf{Using a glass of n=1.5 design a lens of focal length f=1000 mm}
+    
+La distancia focal de una lente delgada se puede calcular usando la fórmula de la lente delgada:
+
+\[\frac{1}{f} = (n - 1) \left( \frac{1}{R_1} - \frac{1}{R_2} \right)\]
+
+Para simplificar, podemos asumir que la lente es simétrica, lo que significa que \(R_1 = -R_2\). Esto nos da:
+
+\[\frac{1}{1000} = (1.5 - 1) \left( \frac{1}{R_1} - \frac{1}{-R_1} \right)\]
+
+\[\frac{1}{1000} = 0.5 \left( \frac{2}{R_1} \right)\]
+
+\[\frac{1}{1000} = \frac{1}{R_1}\]
+
+Por lo tanto, \(R_1 = 1000\) mm y \(R_2 = -1000\) mm. Esto significa que la lente es convergente.
+
+    \item \textbf{The lens of the previous problem is used as objective of a telescope, what is the scale on the focal plane of the system in arcsec/mm ?}
+    
+La escala en el plano focal de un telescopio se puede calcular usando la fórmula:
+
+\[\text{Escala} = \frac{206265}{f}\]
+
+En este caso, \(f = 1000\) mm, por lo que:
+
+\[\text{Escala} = \frac{206265}{1000} = 206.265 \text{ arcsec/mm}\]
+
+    \item \textbf{Using a glass of n=1.5 design a lens of focal length f=-1000 mm}
+
+Utilizando la misma fórmula de la lente delgada. En este caso, queremos que \(f = -1000\) mm y \(n = 1.5\). Asumiendo nuevamente que la lente es simétrica, tenemos:
+
+\[\frac{1}{-1000} = (1.5 - 1) \left( \frac{1}{R_1} - \frac{1}{-R_1} \right)\]
+\[\frac{1}{-1000} = 0.5 \left( \frac{2}{R_1} \right)\]
+\[\frac{1}{-1000} = \frac{1}{R_1}\]
+
+Por lo tanto, \(R_1 = -1000\) mm y \(R_2 = 1000\) mm. Esto significa que la lente es divergente.
+
+    \item \textbf{Design a lens such that when so=20 cm, si=5 cm. What is the focal length of such a lens?}
+
+Utilizando la fórmula de la lente delgada:
+
+\[\frac{1}{f} = \frac{1}{s_o} + \frac{1}{s_i}\]
+
+Donde \(s_o\) es la distancia del objeto y \(s_i\) es la distancia de la imagen.
+
+\[\frac{1}{f} = \frac{1}{20} + \frac{1}{5} = \frac{1}{4}\]
+    
+
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,173 @@
+\documentclass[11pt]{article}
+
+% ==== Paquetes ====
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{minted}
+\usepackage{mdframed}
+\geometry{margin=2.3cm}
+
+\usemintedstyle{friendly}
+\setminted{fontsize=\scriptsize, breaklines=true}
+
+% ==== Datos de la tarea ====
+\title{IEE3864 – Fundamentos de instrumentación astronómica \\ \large Tarea 2}
+\author{Nicolás Seguel}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{enumerate}
+    \item \textbf{given the definition, calculate the length of 1 pc in Km and light yr}
+    
+Un parsec (pc) es la distancia a la que la distancia entre la Tierra y el Sol (1 UA) subtendería un ángulo de 1 segundo de arco. Para calcular la longitud de 1 pc en kilómetros y años luz, podemos usar las siguientes fórmulas:
+
+\[
+1 \, \text{pc} = \frac{1 \, \text{AU}}{\tan(1 / 3600)}
+\]
+
+\[
+1 \, \text{AU} = 149597870.7 \, \text{km}
+\]
+
+Calculando la longitud de 1 pc en kilómetros:
+
+\[
+1 \, \text{pc} = \frac{149597870.7 \, \text{km}}{\tan(1 / 3600)} \approx 3.0857 \times 10^{13} \, \text{km}
+\]
+
+Ahora en años luz se tiene que:
+
+\[
+1 \, \text{ly} = 300000000 \, \text{km/s} \times 365.25 \, \text{days} \times 24 \, \text{hours} \times 3600 \, \text{seconds}
+\]
+
+\[
+1 \, \text{ly} \approx 9.461 \times 10^{12} \, \text{km}
+\]
+
+\[
+1 \, \text{pc} = \frac{3.0857 \times 10^{13} \, \text{km}}{9.461 \times 10^{12} \, \text{km/ly}} \approx 3.2616 \, \text{ly}
+\]
+
+    \item \textbf{calculate the apparent size of a 30 Kpc object at a distance of 1000 Mpc}
+    
+Utilizando trigonometría, el tamaño aparente de un objeto se puede calcular como:
+
+\[
+\theta = \arctan\left(\frac{15 \, \text{kpc}}{1000 \, \text{Mpc}}\right) \times 2
+\]
+
+\[
+\theta = 6,187 \, \text{arcsec}
+\]
+
+    \item \textbf{calculate the sun Irradiance at the Earth surface}
+    
+La irradiancia del Sol, también conocida como constante solar, es la cantidad de energía solar que llega a la superficie de la Tierra por unidad de área. Según Wikipedia, la constante solar se puede calcular con la siguiente fórmula:
+
+\[
+K = \sigma T^4 (\frac{r_s}{a_0})^2
+\]
+
+Donde:
+\begin{itemize}
+    \item $\sigma$ es la constante de Stefan-Boltzmann ($5.67 \times 10^{-8} \, \text{W/m}^2\text{K}^4$)
+    \item $T$ es la temperatura del Sol (aproximadamente 5778 K)
+    \item $r_s$ es el radio del Sol (aproximadamente $6.96 \times 10^8$ m)
+    \item $a_0$ es la distancia media entre la Tierra y el Sol (aproximadamente $1.496 \times 10^{11}$ m)
+\end{itemize}
+
+Calculando la constante solar:
+
+\[
+K = 5.67 \times 10^{-8} \times (5778)^4 \times \left(\frac{6.96 \times 10^8}{1.496 \times 10^{11}}\right)^2
+\]
+
+\[K \approx 1361 \, \text{W/m}^2
+\]
+
+    \item \textbf{calculate the Irradiance of an object of $10^{12} L \odot$ at a distance of 1000 Mpc}
+    
+La irradiancia de un objeto se puede calcular utilizando la ley del inverso del cuadrado. La fórmula es:
+
+\[
+I = \frac{L}{4 \pi d^2}
+\]
+
+Donde:
+\begin{itemize}
+    \item $L$ es la luminosidad del objeto ($10^{12} L_\odot$)
+    \item $d$ es la distancia al objeto (1000 Mpc)
+    \item $L_\odot$ es la luminosidad del Sol (aproximadamente $3.828 \times 10^{26}$ W)
+\end{itemize}
+
+Calculando la luminosidad del objeto:
+
+\[
+I = \frac{10^{12} \times 3.828 \times 10^{26}}{4 \pi (1000 \times 3.086 \times 10^{19})^2}
+\]
+
+\[
+I = 3.199 \times 10^{-14} \, \text{W/m}^2
+\]
+
+    \item \textbf{calculate the sun’s apparent magnitude in V}
+    
+La magnitud aparente del Sol en $m_v$ (magnitud visual) se puede calcular utilizando la fórmula:
+
+\[
+m_v = -2.5 \log_{10}\left(\frac{I}{I_0}\right)
+\]
+
+Donde:
+\begin{itemize}
+    \item $I$ es la irradiancia del Sol (1361 W/m²)
+    \item $I_0$ es la irradiancia de referencia para la magnitud visual (aproximadamente $2.52 \times 10^{-8}$ W/m²)
+\end{itemize}
+
+Calculando la magnitud aparente del Sol:
+
+\[
+m_v = -2.5 \log_{10}\left(\frac{1361}{2.52 \times 10^{-8}}\right) \approx -26.74
+\]
+
+    \item \textbf{convert Jy in units of $Joule/sec/m^2/\mu m$}
+    
+Un Jansky (Jy) es una unidad de medida de la densidad de flujo espectral, que se define como:
+
+\[
+1 \, \text{Jy} = 10^{-26} \, \text{W/m}^2/\text{Hz}
+\]
+
+Para convertir Jy a $Joule/sec/m^2/\mu m$, necesitamos convertir la frecuencia (Hz) a longitud de onda ($\mu m$). La relación entre frecuencia y longitud de onda es:
+
+\[
+1 \, \text{Hz} = \frac{c}{\lambda}
+\]
+
+Reemplazando esta relación en la definición de Jy:
+
+\[
+1 \, \text{Jy} = 10^{-26} \, \text{W/m}^2 \times \frac{\lambda}{c}
+\]
+
+\[
+1 \, \text{Jy} = 10^{-26} \times \frac{\lambda_{\mu m}}{3 \times 10^8} \, \text{Joule/sec/m}^2/\mu m
+\]
+
+\[1 \, \text{Jy} = 3.33 \times 10^{-35} \lambda_{\mu m} \, \text{Joule/sec/m}^2/\mu m
+\]
+
+\end{enumerate}
+
+\end{document}
