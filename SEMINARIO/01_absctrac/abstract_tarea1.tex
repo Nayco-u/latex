@@ -1,0 +1,66 @@
+\documentclass[conference]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands,es-nodecimaldot]{babel}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{url}
+
+\begin{document}
+
+\title{Límite en frecuencia impuesto por la rugosidad en componentes de microondas impresos por SLA y electrodepositados}
+
+\author{\IEEEauthorblockN{Nicolás Seguel Ardiles}
+\IEEEauthorblockA{\textit{Departamento de Ingeniería Eléctrica} \\
+\textit{Pontificia Universidad Católica de Chile}\\
+Santiago, Chile \\
+neseguel@uc.cl}
+}
+
+\maketitle
+
+\begin{abstract}
+La manufactura aditiva por estereolitografía seguida de metalizado permite fabricar antenas y guías de onda complejas a menor costo y peso que el mecanizado. Sin embargo, la rugosidad de la superficie metalizada aumenta las pérdidas del conductor y fija un límite superior de frecuencia aún no cuantificado para este proceso. Este trabajo propone determinar ese límite combinando simulaciones electromagnéticas con distintos modelos y niveles de rugosidad, y caracterización de la superficie por microscopía.
+\end{abstract}
+
+\begin{IEEEkeywords}
+manufactura aditiva, estereolitografía, electrodeposición, rugosidad superficial, guías de onda, antenas de bocina
+\end{IEEEkeywords}
+
+\section{Contexto y motivación}
+Los \emph{feeds} de bocina de banda ancha, como la antena \emph{quad-ridged flared horn} (QRFH), se usan tanto en radioastronomía como en estaciones terrenas multibanda (bandas X y Ku). Su geometría compleja obliga a mecanizarlas en varias piezas, lo que encarece y dificulta su replicación. La impresión 3D en polímero seguida de metalizado es una alternativa liviana y de bajo costo: se han demostrado bocinas y guías de onda impresas por SLA o FDM y metalizadas por deposición química, electrodeposición o pinturas conductoras~\cite{b1,b2,b3}. En todos estos trabajos, la rugosidad de la superficie aparece como el principal factor de degradación~\cite{b2,b4}.
+
+La rugosidad incrementa la resistencia superficial cuando su escala es comparable a la profundidad de penetración $\delta$, que en cobre va de 0,79 a 0,51~\textmu m entre 7 y 17~GHz. Los modelos clásicos de Hammerstad y Groisse~\cite{b7,b8} predicen que este incremento se satura en un factor 2. El modelo de Huray~\cite{b9}, desarrollado para cobre electrodepositado con morfología nodular, no se satura. Trabajos recientes han aplicado estos modelos a piezas metálicas impresas por fusión láser~\cite{b5} y a guías de onda con superficies caracterizadas por microscopía~\cite{b6}, y se han propuesto formas de incorporar la rugosidad en simuladores comerciales~\cite{b10,b11}. Sin embargo, no existe una determinación sistemática de la frecuencia límite para piezas SLA metalizadas por electrodeposición en condiciones óptimas de proceso.
+
+Como el cobre tiene una conductividad 2,3 veces mayor que el aluminio 6061, una pieza impresa y metalizada con cobre parte con una resistencia superficial 1,5 veces menor que una mecanizada. El límite práctico del proceso puede definirse, entonces, como la \emph{frecuencia de cruce} sobre la cual la rugosidad anula esa ventaja.
+
+\section{Hipótesis y pregunta de investigación}
+\textit{Hipótesis:} la superficie de una pieza SLA metalizada por electrodeposición de cobre presenta una morfología nodular. Por eso, su pérdida adicional se describe mejor con el modelo de Huray que con los modelos saturables de Hammerstad y Groisse. Con una rugosidad RMS del orden de 1~\textmu m, alcanzable en condiciones óptimas de impresión y metalizado, la frecuencia de cruce frente al aluminio mecanizado se ubicará dentro del rango de 8 a 18~GHz, donde se puede medir directamente.
+
+\textit{Pregunta de investigación:} ¿cuál es la frecuencia límite a la que la rugosidad de una superficie SLA electrodepositada anula la ventaja de conductividad del cobre frente al aluminio mecanizado, y qué modelo de rugosidad la predice correctamente?
+
+\section{Objetivos}
+\textit{Objetivo general:} determinar la frecuencia límite de operación de componentes de microondas fabricados por SLA y metalizados por electrodeposición de cobre, en función de su rugosidad superficial.
+
+\textit{Objetivo específico 1:} construir en ANSYS HFSS un mapa de atenuación en función de la frecuencia y de la rugosidad (0,25 a 10~\textmu m RMS) para una QRFH de 7 a 17~GHz. A partir de este mapa se obtendrá la frecuencia de cruce frente al aluminio 6061.
+
+\clearpage
+\renewcommand{\refname}{Anexo: Referencias}
+\begin{thebibliography}{00}
+\bibitem{b1} A. Hofmann, Y. Stratakos, L. Marantis, V. Spanakis-Misirlis, D. Khouri, and A. Kanatas, ``A 3D printed quad-ridged flared horn antenna feeder for radio-telescopes,'' in \textit{Proc. 19th Eur. Conf. Antennas Propag. (EuCAP)}, Stockholm, Sweden, 2025, doi: 10.23919/EuCAP63536.2025.11000002.
+\bibitem{b2} K. Lomakin \textit{et al.}, ``Evaluation and characterization of 3-D printed pyramid horn antennas utilizing different deposition techniques for conductive material,'' \textit{IEEE Trans. Compon. Packag. Manuf. Technol.}, vol. 8, no. 11, pp. 1998--2006, Nov. 2018.
+\bibitem{b3} J. Shen, M. Aiken, C. Ladd, M. D. Dickey, and D. S. Ricketts, ``A simple electroless plating solution for 3D printed microwave components,'' in \textit{Proc. Asia-Pacific Microw. Conf. (APMC)}, New Delhi, India, 2016, doi: 10.1109/APMC.2016.7931434.
+\bibitem{b4} C. R. Garcia, R. C. Rumpf, H. H. Tsang, and J. H. Barton, ``Effects of extreme surface roughness on 3D printed horn antenna,'' \textit{Electron. Lett.}, vol. 49, no. 12, pp. 734--736, Jun. 2013.
+\bibitem{b5} C. Kim \textit{et al.}, ``Surface roughness impact of 3D Ti-alloy printed WR-10 waveguide and rectangular horn antenna at W-band (75--110 GHz),'' \textit{Micro Nano Syst. Lett.}, vol. 12, Art. no. 30, 2024.
+\bibitem{b6} K. Lomakin, G. Gold, and K. Helmreich, ``Analytical waveguide model precisely predicting loss and delay including surface roughness,'' \textit{IEEE Trans. Microw. Theory Techn.}, vol. 66, no. 6, 2018, doi: 10.1109/TMTT.2018.2827383.
+\bibitem{b7} E. Hammerstad and \O. Jensen, ``Accurate models for microstrip computer-aided design,'' in \textit{IEEE MTT-S Int. Microw. Symp. Dig.}, 1980, pp. 407--409.
+\bibitem{b8} S. Groiss, I. Bardi, O. Biro, K. Preis, and K. R. Richter, ``Parameters of lossy cavity resonators calculated by the finite element method,'' \textit{IEEE Trans. Magn.}, vol. 32, no. 3, pp. 894--897, May 1996.
+\bibitem{b9} P. G. Huray, O. Oluwafemi, J. Loyer, E. Bogatin, and X. Ye, ``Impact of copper surface texture on loss: A model that works,'' in \textit{Proc. DesignCon}, Santa Clara, CA, USA, 2010.
+\bibitem{b10} B. Huang and Q. Jia, ``Accurate modeling of conductor rough surfaces in waveguide devices,'' \textit{Electronics}, vol. 8, no. 3, Art. no. 269, 2019.
+\bibitem{b11} V. D. Burtsev, A. V. Nikulin, T. S. Vosheva, S. S. Zhukov, A. A. Zarenin, and D. S. Filonov, ``Comprehensive analysis of surface roughness for extremely high frequency antennas,'' \textit{Photon. Nanostruct. Fundam. Appl.}, vol. 63, Art. no. 101345, 2025.
+\end{thebibliography}
+
+\end{document}

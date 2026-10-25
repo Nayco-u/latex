@@ -1,0 +1,52 @@
+\documentclass[11pt]{article}
+
+% ==== Paquetes ====
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{minted}
+\usepackage{mdframed}
+\geometry{margin=2.3cm}
+
+\usemintedstyle{friendly}
+\setminted{fontsize=\scriptsize, breaklines=true}
+
+% ==== Datos de la tarea ====
+\title{IEE3864 – Fundamentos de instrumentación astronómica \\ \large Tarea 9}
+\author{Nicolás Seguel}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{enumerate}
+    \item \textbf{Inventa un método para medir la resolución spectral del ojo humano. Mide la resolución spectral de tu ojo.}
+\end{enumerate}
+
+Para medir la resolución espectral del ojo, se puede utilizar un experimento simple con tarjetas de colores. Por encima de un fondo neutro se pueden colocar tarjetas de colores con diferentes longitudes de onda. El objetivo es determinar la mínima diferencia de longitud de onda que el ojo humano puede distinguir entre dos colores.
+
+Por ejemplo, para el color verde:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{color_cards.png}
+    \caption{Tarjetas de color verde para medir la resolución espectral del ojo.}
+    \label{fig:color_cards}
+\end{figure}
+
+Se pueden utilizar tarjetas con longitudes de onda cercanas, como 520 nm y 530 nm, y luego ir disminuyendo la diferencia entre las tarjetas hasta que el ojo ya no pueda distinguir entre los dos colores. La resolución espectral se puede definir como la mínima diferencia de longitud de onda que el ojo puede distinguir, es decir, la diferencia entre las longitudes de onda de las tarjetas que el ojo aún puede diferenciar.
+
+En mi caso, pude diferenciar colores con una diferencia de aproximadamente 10 nm, lo que sugiere que la resolución espectral de mi ojo es de alrededor de:
+
+\begin{equation}
+    R = \frac{\lambda}{\Delta \lambda} = \frac{520 \text{ nm}}{10 \text{ nm}} = 52
+\end{equation}
+
+\end{document}
